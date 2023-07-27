@@ -1,0 +1,17 @@
+ManifestFileVersion: 0
+CRC: 2221021926
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: f7933d17c46d95f46dc8368d7fb9501b
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 2612ac43db082a73502ee80f2eceb73f
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Scripts/Bundle/H2U_TERRAIN_OUT_Normal0.asset
+Dependencies: []

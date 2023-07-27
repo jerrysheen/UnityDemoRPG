@@ -1,0 +1,7 @@
+ManifestFileVersion: 0
+CRC: 2136453850
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: textures
+      Dependencies: {}
