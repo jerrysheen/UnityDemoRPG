@@ -20,7 +20,7 @@ public class MainCityTerrainGUI : ShaderGUI
     {
 
         // render the shader properties using the default GUI
-        // base.OnGUI(materialEditor, properties);
+        base.OnGUI(materialEditor, properties);
 
         m_properties = properties;
         m_materialEditor = materialEditor;
@@ -104,12 +104,12 @@ public class MainCityTerrainGUI : ShaderGUI
         MaterialProperty _NormalPack1 = FindProperty("_NormalPack1", m_properties, true);
         content = new GUIContent(_NormalPack1.displayName, _NormalPack1.textureValue, "_NormalPack1");
         m_materialEditor.TexturePropertySingleLine(content, _NormalPack1);
-        MaterialProperty _NormalPack2 = FindProperty("_NormalPack2", m_properties, true);
-        content = new GUIContent(_NormalPack2.displayName, _NormalPack2.textureValue, "_NormalPack2");
-        m_materialEditor.TexturePropertySingleLine(content, _NormalPack2);
         MaterialProperty _AlbedoPack2 = FindProperty("_AlbedoPack2", m_properties, true);
         content = new GUIContent(_AlbedoPack2.displayName, _AlbedoPack2.textureValue, "_AlbedoPack2");
         m_materialEditor.TexturePropertySingleLine(content, _AlbedoPack2);
+        MaterialProperty _NormalPack2 = FindProperty("_NormalPack2", m_properties, true);
+        content = new GUIContent(_NormalPack2.displayName, _NormalPack2.textureValue, "_NormalPack2");
+        m_materialEditor.TexturePropertySingleLine(content, _NormalPack2);
 
         MaterialProperty _LODScale = FindProperty("_LODScale", m_properties, true);
         m_materialEditor.RangeProperty(_LODScale, "_LODScale");
