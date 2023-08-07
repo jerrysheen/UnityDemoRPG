@@ -1,0 +1,2 @@
+Spline Cable mesh created in Unity ProBuilder tools New Bezier Shape, UV mapping created in modelling software.There are no script included in the pack.
+Spline Cable included in the folder Models>Props (SM_Cable_05_Spline, SM_Cable_06_Spline), You can create your own spline script or used Unity ProBuilder tools.

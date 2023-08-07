@@ -20,7 +20,7 @@ public class MainCityTerrainGUI : ShaderGUI
     {
 
         // render the shader properties using the default GUI
-        base.OnGUI(materialEditor, properties);
+        // base.OnGUI(materialEditor, properties);
 
         m_properties = properties;
         m_materialEditor = materialEditor;
