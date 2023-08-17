@@ -210,7 +210,7 @@
                 normal.xy *= scale;
 
                 // v2.0， 这个地方如果做了normal scale， 我们要将转化完的normal 从 [-1, 1] 在转化回 [0, 1]
-                //normal.xy = (normal.xy + 1.0) * 0.5f;
+                normal.xy = (normal.xy + 1.0) * 0.5f;
                 return normal;
             }
 
@@ -346,7 +346,7 @@
                 Metallic01 = Nomal_Metallic_Smoothness.b;
                 Smoothness01 = Nomal_Metallic_Smoothness.a;
 
-
+                //return half4(NormalPack01.xyz, 1.0h);
                 float totalWeight;
                 totalWeight = 1.0f - dot(weight00, half4(1.0, 1.0, 1.0, 1.0)) - dot(weight01, half4(1.0, 1.0, 1.0, 1.0)) ;
                 //totalWeight = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uvMainAndLM.xy).r;
@@ -403,17 +403,19 @@
                 // V2.0: global normal blend with local normal
                 // using UE4 normal Blend method, ref: https://mp.weixin.qq.com/s/3cGThckJ3WE-SPnarjjPyA
                 half3 detailNormal = BlendNormalRes;
+                
+                //return half4(BlendNormalRes.xyz, 1.0h);
                 half3 baseNormal = lerp(normalize(half3(0.5, 0.5, 1.0)), globalNormal, _GlobalNormalBlendRate);
                 float3 t = baseNormal.xyz * float3( 2.0,  2.0, 2.0) + float3(-1.0, -1.0,  0);
-                float3 u = normalize(detailNormal.xyz) * float3(-2.0, -2.0, 2.0) + float3( 1.0,  1.0, -1.0);
+                float3 u = detailNormal.xyz * float3(-2.0, -2.0, 2.0) + float3( 1.0,  1.0, -1.0);
                 float3 normalTS = t * dot(t, u) / t.z - u;
-                normalTS = normalTS * 0.5 + 0.5f;
+
+                //normalTS = normalTS * 0.5 + 0.5f;
                 // 这个地方法线做完运算后，还是需要归一到(0.5, 0.5, 1.0)去？
                 //half3 curr = UnpackNormal(SAMPLE_TEXTURE2D(_GlobalNormal, sampler_GlobalNormal, IN.uvMainAndLM.xy));
                // return half4((detailNormal.xyz* float3( 2.0,  2.0, 2.0) + float3(-1.0, -1.0,  0)), 1.0f);
-                return half4(normalize(normalTS.xyz), 1.0f);
                 //normal 混合貌似有一点问题。
-                normalTS = BlendNormalRes;
+                //normalTS = BlendNormalRes;
                 
                 InitializeInputData(IN, normalTS, inputData);
                 float sgn = IN.tangentWS.w;      // should be either +1 or -1
@@ -423,8 +425,10 @@
                 inputData.normalWS = NormalizeNormalPerPixel(inputData.normalWS);
 
                 half metallic = BlendMetallicRes;
+                
                 half smoothness = BlendSmoothnessRes;
                 half occlusion = BlendAlbedoRes.a;
+                return half4(smoothness.xxx, 1.0h);
                 //smoothness = 0.0f;
                // metallic = 0.5f;
                 half alpha = 1.0;

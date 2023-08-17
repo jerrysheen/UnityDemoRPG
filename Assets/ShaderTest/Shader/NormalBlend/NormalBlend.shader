@@ -22,6 +22,7 @@ Shader "STstandard/NormalBlend"
         [ToggleOff] _SpecularHighlights("Specular Highlights", Float) = 1.0
         [ToggleOff] _EnvironmentReflections("Environment Reflections", Float) = 1.0
 
+         _GlobalNormalBlendRate ("_GlobalNormalBlendRate", Range(0.0, 1.0)) = 0.0
         _BumpScale("Scale", Float) = 1.0
         _BumpMap("BaseNormal Map", 2D) = "bump" {}
         _DetailedNormalMap("_DetailedNormalMap Map", 2D) = "bump" {}
@@ -472,5 +473,5 @@ Shader "STstandard/NormalBlend"
     }
 
     FallBack "Hidden/Universal Render Pipeline/FallbackError"
-    //CustomEditor "UnityEditor.Rendering.Universal.ShaderGUI.LitShader"
+    CustomEditor "UnityEditor.Rendering.Universal.ShaderGUI.LitShader"
 }

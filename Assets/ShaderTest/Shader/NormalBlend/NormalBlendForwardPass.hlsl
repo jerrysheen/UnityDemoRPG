@@ -222,19 +222,57 @@ void LitPassFragment(
 #ifdef LOD_FADE_CROSSFADE
     LODFadeCrossFade(input.positionCS);
 #endif
-    half3 detailNormal =  half4(SampleNormal(input.uv, TEXTURE2D_ARGS(_BumpMap, sampler_BumpMap), _BumpScale).xyz, 1.0f);
-    //outColor = SAMPLE_TEXTURE2D(_DetailedNormalMap, sampler_DetailedNormalMap, input.uv);
-    half3 globalNormal =  half4(SampleNormal(input.uv, TEXTURE2D_ARGS(_DetailedNormalMap, sampler_DetailedNormalMap), _BumpScale).xyz, 1.0f);
+    half3 globalNormal =  SampleNormal(input.uv, TEXTURE2D_ARGS(_BumpMap, sampler_BumpMap), _BumpScale).xyz;
+    
+    //
 
-    half3 baseNormal = lerp(normalize(half3(0.5, 0.5, 1.0)), globalNormal, 1.0);
-    float3 t = baseNormal.xyz * float3( 2.0,  2.0, 2.0) + float3(-1.0, -1.0,  0);
-    float3 u = normalize(detailNormal.xyz) * float3(-2.0, -2.0, 2.0) + float3( 1.0,  1.0, -1.0);
-    float3 normalTS = t * dot(t, u) / t.z - u;
-    //normalTS = normalTS * 0.5 + 0.5f;
-    half4(normalTS, 1.0f);
+    half3 deatilNormal =  SampleNormal(input.uv, TEXTURE2D_ARGS(_DetailedNormalMap, sampler_DetailedNormalMap), _BumpScale).xyz;
+    outColor = half4(deatilNormal.xyz, 1.0f);
+
+    globalNormal = SAMPLE_TEXTURE2D(_BumpMap, sampler_BumpMap, input.uv);
+    deatilNormal = SAMPLE_TEXTURE2D(_DetailedNormalMap, sampler_DetailedNormalMap, input.uv);
+
+     half3 base = lerp(half3(0.5, 0.5, 1.0), SAMPLE_TEXTURE2D(_BumpMap, sampler_BumpMap, input.uv).xyz, _GlobalNormalBlendRate);
+     half3 detail = SAMPLE_TEXTURE2D(_DetailedNormalMap, sampler_DetailedNormalMap, input.uv).xyz;
+
+    half3 normal;    
+        normal.xy = detail.rg * 2.0 - 1.0;
+        normal.z = max(1.0e-16, sqrt(1.0 - saturate(dot(normal.xy, normal.xy))));
+     //    normal.xy = (normal.xy + 1.0) * 0.5f;
+     // outColor = half4(normal, 1.0);
+     // return ;
+    //  float3 t = base.xyz * float3( 2.0,  2.0, 2.0) + float3(-1.0, -1.0,  0);
+    //  float3 u = detail.xyz * float3(-2.0, -2.0, 2.0) + float3( 1.0,  1.0, -1.0);
+    //  float3 normalTS = t * dot(t, u) / t.z - u;
+    // //normalTS = normalTS * 0.5 + 0.5;
+
+    // half3 detailNormal0;
+    // detailNormal0.xy = deatilNormal.xy * 2.0 - 1.0;
+    // detailNormal0.z = max(1.0e-16, sqrt(1.0 - saturate(dot(detailNormal0.xy, detailNormal0.xy))));
+    // detailNormal0.xy = detailNormal0.xy * 0.5f + 0.5f;
+    // detailNormal0 = normalize(detailNormal0);
+    //
+
+    // outColor = half4(globalNormal.xyz, 1.0f);
+    //
+    // half3 globalNormal0;
+    // globalNormal0.xy = globalNormal.xy * 2.0 - 1.0;
+    // globalNormal0.z = max(1.0e-16, sqrt(1.0 - saturate(dot(globalNormal0.xy, globalNormal0.xy))));
+    // globalNormal0.xy = globalNormal0.xy * 0.5f + 0.5f;
+    // globalNormal0 = normalize(globalNormal0);
+    // outColor = half4(globalNormal0.xyz, 1.0f);
+  
+    
+    
+    // half3 baseNormal = lerp(half3(0.5, 0.5, 1.0), globalNormal0, _GlobalNormalBlendRate);
+    // float3 t = baseNormal.xyz * float3( 2.0,  2.0, 2.0) + float3(-1.0, -1.0,  0);
+    // float3 u = normalize(detailNormal0.xyz) * float3(-2.0, -2.0, 2.0) + float3( 1.0,  1.0, -1.0);
+    // float3 normalTS = t * dot(t, u) / t.z - u;
+    half4 specGloss = SampleMetallicSpecGloss(input.uv, 1.0f);
+    outColor = half4(specGloss.aaa, 1.0f);
     return;
     InputData inputData;
-    InitializeInputData(input, surfaceData.normalTS, inputData);
+    InitializeInputData(input, normal, inputData);
     SETUP_DEBUG_TEXTURE_DATA(inputData, input.uv, _BaseMap);
 
 #ifdef _DBUFFER
