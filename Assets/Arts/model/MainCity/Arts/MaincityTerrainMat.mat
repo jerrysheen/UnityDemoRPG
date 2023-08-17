@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: MaincityTerrainMat
-  m_Shader: {fileID: 4800000, guid: ea500dbdf25db3b42b69db940341e15d, type: 3}
+  m_Shader: {fileID: 4800000, guid: 3c49d044d3855b34290ac03384fee3a9, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -69,6 +69,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _GLobalMipMapLimit: 0
     - _GlobalNormalBlendRate: 0.39
     - _LODScale: 3
     - _NormalScale00: 1

@@ -25,6 +25,13 @@ public class TerrainToMeshTools_UnityTerrain : MonoBehaviour
     public List<Texture2D> outAlbedoPack;
     public List<Texture2D> outNormalPack;
 
+
+    public TerrainData terrainData;
+    public bool needOutputPCAsset = false;
+    public bool enableSimpleTerrain = false;
+
+
+    public List<int> indexArray;
     // Start is called before the first frame update
     void Start()
     {
@@ -49,6 +56,9 @@ public class TerrainToMeshTools_UnityTerrain : MonoBehaviour
 
     void CreateTextureList()
     {
+        indexArray = new List<int>() {0, 1, 2, 3, 4,5,6 ,7,8 };
+        //List<int> indexArray = new List<int>() {0, 1, 2, 3, 5,6,4 ,7,8 };
+        
         inAlbedoPack = new List<Texture2D>();
         inNormalPack = new List<Texture2D>();
         inMaskPack = new List<Texture2D>();
@@ -59,22 +69,31 @@ public class TerrainToMeshTools_UnityTerrain : MonoBehaviour
         outAlbedoPack = new List<Texture2D>();
         outNormalPack = new List<Texture2D>();
 
-        TerrainData terrainData = this.GetComponent<TerrainCollider>().terrainData;
+        terrainData = this.GetComponent<TerrainCollider>().terrainData;
         if (!terrainData)
         {
             Debug.LogError("Can't Find Terrain Data!");
             return;
         }
 
+        if (terrainData.terrainLayers.Length != 6 && terrainData.terrainLayers.Length != 9)
+        {
+            
+            Debug.LogError(terrainData.terrainLayers.Length);
+            Debug.LogError("地表材质数量不对，要求6层或者9层材质地表！");
+        }
+
+        enableSimpleTerrain = terrainData.terrainLayers.Length == 6 ? true : false;
+        
         // inWeightPack
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < terrainData.alphamapTextures.Length; i++)
         {
             inWeightPack.Add(terrainData.alphamapTextures[i]);
         }
         //inAlbedoPack
         //inNormalPack
         //inMaskPack
-        for (int i = 0; i < 9; i++)
+        for (int i = 0; i < terrainData.terrainLayers.Length; i++)
         {
             inAlbedoPack.Add(terrainData.terrainLayers[i].diffuseTexture);
             inNormalPack.Add(terrainData.terrainLayers[i].normalMapTexture);
@@ -102,10 +121,10 @@ public class TerrainToMeshTools_UnityTerrain : MonoBehaviour
     public void TransformHeightMap()
     {
         #region GetHeightMap
-        List<int> indexArray = new List<int>() {0, 1, 2, 3, 5,6,4 ,7,8 };
         var newcol = new List<Color>();
         outHeightPack = new List<Texture2D>();
-        for (int i = 0; i < 2; i++)
+        int heightMapCount = terrainData.alphamapTextures.Length - 1;
+        for (int i = 0; i < heightMapCount; i++)
         {
             int indexPic0 = indexArray[4 * i];
             int indexPic1 = indexArray[4 * i + 1];
@@ -137,20 +156,24 @@ public class TerrainToMeshTools_UnityTerrain : MonoBehaviour
                 }
 
             }
+
             targetTex.SetPixels(newcol.ToArray());
-            targetTexPC.SetPixels(newcol.ToArray());
-            newcol.Clear();
             string assetLoadPath = "Assets" + outputPath + "/";
             string assetName = outputPrefix + "HeightMap" + i + ".asset";
             EditorUtility.CompressTexture(targetTex, TextureFormat.ASTC_4x4, TextureCompressionQuality.Normal);
             targetTex.Apply(true, true);
             AssetDatabase.CreateAsset(targetTex, assetLoadPath + "/" + assetName);
             
-            assetName = outputPrefix + "HeightMap" + i + "_PC.asset";
-            EditorUtility.CompressTexture(targetTexPC, TextureFormat.DXT5, TextureCompressionQuality.Normal);
-            targetTexPC.Apply(true, true);
-            AssetDatabase.CreateAsset(targetTexPC, assetLoadPath + "/" + assetName);
-            outHeightPack.Add(targetTexPC);
+            if (needOutputPCAsset)
+            {
+                targetTexPC.SetPixels(newcol.ToArray());
+                assetName = outputPrefix + "HeightMap" + i + "_PC.asset";
+                EditorUtility.CompressTexture(targetTexPC, TextureFormat.DXT5, TextureCompressionQuality.Normal);
+                targetTexPC.Apply(true, true);
+                AssetDatabase.CreateAsset(targetTexPC, assetLoadPath + "/" + assetName);
+                outHeightPack.Add(targetTexPC);
+            }
+            newcol.Clear();
         }
         AssetDatabase.Refresh();
 #endregion
@@ -160,7 +183,7 @@ public class TerrainToMeshTools_UnityTerrain : MonoBehaviour
     {
 #region GetWeightMap
         Debug.Log("Deal with weight map");
-        List<int> indexArray = new List<int>() {0, 1, 2, 3, 5,6,4 ,7,8 };
+        //List<int> indexArray = new List<int>() {0, 1, 2, 3, 5,6,4 ,7,8 };
         var newcol = new List<Color>();
         outWeightPack = new List<Texture2D>();
 
@@ -266,7 +289,7 @@ public class TerrainToMeshTools_UnityTerrain : MonoBehaviour
     {
 #region GetAlbedoMap
         Debug.Log("Deal with albedo map");
-        List<int> indexArray = new List<int>() {0, 1, 2, 3, 5,6,4 ,7,8 };
+        //List<int> indexArray = new List<int>() {0, 1, 2, 3, 5,6,4 ,7,8 };
         outAlbedoPack = new List<Texture2D>();
         var newcol = new List<Color>();
 
@@ -371,7 +394,7 @@ public class TerrainToMeshTools_UnityTerrain : MonoBehaviour
     public void TransformNormalMap()
     {
 #region GetNormalMap
-        List<int> indexArray = new List<int>() {0, 1, 2, 3, 5,6,4 ,7,8 };
+        //List<int> indexArray = new List<int>() {0, 1, 2, 3, 5,6,4 ,7,8 };
         outNormalPack = new List<Texture2D>();
 
         for(int i = 0; i < 3; i++)
