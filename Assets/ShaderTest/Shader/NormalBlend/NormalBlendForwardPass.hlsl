@@ -238,9 +238,9 @@ void LitPassFragment(
     half3 normal;    
         normal.xy = detail.rg * 2.0 - 1.0;
         normal.z = max(1.0e-16, sqrt(1.0 - saturate(dot(normal.xy, normal.xy))));
-     //    normal.xy = (normal.xy + 1.0) * 0.5f;
-     // outColor = half4(normal, 1.0);
-     // return ;
+        //normal.xy = (normal.xy + 1.0) * 0.5f;
+      //outColor = half4(normal, 1.0);
+      //return ;
     //  float3 t = base.xyz * float3( 2.0,  2.0, 2.0) + float3(-1.0, -1.0,  0);
     //  float3 u = detail.xyz * float3(-2.0, -2.0, 2.0) + float3( 1.0,  1.0, -1.0);
     //  float3 normalTS = t * dot(t, u) / t.z - u;
@@ -269,8 +269,8 @@ void LitPassFragment(
     // float3 u = normalize(detailNormal0.xyz) * float3(-2.0, -2.0, 2.0) + float3( 1.0,  1.0, -1.0);
     // float3 normalTS = t * dot(t, u) / t.z - u;
     half4 specGloss = SampleMetallicSpecGloss(input.uv, 1.0f);
-    outColor = half4(specGloss.aaa, 1.0f);
-    return;
+    //outSurfaceData.occlusion = SampleOcclusion(uv);
+
     InputData inputData;
     InitializeInputData(input, normal, inputData);
     SETUP_DEBUG_TEXTURE_DATA(inputData, input.uv, _BaseMap);

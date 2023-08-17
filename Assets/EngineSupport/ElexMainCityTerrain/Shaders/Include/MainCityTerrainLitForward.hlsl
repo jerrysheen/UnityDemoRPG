@@ -404,13 +404,14 @@
                 // using UE4 normal Blend method, ref: https://mp.weixin.qq.com/s/3cGThckJ3WE-SPnarjjPyA
                 half3 detailNormal = BlendNormalRes;
                 
-                //return half4(BlendNormalRes.xyz, 1.0h);
-                half3 baseNormal = lerp(normalize(half3(0.5, 0.5, 1.0)), globalNormal, _GlobalNormalBlendRate);
+                
+                half3 baseNormal = lerp(half3(0.5, 0.5, 1.0), globalNormal, _GlobalNormalBlendRate);
                 float3 t = baseNormal.xyz * float3( 2.0,  2.0, 2.0) + float3(-1.0, -1.0,  0);
                 float3 u = detailNormal.xyz * float3(-2.0, -2.0, 2.0) + float3( 1.0,  1.0, -1.0);
                 float3 normalTS = t * dot(t, u) / t.z - u;
-
+                
                 //normalTS = normalTS * 0.5 + 0.5f;
+                //return half4(normalTS.xyz, 1.0h);
                 // 这个地方法线做完运算后，还是需要归一到(0.5, 0.5, 1.0)去？
                 //half3 curr = UnpackNormal(SAMPLE_TEXTURE2D(_GlobalNormal, sampler_GlobalNormal, IN.uvMainAndLM.xy));
                // return half4((detailNormal.xyz* float3( 2.0,  2.0, 2.0) + float3(-1.0, -1.0,  0)), 1.0f);
@@ -428,7 +429,7 @@
                 
                 half smoothness = BlendSmoothnessRes;
                 half occlusion = BlendAlbedoRes.a;
-                return half4(smoothness.xxx, 1.0h);
+               
                 //smoothness = 0.0f;
                // metallic = 0.5f;
                 half alpha = 1.0;
