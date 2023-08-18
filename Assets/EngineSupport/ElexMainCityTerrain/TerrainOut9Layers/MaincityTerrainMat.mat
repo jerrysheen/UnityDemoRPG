@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: MaincityTerrainMat
+  m_Shader: {fileID: 4800000, guid: 3c49d044d3855b34290ac03384fee3a9, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords:
+  - _SIMPLE_6LAYER_BLEND
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _AlbedoPack0:
+        m_Texture: {fileID: 2800000, guid: 81123c1981dedaa48be0f4cf2a7b7fca, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _AlbedoPack1:
+        m_Texture: {fileID: 2800000, guid: 912b878945b6a0840b6d62575c107b98, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _AlbedoPack2:
+        m_Texture: {fileID: 2800000, guid: e797f4ff7d27f4740b65a9870ffadc8c, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _GlobalNormal:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _HeightPack0:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 60, y: 60}
+        m_Offset: {x: 0, y: 0}
+    - _HeightPack1:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormalPack0:
+        m_Texture: {fileID: 2800000, guid: 09bae569c1964084da9be9623a3936db, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormalPack1:
+        m_Texture: {fileID: 2800000, guid: 45ac51879aacfea47986bc2dfe255c12, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormalPack2:
+        m_Texture: {fileID: 2800000, guid: 9ec3094c1e14b254da23d3d432914981, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _WeightPack0:
+        m_Texture: {fileID: 2800000, guid: dc31cacb220ea1444b4d209cc9a73e81, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _WeightPack1:
+        m_Texture: {fileID: 2800000, guid: ed9db7ccd04ef864091e6212606f6664, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _GlobalNormalBlendRate: 0
+    - _LODScale: 3
+    - _NormalScale00: 1
+    - _NormalScale01: 1
+    - _NormalScale02: 1
+    - _SIMPLE_6LAYER_BLEND: 1
+    m_Colors: []
+  m_BuildTextureStacks: []

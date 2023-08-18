@@ -30,6 +30,8 @@ Shader "Catmull/MainCityTerrain"
         _NormalScale02 ("_NormalScale02", Range(0.0, 2.0)) = 1.0
 
         _LODScale ("_LODScale", Range(0.0, 3.0)) = 3.0
+        
+        [Toggle(_SIMPLE_6LAYER_BLEND)] _SIMPLE_6LAYER_BLEND("Enable Simple Six Layer Blend", Float) = 0.0
         //_GLobalMipMapLimit("_GLobalMipMapLimit", Range(0.0, 3.0)) = 0.0
 
        // _LODValue00 ("金属度", Range(0.0, 3.0)) = 1.0
@@ -71,10 +73,11 @@ Shader "Catmull/MainCityTerrain"
             // no LightMode tag are also rendered by Universal Render Pipeline
 
             HLSLPROGRAM
-            #define LOW_QUALITY
+            
             #pragma multi_compile _ _ENABLE_WORLD_NORMAL
             #define _NORMALMAP
             #define REQUIRES_WORLD_SPACE_TANGENT_INTERPOLATOR
+            #pragma shader_feature_local_fragment _SIMPLE_6LAYER_BLEND
             #pragma target 2.0
             #pragma vertex MainCityTerrainPassVertex
             #pragma fragment MainCityTerrainPassFragment
@@ -95,6 +98,7 @@ Shader "Catmull/MainCityTerrain"
             #pragma shader_feature_local_fragment _SPECULARHIGHLIGHTS_OFF
             #pragma shader_feature_local_fragment _ENVIRONMENTREFLECTIONS_OFF
             #pragma shader_feature_local_fragment _SPECULAR_SETUP
+            
 
             // -------------------------------------
             // Universal Pipeline keywords
@@ -471,6 +475,7 @@ Shader "Catmull/MainCityTerrain"
             
             
             HLSLPROGRAM
+            #define LOW_QUALITY
             #define _NORMALMAP
             #define REQUIRES_WORLD_SPACE_TANGENT_INTERPOLATOR
             #pragma target 2.0

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class TerrainToMeshTools_UnityTerrain : MonoBehaviour
 {
@@ -123,18 +124,21 @@ public class TerrainToMeshTools_UnityTerrain : MonoBehaviour
         #region GetHeightMap
         var newcol = new List<Color>();
         outHeightPack = new List<Texture2D>();
-        int heightMapCount = terrainData.alphamapTextures.Length - 1;
-        for (int i = 0; i < heightMapCount; i++)
+        int weightMapCount = terrainData.alphamapTextures.Length;
+        int terrainLayerCount = terrainData.terrainLayers.Length;
+
+
+        for (int i = 0; i < weightMapCount; i++)
         {
             int indexPic0 = indexArray[4 * i];
             int indexPic1 = indexArray[4 * i + 1];
             int indexPic2 = indexArray[4 * i + 2];
             int indexPic3 = indexArray[4 * i + 3];
 
-            Texture2D heightMap00 = inMaskPack[indexPic0];
-            Texture2D heightMap01 = inMaskPack[indexPic1];
-            Texture2D heightMap02 = inMaskPack[indexPic2];
-            Texture2D heightMap03 = inMaskPack[indexPic3];
+            Texture2D heightMap00 = inMaskPack[indexPic0 >= terrainLayerCount ? terrainLayerCount - 1 : indexPic0];
+            Texture2D heightMap01 = inMaskPack[indexPic1 >= terrainLayerCount ? terrainLayerCount - 1 : indexPic1];
+            Texture2D heightMap02 = inMaskPack[indexPic2 >= terrainLayerCount ? terrainLayerCount - 1 : indexPic2];
+            Texture2D heightMap03 = inMaskPack[indexPic3 >= terrainLayerCount ? terrainLayerCount - 1 : indexPic3];
 
 
 
@@ -186,7 +190,8 @@ public class TerrainToMeshTools_UnityTerrain : MonoBehaviour
         //List<int> indexArray = new List<int>() {0, 1, 2, 3, 5,6,4 ,7,8 };
         var newcol = new List<Color>();
         outWeightPack = new List<Texture2D>();
-
+        int weightMapCount = terrainData.alphamapTextures.Length;
+        Debug.Log("WeightMapCount :" + weightMapCount);
         // pic00:
         var height = inWeightPack[0].height;
         var width = inWeightPack[0].width;
@@ -210,13 +215,16 @@ public class TerrainToMeshTools_UnityTerrain : MonoBehaviour
         string assetName = outputPrefix + "WeightMap00.asset";
         EditorUtility.CompressTexture(targetTex, TextureFormat.ASTC_4x4, TextureCompressionQuality.Normal);
         targetTex.Apply(true, true);
-        AssetDatabase.CreateAsset(targetTex, assetLoadPath + "/" + assetName);        
-        
-        assetName = outputPrefix + "WeightMap00_PC.asset";
-        EditorUtility.CompressTexture(targetTexPC, TextureFormat.DXT5, TextureCompressionQuality.Normal);
-        targetTexPC.Apply(true, true);
-        AssetDatabase.CreateAsset(targetTexPC, assetLoadPath + "/" + assetName);
-        
+        AssetDatabase.CreateAsset(targetTex, assetLoadPath + "/" + assetName);
+
+        if (needOutputPCAsset)
+        {
+            assetName = outputPrefix + "WeightMap00_PC.asset";
+            EditorUtility.CompressTexture(targetTexPC, TextureFormat.DXT5, TextureCompressionQuality.Normal);
+            targetTexPC.Apply(true, true);
+            AssetDatabase.CreateAsset(targetTexPC, assetLoadPath + "/" + assetName);
+        }
+
         outWeightPack.Add(targetTex);
         newcol.Clear();
 
@@ -242,46 +250,55 @@ public class TerrainToMeshTools_UnityTerrain : MonoBehaviour
         EditorUtility.CompressTexture(targetTex, TextureFormat.ASTC_4x4, TextureCompressionQuality.Normal);
         targetTex.Apply(true, true);
         AssetDatabase.CreateAsset(targetTex, assetLoadPath + "/" + assetName);
-        
-        assetName = outputPrefix + "WeightMap01_PC.asset";
-        EditorUtility.CompressTexture(targetTexPC, TextureFormat.DXT5, TextureCompressionQuality.Normal);
-        targetTexPC.Apply(true, true);
-        AssetDatabase.CreateAsset(targetTexPC, assetLoadPath + "/" + assetName);
-        
+
+        if (needOutputPCAsset)
+        {
+            assetName = outputPrefix + "WeightMap01_PC.asset";
+            EditorUtility.CompressTexture(targetTexPC, TextureFormat.DXT5, TextureCompressionQuality.Normal);
+            targetTexPC.Apply(true, true);
+            AssetDatabase.CreateAsset(targetTexPC, assetLoadPath + "/" + assetName);
+        }
+
         outWeightPack.Add(targetTex);
         newcol.Clear();
 
-        // pic02:
-        targetTex = new Texture2D(height, width, textureFormat: TextureFormat.RGBA32, false, true);
-        targetTexPC = new Texture2D(height, width, textureFormat: TextureFormat.RGBA32, false, true);
-        for (int j = 0; j < height; j++)
+        if (weightMapCount >= 3)
         {
-            for (int k = 0; k < width; k++)
+            // pic02:
+            targetTex = new Texture2D(height, width, textureFormat: TextureFormat.RGBA32, false, true);
+            targetTexPC = new Texture2D(height, width, textureFormat: TextureFormat.RGBA32, false, true);
+            for (int j = 0; j < height; j++)
             {
-                Color curr = Color.black;
-                curr.r = inWeightPack[2].GetPixel(k, j).r;
-                curr.g = 0.0f;
-                curr.b = 0.0f;
-                curr.a = 0.0f;
-                newcol.Add(curr);
+                for (int k = 0; k < width; k++)
+                {
+                    Color curr = Color.black;
+                    curr.r = inWeightPack[2].GetPixel(k, j).r;
+                    curr.g = 0.0f;
+                    curr.b = 0.0f;
+                    curr.a = 0.0f;
+                    newcol.Add(curr);
+                }
             }
+            targetTex.SetPixels(newcol.ToArray());
+            targetTexPC.SetPixels(newcol.ToArray());
+            assetLoadPath = "Assets" + outputPath + "/";
+            assetName = outputPrefix + "WeightMap02.asset";
+            EditorUtility.CompressTexture(targetTex, TextureFormat.ASTC_4x4, TextureCompressionQuality.Normal);
+            targetTex.Apply(true, true);
+            AssetDatabase.CreateAsset(targetTex, assetLoadPath + "/" + assetName);
+            if (needOutputPCAsset)
+            {
+                assetName = outputPrefix + "WeightMap02_PC.asset";
+                EditorUtility.CompressTexture(targetTexPC, TextureFormat.DXT5, TextureCompressionQuality.Normal);
+                targetTexPC.Apply(true, true);
+                AssetDatabase.CreateAsset(targetTexPC, assetLoadPath + "/" + assetName);
+            }
+
+            outWeightPack.Add(targetTex);
+            newcol.Clear();
+            AssetDatabase.Refresh();
         }
-        targetTex.SetPixels(newcol.ToArray());
-        targetTexPC.SetPixels(newcol.ToArray());
-        assetLoadPath = "Assets" + outputPath + "/";
-        assetName = outputPrefix + "WeightMap02.asset";
-        EditorUtility.CompressTexture(targetTex, TextureFormat.ASTC_4x4, TextureCompressionQuality.Normal);
-        targetTex.Apply(true, true);
-        AssetDatabase.CreateAsset(targetTex, assetLoadPath + "/" + assetName);
-        
-        assetName = outputPrefix + "WeightMap02_PC.asset";
-        EditorUtility.CompressTexture(targetTexPC, TextureFormat.DXT5, TextureCompressionQuality.Normal);
-        targetTexPC.Apply(true, true);
-        AssetDatabase.CreateAsset(targetTexPC, assetLoadPath + "/" + assetName);
-        
-        outWeightPack.Add(targetTex);
-        newcol.Clear();
-        AssetDatabase.Refresh();
+
 #endregion
     }
 
@@ -292,8 +309,8 @@ public class TerrainToMeshTools_UnityTerrain : MonoBehaviour
         //List<int> indexArray = new List<int>() {0, 1, 2, 3, 5,6,4 ,7,8 };
         outAlbedoPack = new List<Texture2D>();
         var newcol = new List<Color>();
-
-        for(int i = 0; i < 3; i ++)
+        int weightMapCount = terrainData.alphamapTextures.Length;
+        for(int i = 0; i < weightMapCount; i ++)
         {
             int count = i;
             int indexPic0 = indexArray[count * 3 + 0];
@@ -378,12 +395,14 @@ public class TerrainToMeshTools_UnityTerrain : MonoBehaviour
             EditorUtility.CompressTexture(targetTex, TextureFormat.ASTC_4x4, TextureCompressionQuality.Normal);
             targetTex.Apply(true, true);
             AssetDatabase.CreateAsset(targetTex, assetLoadPath + "/" + assetName);
-            
-            assetName = outputPrefix + "AlbedoMap" + count + "_PC.asset";
-            EditorUtility.CompressTexture(targetTexPC, TextureFormat.DXT5, TextureCompressionQuality.Normal);
-            targetTexPC.Apply(true, true);
-            AssetDatabase.CreateAsset(targetTexPC, assetLoadPath + "/" + assetName);
-            
+            if (needOutputPCAsset)
+            {
+                assetName = outputPrefix + "AlbedoMap" + count + "_PC.asset";
+                EditorUtility.CompressTexture(targetTexPC, TextureFormat.DXT5, TextureCompressionQuality.Normal);
+                targetTexPC.Apply(true, true);
+                AssetDatabase.CreateAsset(targetTexPC, assetLoadPath + "/" + assetName);
+            }
+
             outAlbedoPack.Add(targetTex);
         }
         AssetDatabase.Refresh();
@@ -396,8 +415,8 @@ public class TerrainToMeshTools_UnityTerrain : MonoBehaviour
 #region GetNormalMap
         //List<int> indexArray = new List<int>() {0, 1, 2, 3, 5,6,4 ,7,8 };
         outNormalPack = new List<Texture2D>();
-
-        for(int i = 0; i < 3; i++)
+        int weightMapCount = terrainData.alphamapTextures.Length;
+        for(int i = 0; i < weightMapCount; i++)
         {
             int count = i;
             int indexPic0 = indexArray[count * 3 + 0];
@@ -556,11 +575,13 @@ public class TerrainToMeshTools_UnityTerrain : MonoBehaviour
             EditorUtility.CompressTexture(targetTex, TextureFormat.ASTC_4x4, TextureCompressionQuality.Normal);
             targetTex.Apply(true, true);
             AssetDatabase.CreateAsset(targetTex, assetLoadPath + "/" + assetName);
-            
-            assetName = outputPrefix + "Normal" + count + "_PC.asset";
-            EditorUtility.CompressTexture(targetTexPC, TextureFormat.DXT5, TextureCompressionQuality.Normal);
-            targetTexPC.Apply(true, true);
-            AssetDatabase.CreateAsset(targetTexPC, assetLoadPath + "/" + assetName);
+            if (needOutputPCAsset)
+            {
+                assetName = outputPrefix + "Normal" + count + "_PC.asset";
+                EditorUtility.CompressTexture(targetTexPC, TextureFormat.DXT5, TextureCompressionQuality.Normal);
+                targetTexPC.Apply(true, true);
+                AssetDatabase.CreateAsset(targetTexPC, assetLoadPath + "/" + assetName);
+            }
         }
         AssetDatabase.Refresh();
 #endregion

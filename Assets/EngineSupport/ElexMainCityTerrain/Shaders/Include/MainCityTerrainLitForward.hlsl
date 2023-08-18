@@ -220,29 +220,19 @@
 
 #ifndef  LOW_QUALITY
     #define GLOBAL_NORMAL_BLEND
-    #define HTIGHTMAP_BLEND
+    #define HEIGHTMAP_BLEND
     #define PBR_LIGHT_CALCULATE
 #else
-                //return 1.0f;
 #endif
-                float _ChangeSeasonPack0 = 0.0f;
 
-                float2 u_xlat16_1 = IN.uvMainAndLM.xy;
                 float2 uvHeight = IN.uvMainAndLM.xy * _HeightPack0_ST.xy + _HeightPack0_ST.zw;
-                //globalNormal = TransformTangentToWorld(globalNormal, half3x3(-IN.tangent.xyz, IN.bitangent.xyz, IN.normal.xyz));
+                half4 weight00 = SAMPLE_TEXTURE2D(_WeightPack0, sampler_WeightPack0, IN.uvMainAndLM.xy).xyzw;
+                half4 weight01 = SAMPLE_TEXTURE2D(_WeightPack1, sampler_WeightPack1, IN.uvMainAndLM.xy).xyzw;
 
-                half4 weight00 = SAMPLE_TEXTURE2D(_WeightPack0, sampler_WeightPack0, u_xlat16_1.xy).xyzw;
-                half4 weight01 = SAMPLE_TEXTURE2D(_WeightPack1, sampler_WeightPack1, u_xlat16_1.xy).xyzw;
-                float3 globalNormal = UnpackNormalMainCity(SAMPLE_TEXTURE2D(_GlobalNormal, sampler_GlobalNormal, u_xlat16_1.xy));
-                
-                u_xlat16_1 = weight01.xy;
+#ifdef GLOBAL_NORMAL_BLEND
+                float3 globalNormal = UnpackNormalMainCity(SAMPLE_TEXTURE2D(_GlobalNormal, sampler_GlobalNormal, IN.uvMainAndLM.xy));
+#endif
 
-
-
-                float2 u_xlat16_12 = 0.0;
-
-                // Global Normal and LOD:
-                float2 u_xlat0 = IN.uvMainAndLM.xy;
 
 #ifdef HEIGHTMAP_BLEND
                 float4 HeightControl0;
@@ -259,14 +249,8 @@
                 float2  dx = ddx(uv);
                 float2 dy = ddy(uv);
                 float2 rho = max(sqrt(dot(dx, dx)), sqrt(dot(dy, dy)));
-                //float2 lambda = 0.5 * log2(rho);
                 float lambda = log2(rho - _LODScale).x;
                 float LODLevel = max(int(lambda + 0.5), 0);
-                
-                u_xlat0.x = _AlbedoPack0_TexelSize.z * 0.5;
-                //int d = max(int(lambda + 0.5), 0);
-                float u_xlat16_24;
-                //float LODLevel = round(lambda * 1.0);
                 LODLevel = LODLevel > 0.0 ? LODLevel : 0.0;
                 float final_LOD = LODLevel;
 
@@ -316,7 +300,6 @@
                 
 
                 AlbedoPack00 = SAMPLE_TEXTURE2D_LOD(_AlbedoPack0, sampler_AlbedoPack0, Layer0UV.xy , final_LOD);
-                
                 Nomal_Metallic_Smoothness = (SAMPLE_TEXTURE2D_LOD(_NormalPack0, sampler_NormalPack0, Layer0UV.xy , final_LOD));
                 NormalPack00 = UnpackNormalMainCity(Nomal_Metallic_Smoothness, _NormalScale00);
                 Metallic00 = Nomal_Metallic_Smoothness.b;
@@ -357,33 +340,34 @@
                 float BlendUVLayer2X = weight00.w * HeightControl0.w;
                 float BlendUVLayer2Y = weight01.y * HeightControl1.x;
                 float BlendUVLayer2Z = weight01.z * HeightControl1.y;
-                
 #else
                 float BlendUVLayer2X = weight01.z;
                 float BlendUVLayer2Y = weight01.w;
                 float BlendUVLayer2Z = totalWeight;
-                
 #endif
 
                 
+                float Layer00TotalWeight = BlendUVLayer0Y + BlendUVLayer0Z+ BlendUVLayer0X + 0.00100000005;
+                float Layer01TotalWeight = BlendUVLayer1X + BlendUVLayer1Y + BlendUVLayer1Z + 0.00100000005;
+                float Layer02TotalWeight = 0.0f;
+                half  Metallic02 = 0.0f;
+                half  Smoothness02 = 0.0f;
+                half3  NormalPack02 = 0.0f;
+                half4 AlbedoPack02 = 0.0f;
+                
+#ifndef _SIMPLE_6LAYER_BLEND
+                Layer02TotalWeight = (BlendUVLayer2X + BlendUVLayer2Y + BlendUVLayer2Z + 0.00100000005);
                 diffuseLocalUV.x= BlendUVLayer2Z / (BlendUVLayer2Y + BlendUVLayer2Z + 0.00100000005);
                 diffuseLocalUV.y = (BlendUVLayer2Y + BlendUVLayer2Z + 0.00100000005) /(BlendUVLayer2X + BlendUVLayer2Y + BlendUVLayer2Z + 0.00100000005);
                 float2 Layer2UV = diffuseLocalUV.xy * diffuseLodScale.xx + diffuseGalobalTillingAndOffset;
-                half3  NormalPack02;
-                half  Metallic02;
-                half  Smoothness02;
-                half4 AlbedoPack02 = SAMPLE_TEXTURE2D_LOD(_AlbedoPack2 ,sampler_AlbedoPack2 ,Layer2UV.xy,final_LOD);
+                AlbedoPack02 = SAMPLE_TEXTURE2D_LOD(_AlbedoPack2 ,sampler_AlbedoPack2 ,Layer2UV.xy,final_LOD);
                 Nomal_Metallic_Smoothness = (SAMPLE_TEXTURE2D_LOD(_NormalPack2, sampler_NormalPack2, Layer2UV.xy , final_LOD));
                 NormalPack02 = UnpackNormalMainCity(Nomal_Metallic_Smoothness, _NormalScale02);
                 Metallic02 = Nomal_Metallic_Smoothness.b;
                 Smoothness02 = Nomal_Metallic_Smoothness.a;
+#endif
+               
 
-           
-                float Layer01TotalWeight = BlendUVLayer1X + BlendUVLayer1Y + BlendUVLayer1Z + 0.00100000005;
-
-                float Layer00TotalWeight = BlendUVLayer0Y + BlendUVLayer0Z+ BlendUVLayer0X + 0.00100000005;
-
-                float Layer02TotalWeight = (BlendUVLayer2X + BlendUVLayer2Y + BlendUVLayer2Z + 0.00100000005);
 
                 half4 BlendAlbedoRes = AlbedoPack00 * Layer00TotalWeight + AlbedoPack01 * Layer01TotalWeight + AlbedoPack02 * Layer02TotalWeight;
                 half3 BlendNormalRes = NormalPack00 * Layer00TotalWeight + NormalPack01 * Layer01TotalWeight + NormalPack02 * Layer02TotalWeight;
@@ -402,21 +386,17 @@
 
                 // V2.0: global normal blend with local normal
                 // using UE4 normal Blend method, ref: https://mp.weixin.qq.com/s/3cGThckJ3WE-SPnarjjPyA
+                // 此处与Unity自带的NormalBlendNRM不同的是，NormalBlendRNM是先归一化，再计算，这个是直接采样xyz，再计算，后期可以根据这个调整。
                 half3 detailNormal = BlendNormalRes;
-                
-                
+ #ifdef GLOBAL_NORMAL_BLEND
                 half3 baseNormal = lerp(half3(0.5, 0.5, 1.0), globalNormal, _GlobalNormalBlendRate);
+ #else
+                half3 baseNormal = half3(0.5, 0.5, 1.0);
+ #endif
                 float3 t = baseNormal.xyz * float3( 2.0,  2.0, 2.0) + float3(-1.0, -1.0,  0);
                 float3 u = detailNormal.xyz * float3(-2.0, -2.0, 2.0) + float3( 1.0,  1.0, -1.0);
                 float3 normalTS = t * dot(t, u) / t.z - u;
                 
-                //normalTS = normalTS * 0.5 + 0.5f;
-                //return half4(normalTS.xyz, 1.0h);
-                // 这个地方法线做完运算后，还是需要归一到(0.5, 0.5, 1.0)去？
-                //half3 curr = UnpackNormal(SAMPLE_TEXTURE2D(_GlobalNormal, sampler_GlobalNormal, IN.uvMainAndLM.xy));
-               // return half4((detailNormal.xyz* float3( 2.0,  2.0, 2.0) + float3(-1.0, -1.0,  0)), 1.0f);
-                //normal 混合貌似有一点问题。
-                //normalTS = BlendNormalRes;
                 
                 InitializeInputData(IN, normalTS, inputData);
                 float sgn = IN.tangentWS.w;      // should be either +1 or -1
@@ -426,17 +406,16 @@
                 inputData.normalWS = NormalizeNormalPerPixel(inputData.normalWS);
 
                 half metallic = BlendMetallicRes;
-                
                 half smoothness = BlendSmoothnessRes;
                 half occlusion = BlendAlbedoRes.a;
-               
-                //smoothness = 0.0f;
-               // metallic = 0.5f;
                 half alpha = 1.0;
-
+                
+#ifdef PBR_LIGHT_CALCULATE
                 half4 color = UniversalFragmentPBR(inputData, albedo.xyz, metallic, /* specular */ half3(0.0h, 0.0h, 0.0h), smoothness, occlusion, /* emission */ half3(0, 0, 0), alpha);
+#else
+                half4 color = UniversalFragmentBlinnPhong( inputData, albedo.xyz, half4(0.0f, 0.0f, 0.0f, 0.0f), smoothness, half3(0, 0, 0), alpha, normalTS);
+#endif
                 SplatmapFinalColor(color, inputData.fogCoord);
-
                 return half4(color.xyz, 1.0h);
                 //#endif
             }
