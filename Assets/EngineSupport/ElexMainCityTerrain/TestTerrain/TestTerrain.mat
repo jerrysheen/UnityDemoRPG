@@ -11,7 +11,8 @@ Material:
   m_Shader: {fileID: 4800000, guid: 3c49d044d3855b34290ac03384fee3a9, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _SIMPLE_6LAYER_BLEND
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -139,7 +140,7 @@ Material:
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
-    - _GlobalNormalBlendRate: 0.335
+    - _GlobalNormalBlendRate: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
@@ -152,7 +153,7 @@ Material:
     - _Parallax: 0.005
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _SIMPLE_6LAYER_BLEND: 0
+    - _SIMPLE_6LAYER_BLEND: 1
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1

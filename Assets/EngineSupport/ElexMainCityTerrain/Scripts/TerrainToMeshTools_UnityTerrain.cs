@@ -128,7 +128,7 @@ public class TerrainToMeshTools_UnityTerrain : MonoBehaviour
         int terrainLayerCount = terrainData.terrainLayers.Length;
 
 
-        for (int i = 0; i < weightMapCount; i++)
+        for (int i = 0; i < weightMapCount - 1; i++)
         {
             int indexPic0 = indexArray[4 * i];
             int indexPic1 = indexArray[4 * i + 1];

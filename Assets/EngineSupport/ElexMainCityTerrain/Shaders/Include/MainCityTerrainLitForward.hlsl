@@ -297,8 +297,6 @@
                 diffuseLocalUV.y = (BlendUVLayer0Y + BlendUVLayer0Z + 0.00100000005) / (BlendUVLayer0Z + BlendUVLayer0Y + BlendUVLayer0X + 0.00100000005);
                 float2 Layer0UV  = diffuseLocalUV.xy * diffuseLodScale.xx + diffuseGalobalTillingAndOffset;
  
-                
-
                 AlbedoPack00 = SAMPLE_TEXTURE2D_LOD(_AlbedoPack0, sampler_AlbedoPack0, Layer0UV.xy , final_LOD);
                 Nomal_Metallic_Smoothness = (SAMPLE_TEXTURE2D_LOD(_NormalPack0, sampler_NormalPack0, Layer0UV.xy , final_LOD));
                 NormalPack00 = UnpackNormalMainCity(Nomal_Metallic_Smoothness, _NormalScale00);
@@ -311,8 +309,8 @@
                 half  Smoothness01;
  #ifdef HEIGHTMAP_BLEND
                 float BlendUVLayer1X = weight00.w * HeightControl0.w;
-                float BlendUVLayer1Y = weight01.y * HeightControl1.x;
-                float BlendUVLayer1Z = weight01.z * HeightControl1.y;
+                float BlendUVLayer1Y = weight01.x * HeightControl1.x;
+                float BlendUVLayer1Z = weight01.y * HeightControl1.y;
 #else
                 float BlendUVLayer1X = weight00.w;
                 float BlendUVLayer1Y = weight01.x;
@@ -328,7 +326,7 @@
                 NormalPack01 = UnpackNormalMainCity(Nomal_Metallic_Smoothness, _NormalScale01);
                 Metallic01 = Nomal_Metallic_Smoothness.b;
                 Smoothness01 = Nomal_Metallic_Smoothness.a;
-
+                
                 //return half4(NormalPack01.xyz, 1.0h);
                 float totalWeight;
                 totalWeight = 1.0f - dot(weight00, half4(1.0, 1.0, 1.0, 1.0)) - dot(weight01, half4(1.0, 1.0, 1.0, 1.0)) ;
@@ -337,9 +335,9 @@
                 totalWeight *= 0.5f;
                 // total value其实这个地方就是0.0;
 #ifdef HEIGHTMAP_BLEND
-                float BlendUVLayer2X = weight00.w * HeightControl0.w;
-                float BlendUVLayer2Y = weight01.y * HeightControl1.x;
-                float BlendUVLayer2Z = weight01.z * HeightControl1.y;
+                float BlendUVLayer2X = weight01.z * HeightControl1.z;
+                float BlendUVLayer2Y = weight01.w * HeightControl1.w;
+                float BlendUVLayer2Z = totalWeight * HeightControl1.y;
 #else
                 float BlendUVLayer2X = weight01.z;
                 float BlendUVLayer2Y = weight01.w;
@@ -380,7 +378,6 @@
                 BlendNormalRes = BlendNormalRes / totalValue;
                 BlendMetallicRes = BlendMetallicRes / totalValue;
                 BlendSmoothnessRes = BlendSmoothnessRes / totalValue;
-
                 half4 albedo = BlendAlbedoRes;
                 InputData inputData;
 

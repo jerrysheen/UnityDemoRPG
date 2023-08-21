@@ -74,5 +74,6 @@ Material:
     - _NormalScale00: 1
     - _NormalScale01: 1
     - _NormalScale02: 1
+    - _SIMPLE_6LAYER_BLEND: 0
     m_Colors: []
   m_BuildTextureStacks: []
