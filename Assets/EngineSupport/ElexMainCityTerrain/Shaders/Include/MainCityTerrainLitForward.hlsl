@@ -220,12 +220,14 @@
 
 #ifndef  LOW_QUALITY
     #define GLOBAL_NORMAL_BLEND
-    #define HEIGHTMAP_BLEND
+    //#define HEIGHTMAP_BLEND
     #define PBR_LIGHT_CALCULATE
 #else
 #endif
-
                 float2 uvHeight = IN.uvMainAndLM.xy * _HeightPack0_ST.xy + _HeightPack0_ST.zw;
+                float2 uvAlbedo00 = IN.uvMainAndLM.xy * _AlbedoPack0_ST.xy + _AlbedoPack0_ST.zw;
+                float2 uvAlbedo01 = IN.uvMainAndLM.xy * _AlbedoPack1_ST.xy + _AlbedoPack1_ST.zw;
+                float2 uvAlbedo02 = IN.uvMainAndLM.xy * _AlbedoPack2_ST.xy + _AlbedoPack2_ST.zw;
                 half4 weight00 = SAMPLE_TEXTURE2D(_WeightPack0, sampler_WeightPack0, IN.uvMainAndLM.xy).xyzw;
                 half4 weight01 = SAMPLE_TEXTURE2D(_WeightPack1, sampler_WeightPack1, IN.uvMainAndLM.xy).xyzw;
 
@@ -245,11 +247,11 @@
                 // 计算LOD
                 _AlbedoPack0_TexelSize.xy *= (int)pow(2, _GLobalMipMapLimit);
                 _AlbedoPack0_TexelSize.zw /= (int)pow(2, _GLobalMipMapLimit);
-                float2 uv = uvHeight * _AlbedoPack0_TexelSize.zw ;
+                float2 uv = uvAlbedo00 * _AlbedoPack0_TexelSize.zw ;
                 float2  dx = ddx(uv);
                 float2 dy = ddy(uv);
                 float2 rho = max(sqrt(dot(dx, dx)), sqrt(dot(dy, dy)));
-                float lambda = log2(rho - _LODScale).x;
+                float lambda = log2(_LODPram * rho - _LODScale).x;
                 float LODLevel = max(int(lambda + 0.5), 0);
                 LODLevel = LODLevel > 0.0 ? LODLevel : 0.0;
                 float final_LOD = LODLevel;
@@ -270,12 +272,12 @@
                 // 而diffuseGalobalTillingAndOffset，则要保证globalUV保持在
                 // （0/512),（1/512),（2/512)....1 +（0/512), 1 +（1/512), 1 +（2/512) 这些位置上，这些位置以一个Block为单位
                 // 最后diffuseLodScale.xx * float2(0.5, 0.5) 表示我会在像素的中心点进行采样。
-                diffuseGalobalTillingAndOffset = uvHeight.xy * float2(ScaleRatio, ScaleRatio);
+                diffuseGalobalTillingAndOffset = uvAlbedo00.xy * float2(ScaleRatio, ScaleRatio);
                 diffuseGalobalTillingAndOffset = floor(diffuseGalobalTillingAndOffset);
                 diffuseGalobalTillingAndOffset = diffuseGalobalTillingAndOffset / float2(ScaleRatio, ScaleRatio);
                 diffuseGalobalTillingAndOffset = diffuseLodScale.xx * float2(0.5, 0.5) + diffuseGalobalTillingAndOffset;
 
-                // 第一层的混合
+                // 第零层的混合
                 float2 diffuseLocalUV;
                 half4  AlbedoPack00;
                 half3  NormalPack00;
@@ -303,6 +305,7 @@
                 Metallic00 = Nomal_Metallic_Smoothness.b;
                 Smoothness00 = Nomal_Metallic_Smoothness.a;
 
+                // 第一层的混合
                 half4 AlbedoPack01;
                 half3  NormalPack01;
                 half  Metallic01;
@@ -316,8 +319,34 @@
                 float BlendUVLayer1Y = weight01.x;
                 float BlendUVLayer1Z = weight01.y;
 #endif
-        
 
+                uv = uvAlbedo01 * _AlbedoPack0_TexelSize.zw ;
+                
+                dx = _AlbedoPack1_ST.x / _AlbedoPack0_ST.x * dx;
+                dy = _AlbedoPack1_ST.y / _AlbedoPack0_ST.y * dy;
+                rho = max(sqrt(dot(dx, dx)), sqrt(dot(dy, dy)));
+                lambda = log2( _LODPram * rho - _LODScale).x;
+                LODLevel = max(int(lambda + 0.5), 0);
+                LODLevel = LODLevel > 0.0 ? LODLevel : 0.0;
+                final_LOD = LODLevel;
+
+                // 得到正确的local坐标，0，0表示完全采样第一个texel的像素， 0，1则表示完全采样第三个texel的像素，
+                // 这一步就在求，我正确的LOD下，需要采样的texel的间隔是多少。
+                // Single_AlbedoTex_Width : 单张diffuse的大小
+                // diffuseGalobalTillingAndOffset : diffuseUV的全局的tilling和offset计算结果
+                // diffuseLodScale : 用来计算不同LOD Level时，每个texel的UV偏移量，比方说0层的时候是1/512，一层就是2/512
+                Single_AlbedoTex_Width = _AlbedoPack0_TexelSize.z * 0.5;
+                LOD_Scale = exp2(final_LOD);;
+                ScaleRatio = Single_AlbedoTex_Width / LOD_Scale;
+                diffuseLodScale = LOD_Scale * _AlbedoPack0_TexelSize.x;
+                diffuseGalobalTillingAndOffset;
+                
+                diffuseGalobalTillingAndOffset = uvAlbedo01.xy * float2(ScaleRatio, ScaleRatio);
+                diffuseGalobalTillingAndOffset = floor(diffuseGalobalTillingAndOffset);
+                diffuseGalobalTillingAndOffset = diffuseGalobalTillingAndOffset / float2(ScaleRatio, ScaleRatio);
+                diffuseGalobalTillingAndOffset = diffuseLodScale.xx * float2(0.5, 0.5) + diffuseGalobalTillingAndOffset;
+
+                
                 diffuseLocalUV.x = BlendUVLayer1Z / (BlendUVLayer1Y + BlendUVLayer1Z + 0.00100000005);
                 diffuseLocalUV.y = (BlendUVLayer1Y + BlendUVLayer1Z + 0.00100000005) / (BlendUVLayer1Y + BlendUVLayer1Z + BlendUVLayer1X + 0.00100000005);
                 float2 Layer1UV  = diffuseLocalUV.xy * diffuseLodScale.xx + diffuseGalobalTillingAndOffset;
@@ -344,7 +373,7 @@
                 float BlendUVLayer2Z = totalWeight;
 #endif
 
-                
+                // 第二层的混合
                 float Layer00TotalWeight = BlendUVLayer0Y + BlendUVLayer0Z+ BlendUVLayer0X + 0.00100000005;
                 float Layer01TotalWeight = BlendUVLayer1X + BlendUVLayer1Y + BlendUVLayer1Z + 0.00100000005;
                 float Layer02TotalWeight = 0.0f;
@@ -352,6 +381,31 @@
                 half  Smoothness02 = 0.0f;
                 half3  NormalPack02 = 0.0f;
                 half4 AlbedoPack02 = 0.0f;
+
+                
+                dx = _AlbedoPack2_ST.x / _AlbedoPack0_ST.x * dx;
+                dy = _AlbedoPack2_ST.y / _AlbedoPack0_ST.y * dy;
+                rho = max(sqrt(dot(dx, dx)), sqrt(dot(dy, dy)));
+                lambda = log2( _LODPram * rho - _LODScale).x;
+                LODLevel = max(int(lambda + 0.5), 0);
+                LODLevel = LODLevel > 0.0 ? LODLevel : 0.0;
+                final_LOD = LODLevel;
+
+                // 得到正确的local坐标，0，0表示完全采样第一个texel的像素， 0，1则表示完全采样第三个texel的像素，
+                // 这一步就在求，我正确的LOD下，需要采样的texel的间隔是多少。
+                // Single_AlbedoTex_Width : 单张diffuse的大小
+                // diffuseGalobalTillingAndOffset : diffuseUV的全局的tilling和offset计算结果
+                // diffuseLodScale : 用来计算不同LOD Level时，每个texel的UV偏移量，比方说0层的时候是1/512，一层就是2/512
+                Single_AlbedoTex_Width = _AlbedoPack0_TexelSize.z * 0.5;
+                LOD_Scale = exp2(final_LOD);;
+                ScaleRatio = Single_AlbedoTex_Width / LOD_Scale;
+                diffuseLodScale = LOD_Scale * _AlbedoPack0_TexelSize.x;
+                diffuseGalobalTillingAndOffset;
+                
+                diffuseGalobalTillingAndOffset = uvAlbedo02.xy * float2(ScaleRatio, ScaleRatio);
+                diffuseGalobalTillingAndOffset = floor(diffuseGalobalTillingAndOffset);
+                diffuseGalobalTillingAndOffset = diffuseGalobalTillingAndOffset / float2(ScaleRatio, ScaleRatio);
+                diffuseGalobalTillingAndOffset = diffuseLodScale.xx * float2(0.5, 0.5) + diffuseGalobalTillingAndOffset;
                 
 #ifndef _SIMPLE_6LAYER_BLEND
                 Layer02TotalWeight = (BlendUVLayer2X + BlendUVLayer2Y + BlendUVLayer2Z + 0.00100000005);

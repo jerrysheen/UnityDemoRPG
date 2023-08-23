@@ -19,6 +19,8 @@ float4 _BaseMap_ST;
 float4 _HeightPack0_ST;
 float4 _GlobalNormal_ST;
 float4 _AlbedoPack0_ST;
+float4 _AlbedoPack1_ST;
+float4 _AlbedoPack2_ST;
 float4 _NormalPack0_ST;
 half4 _Color;
 float _GlobalNormalBlendRate;
@@ -36,6 +38,7 @@ float4 _PosInfo;
 float4 _GridVSPixel;
 uniform float4 _AlbedoPack0_TexelSize;
 float _LODScale;
+float _LODPram;
 int _GLobalMipMapLimit;
 CBUFFER_END
 

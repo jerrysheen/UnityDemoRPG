@@ -29,9 +29,11 @@ Shader "Catmull/MainCityTerrain"
         _NormalPack2 ("_NormalPack2", 2D) = "white" {}
         _NormalScale02 ("_NormalScale02", Range(0.0, 2.0)) = 1.0
 
-        _LODScale ("_LODScale", Range(0.0, 3.0)) = 3.0
+        _LODScale ("_LODScale", Range(0.0, 10.0)) = 3.0
+        _LODPram ("_LODPram", Range(-1.0, 1.0)) = 3.0
         
         [Toggle(_SIMPLE_6LAYER_BLEND)] _SIMPLE_6LAYER_BLEND("Enable Simple Six Layer Blend", Float) = 0.0
+        [Toggle(_MULTI_TILING)] _MULTI_TILING("Enable Multi Tiling", Float) = 0.0
         //_GLobalMipMapLimit("_GLobalMipMapLimit", Range(0.0, 3.0)) = 0.0
 
        // _LODValue00 ("金属度", Range(0.0, 3.0)) = 1.0
@@ -78,6 +80,7 @@ Shader "Catmull/MainCityTerrain"
             #define _NORMALMAP
             #define REQUIRES_WORLD_SPACE_TANGENT_INTERPOLATOR
             #pragma shader_feature_local_fragment _SIMPLE_6LAYER_BLEND
+            #pragma shader_feature_local_fragment _MULTI_TILING
             #pragma target 2.0
             #pragma vertex MainCityTerrainPassVertex
             #pragma fragment MainCityTerrainPassFragment
