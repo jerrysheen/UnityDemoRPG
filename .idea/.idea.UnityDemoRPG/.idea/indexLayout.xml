@@ -25,7 +25,6 @@
       <Path>Library/PackageCache/com.unity.timeline@1.7.4</Path>
       <Path>Library/PackageCache/com.unity.timeline@1.7.5</Path>
       <Path>Library/PackageCache/com.unity.visualscripting@1.8.0</Path>
-      <Path>Packages</Path>
       <Path>ProjectSettings</Path>
     </explicitIncludes>
     <explicitExcludes>

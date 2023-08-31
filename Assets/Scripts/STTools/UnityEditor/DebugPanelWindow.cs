@@ -76,6 +76,11 @@ public class DebugPanelWindow : EditorWindow
         {
             EditorSceneManager.OpenScene("Assets/Scenes/" + "MainCityTerrainShderTest.unity", OpenSceneMode.Single);
         }
+        if (GUILayout.Button("MipMap检视工具测试场景"))
+        {
+            EditorSceneManager.OpenScene("Assets/Scenes/" + "MipMapViewer.unity", OpenSceneMode.Single);
+        }
+        
     }
     
     public void DrawQualityButton()
