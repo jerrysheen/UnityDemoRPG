@@ -601,7 +601,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 00787321d7dff9f4bab484e6e59de9ec,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -7.76
+      value: -5.654
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 00787321d7dff9f4bab484e6e59de9ec,
         type: 3}
@@ -611,7 +611,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 00787321d7dff9f4bab484e6e59de9ec,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3.24
+      value: -3.211
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 00787321d7dff9f4bab484e6e59de9ec,
         type: 3}
@@ -652,11 +652,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 17052ae6638a4b246aa515aa2a540cf2, type: 2}
+      objectReference: {fileID: 2100000, guid: 535e35b0e34ab2545bd5c3dad400423a, type: 2}
     - target: {fileID: 919132149155446097, guid: 00787321d7dff9f4bab484e6e59de9ec,
         type: 3}
       propertyPath: m_Name
-      value: ctm_zhujidi_low_mod (3)
+      value: 2048Building
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -933,7 +933,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 00787321d7dff9f4bab484e6e59de9ec,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -5.7
+      value: -7.697
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 00787321d7dff9f4bab484e6e59de9ec,
         type: 3}
@@ -943,7 +943,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 00787321d7dff9f4bab484e6e59de9ec,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3.35
+      value: -3.209
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 00787321d7dff9f4bab484e6e59de9ec,
         type: 3}
@@ -984,11 +984,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 17052ae6638a4b246aa515aa2a540cf2, type: 2}
+      objectReference: {fileID: 2100000, guid: eef47220f62dfb145aae22ac95162b10, type: 2}
     - target: {fileID: 919132149155446097, guid: 00787321d7dff9f4bab484e6e59de9ec,
         type: 3}
       propertyPath: m_Name
-      value: ctm_zhujidi_low_mod (2)
+      value: 1024Building
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1299,7 +1299,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 00787321d7dff9f4bab484e6e59de9ec,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -11.84
+      value: -9.824
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 00787321d7dff9f4bab484e6e59de9ec,
         type: 3}
@@ -1350,11 +1350,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 17052ae6638a4b246aa515aa2a540cf2, type: 2}
+      objectReference: {fileID: 2100000, guid: 55d3f845237217e4a9e845dac68733ca, type: 2}
     - target: {fileID: 919132149155446097, guid: 00787321d7dff9f4bab484e6e59de9ec,
         type: 3}
       propertyPath: m_Name
-      value: ctm_zhujidi_low_mod (1)
+      value: 512Building
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1494,7 +1494,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 00787321d7dff9f4bab484e6e59de9ec,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9.83
+      value: -11.735
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 00787321d7dff9f4bab484e6e59de9ec,
         type: 3}
@@ -1549,7 +1549,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 00787321d7dff9f4bab484e6e59de9ec,
         type: 3}
       propertyPath: m_Name
-      value: ctm_zhujidi_low_mod
+      value: 256Building
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

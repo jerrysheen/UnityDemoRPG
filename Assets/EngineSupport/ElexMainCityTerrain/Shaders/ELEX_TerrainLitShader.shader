@@ -19,6 +19,7 @@ Shader "Catmull/MainCityTerrain"
         _WeightPack1 ("_WeightPack1", 2D) = "white" {}
         _HeightPack0 ("_HeightPack0", 2D) = "white" {}
         _HeightPack1 ("_HeightPack1", 2D) = "white" {}
+
         _AlbedoPack0 ("_AlbedoPack0", 2D) = "white" {}
         _AlbedoPack1 ("_AlbedoPack1", 2D) = "white" {}
         _AlbedoPack2 ("_AlbedoPack2", 2D) = "white" {}
@@ -29,8 +30,10 @@ Shader "Catmull/MainCityTerrain"
         _NormalPack2 ("_NormalPack2", 2D) = "white" {}
         _NormalScale02 ("_NormalScale02", Range(0.0, 2.0)) = 1.0
 
+
         _LODScale ("_LODScale", Range(0.0, 10.0)) = 3.0
-        _LODPram ("_LODPram", Range(-1.0, 1.0)) = 3.0
+        _LODPram ("_LODPram", Range(0.0, 5.0)) = 1.0
+        _LODAdd ("_LODAdd", Range(0.0, 10.0)) = 1.0
         
         [Toggle(_SIMPLE_6LAYER_BLEND)] _SIMPLE_6LAYER_BLEND("Enable Simple Six Layer Blend", Float) = 0.0
         [Toggle(_MULTI_TILING)] _MULTI_TILING("Enable Multi Tiling", Float) = 0.0

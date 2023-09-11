@@ -39,6 +39,7 @@ float4 _GridVSPixel;
 uniform float4 _AlbedoPack0_TexelSize;
 float _LODScale;
 float _LODPram;
+float _LODAdd;
 int _GLobalMipMapLimit;
 CBUFFER_END
 

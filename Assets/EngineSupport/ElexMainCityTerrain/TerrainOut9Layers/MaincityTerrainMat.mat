@@ -25,11 +25,11 @@ Material:
     m_TexEnvs:
     - _AlbedoPack0:
         m_Texture: {fileID: 2800000, guid: 81123c1981dedaa48be0f4cf2a7b7fca, type: 2}
-        m_Scale: {x: 100, y: 100}
+        m_Scale: {x: 50, y: 50}
         m_Offset: {x: 0, y: 0}
     - _AlbedoPack1:
         m_Texture: {fileID: 2800000, guid: 912b878945b6a0840b6d62575c107b98, type: 2}
-        m_Scale: {x: 75, y: 75}
+        m_Scale: {x: 50, y: 50}
         m_Offset: {x: 0, y: 0}
     - _AlbedoPack2:
         m_Texture: {fileID: 2800000, guid: e797f4ff7d27f4740b65a9870ffadc8c, type: 2}
@@ -70,9 +70,10 @@ Material:
     m_Ints: []
     m_Floats:
     - _GlobalNormalBlendRate: 0
+    - _LODAdd: 0
     - _LODOffset: 4.34
-    - _LODPram: 1
-    - _LODScale: 2.41
+    - _LODPram: 0.72
+    - _LODScale: 0.38
     - _MULTI_TILING: 0
     - _NormalScale00: 1
     - _NormalScale01: 1

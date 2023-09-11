@@ -19,11 +19,11 @@ public class DebugPanelWindow : EditorWindow
     // 当前选择的Tab状态
     private TabState currentTab = TabState.Tab1;
 
-    [MenuItem("Window/UI Toolkit/MyEditorWindow")]
+    [MenuItem("Window/UI Toolkit/DebugPanelWindow")]
     public static void ShowDebugPanel()
     {
         DebugPanelWindow wnd = GetWindow<DebugPanelWindow>();
-        wnd.titleContent = new GUIContent("MyEditorWindow");
+        wnd.titleContent = new GUIContent("DebugPanelWindow");
     }
     public static void ShowWindow()
     {
@@ -79,6 +79,10 @@ public class DebugPanelWindow : EditorWindow
         if (GUILayout.Button("MipMap检视工具测试场景"))
         {
             EditorSceneManager.OpenScene("Assets/Scenes/" + "MipMapViewer.unity", OpenSceneMode.Single);
+        }
+        if (GUILayout.Button("骨骼动画场景"))
+        {
+            EditorSceneManager.OpenScene("Assets/Scenes/SkinMesh/" + "SkinMeshScene.unity", OpenSceneMode.Single);
         }
         
     }

@@ -6,8 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: Assets/Scenes/Preloader.unity
-  - enabled: 0
-    path: Assets/Scenes/UnityLabs01.unity
-  - enabled: 1
-    path: Assets/Scenes/TheLabs.unity
+    path: Assets/Scenes/SkinMesh/SkinMeshScene.unity
+    guid: dde6fb9066db3ec4ab30d9b7de33a85e
+  m_configObjects: {}

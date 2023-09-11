@@ -252,7 +252,7 @@
                 float2 dy = ddy(uv);
                 float2 rho = max(sqrt(dot(dx, dx)), sqrt(dot(dy, dy)));
                 float lambda = log2(_LODPram * rho - _LODScale).x;
-                float LODLevel = max(int(lambda + 0.5), 0);
+                float LODLevel = max(int(lambda + _LODAdd), 0);
                 LODLevel = LODLevel > 0.0 ? LODLevel : 0.0;
                 float final_LOD = LODLevel;
 
@@ -325,8 +325,8 @@
                 dx = _AlbedoPack1_ST.x / _AlbedoPack0_ST.x * dx;
                 dy = _AlbedoPack1_ST.y / _AlbedoPack0_ST.y * dy;
                 rho = max(sqrt(dot(dx, dx)), sqrt(dot(dy, dy)));
-                lambda = log2( _LODPram * rho - _LODScale).x;
-                LODLevel = max(int(lambda + 0.5), 0);
+                lambda = log2(_LODPram * rho - _LODScale).x;
+                LODLevel = max(int(lambda + _LODAdd), 0);
                 LODLevel = LODLevel > 0.0 ? LODLevel : 0.0;
                 final_LOD = LODLevel;
 
