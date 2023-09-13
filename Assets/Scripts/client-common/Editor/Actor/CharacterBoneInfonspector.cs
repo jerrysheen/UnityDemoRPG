@@ -21,7 +21,7 @@ public class CharacterBoneInfoInspector : Editor
     }
 
     static void InitBoneArray(CharacterBoneInfo boneInfo)
-    {
+    {	
         if (boneInfo == null || boneInfo.m_BoneArray != null)
         {
             return;
@@ -229,6 +229,10 @@ public class CharacterBoneInfoInspector : Editor
                     reader.Close();
                 }
             }
+        }
+        else
+        {
+	        Debug.LogError("There is no Bone Config file");
         }
         ClearBoneArray(boneInfo);
         for (int i = 0, imax = stickBoneImport.StickBoneList.Count; i < imax; i++)

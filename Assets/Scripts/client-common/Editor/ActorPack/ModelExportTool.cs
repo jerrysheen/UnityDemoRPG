@@ -44,6 +44,7 @@ public static class ModelExportTool
         UnityEngine.Object[] SelectionAsset = Selection.GetFiltered(typeof(UnityEngine.Object), SelectionMode.Assets);
         foreach(UnityEngine.Object obj in SelectionAsset)
         {
+            Debug.Log(obj.name);
             string npcFolder = AssetDatabase.GetAssetPath(obj);
             DealNpcFolder(npcFolder);
         }
@@ -211,7 +212,7 @@ public static class ModelExportTool
 
                 AnimationClip animClip = AssetDatabase.LoadAssetAtPath<AnimationClip>(fbx_file);
                 if (animClip == null) continue;
-
+                Debug.Log("deal With animation clips: " + animClip.name);
                 AnimationClip newClip = new AnimationClip();
                 EditorUtility.CopySerialized(animClip, newClip);
 
@@ -325,6 +326,10 @@ public static class ModelExportTool
                     reader.Close();
                 }
             }
+        }
+        else
+        {
+            Debug.LogError("Anim config file not exits");
         }
     }
 

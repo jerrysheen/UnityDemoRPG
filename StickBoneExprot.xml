@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<StickBones>
+  <StickBone key="Head" transform="head" />
+  <StickBone key="Head_UI" transform="headui" />
+  <StickBone key="Chest" transform="Bip001 Spine1" />
+  <StickBone key="LeftHand" transform="Bip001 L Hand" />
+  <StickBone key="RightHand" transform="Bip001 R Hand" />
+  <StickBone key="LeftArm" transform="Bip001 L Forearm" />
+  <StickBone key="RightArm" transform="Bip001 R Forearm" />
+  <StickBone key="LeftLeg" transform="Bip001 L Thigh" />
+  <StickBone key="RightLeg" transform="Bip001 R Thigh" />
+  <StickBone key="LeftFoot" transform="Bip001 L Foot" />
+  <StickBone key="RightFoot" transform="Bip001 R Foot" />
+</StickBones>

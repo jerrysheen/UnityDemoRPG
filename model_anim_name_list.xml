@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<AnimNameList>
+  <!-- 编辑器【导出角色】使用配置 -->
+  <LoopAnimName>stand</LoopAnimName>
+  <LoopAnimName>run</LoopAnimName>
+  <LoopAnimName>walk</LoopAnimName>
+  <LoopAnimName>statue</LoopAnimName>
+  <LoopAnimName>struggle</LoopAnimName>
+</AnimNameList>
