@@ -243,6 +243,7 @@ public class TextureAnimationExporter:Editor
 			}
 		}
 
+		// 算需要的最小像素, 128 / 256 ?
 		int textureW = 2;
 		int textureH = 2;
 		while( textureW *textureH <pixelStartIndex)
