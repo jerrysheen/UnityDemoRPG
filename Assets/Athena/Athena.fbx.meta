@@ -1,0 +1,217 @@
+fileFormatVersion: 2
+guid: 50e77f1f9837adc4d87b498666611d88
+timeCreated: 1512992530
+licenseType: Pro
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: Model001_24_bikini!2nPart!_0.3_1_1.001
+    100004: Model001_24_body_0.9_1_1
+    100006: Model001_24_Eyeball_0.9_1_1
+    100008: Model001_24_eyes_0.9_1_1
+    100010: Model001_24_Face_0.9_1_1
+    100012: Model001_24_shorts_0.4_1_1
+    100014: Model001_25_eyesdw_0.1_1_1
+    100016: Model001_25_sitamatuge1_0.1_1_1
+    100018: Model001_25_uematug1_0.1_1_1
+    100020: Model001_25_uematug2_0.1_1_1
+    100022: Model001_26_lips_0.1_1_1
+    100024: Model002_25_+hair-bf.hair-bf_1_0_0
+    100026: Model002_25_+hair.hair_1_0_0
+    400000: //RootNode
+    400002: Model001_24_bikini!2nPart!_0.3_1_1.001
+    400004: Model001_24_body_0.9_1_1
+    400006: Model001_24_Eyeball_0.9_1_1
+    400008: Model001_24_eyes_0.9_1_1
+    400010: Model001_24_Face_0.9_1_1
+    400012: Model001_24_shorts_0.4_1_1
+    400014: Model001_25_eyesdw_0.1_1_1
+    400016: Model001_25_sitamatuge1_0.1_1_1
+    400018: Model001_25_uematug1_0.1_1_1
+    400020: Model001_25_uematug2_0.1_1_1
+    400022: Model001_26_lips_0.1_1_1
+    400024: Model002_25_+hair-bf.hair-bf_1_0_0
+    400026: Model002_25_+hair.hair_1_0_0
+    2300000: Model001_24_bikini!2nPart!_0.3_1_1.001
+    2300002: Model001_24_body_0.9_1_1
+    2300004: Model001_24_Eyeball_0.9_1_1
+    2300006: Model001_24_eyes_0.9_1_1
+    2300008: Model001_24_Face_0.9_1_1
+    2300010: Model001_24_shorts_0.4_1_1
+    2300012: Model001_25_eyesdw_0.1_1_1
+    2300014: Model001_25_sitamatuge1_0.1_1_1
+    2300016: Model001_25_uematug1_0.1_1_1
+    2300018: Model001_25_uematug2_0.1_1_1
+    2300020: Model001_26_lips_0.1_1_1
+    2300022: Model002_25_+hair-bf.hair-bf_1_0_0
+    2300024: Model002_25_+hair.hair_1_0_0
+    3300000: Model001_24_bikini!2nPart!_0.3_1_1.001
+    3300002: Model001_24_body_0.9_1_1
+    3300004: Model001_24_Eyeball_0.9_1_1
+    3300006: Model001_24_eyes_0.9_1_1
+    3300008: Model001_24_Face_0.9_1_1
+    3300010: Model001_24_shorts_0.4_1_1
+    3300012: Model001_25_eyesdw_0.1_1_1
+    3300014: Model001_25_sitamatuge1_0.1_1_1
+    3300016: Model001_25_uematug1_0.1_1_1
+    3300018: Model001_25_uematug2_0.1_1_1
+    3300020: Model001_26_lips_0.1_1_1
+    3300022: Model002_25_+hair-bf.hair-bf_1_0_0
+    3300024: Model002_25_+hair.hair_1_0_0
+    4300000: Model001_24_shorts_0.4_1_1
+    4300002: Model001_25_eyesdw_0.1_1_1
+    4300004: Model001_24_bikini!2nPart!_0.3_1_1.001
+    4300006: Model001_25_sitamatuge1_0.1_1_1
+    4300008: Model001_24_eyes_0.9_1_1
+    4300010: Model001_25_uematug1_0.1_1_1
+    4300012: Model001_24_Face_0.9_1_1
+    4300014: Model001_26_lips_0.1_1_1
+    4300016: Model001_24_body_0.9_1_1
+    4300018: Model002_25_+hair.hair_1_0_0
+    4300020: Model002_25_+hair-bf.hair-bf_1_0_0
+    4300022: Model001_25_uematug2_0.1_1_1
+    4300024: Model001_24_Eyeball_0.9_1_1
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Model001_Material001
+    second: {fileID: 2100000, guid: 86fd78cba46b6ce41a6ace329ecfbed9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Model001_Material002
+    second: {fileID: 2100000, guid: 86fd78cba46b6ce41a6ace329ecfbed9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Model001_Material003
+    second: {fileID: 2100000, guid: d0fdfc9213eb3f54c891e7268fec1f1d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Model001_Material004
+    second: {fileID: 2100000, guid: c53880087ef738c4bb7d20499d3dd949, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Model001_Material005
+    second: {fileID: 2100000, guid: 86fd78cba46b6ce41a6ace329ecfbed9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Model001_Material006
+    second: {fileID: 2100000, guid: 0e5b367e0827db34993f3c25b9dba492, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Model001_Material007
+    second: {fileID: 2100000, guid: 3faf1a5109854a443812ffed0bed711f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Model001_Material008
+    second: {fileID: 2100000, guid: 41930726dff3b614fb75ed92a489e2e9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Model001_Material009
+    second: {fileID: 2100000, guid: df93547bac26b9d4281738be5639b3e7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Model001_Material010
+    second: {fileID: 2100000, guid: df93547bac26b9d4281738be5639b3e7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Model001_Material011
+    second: {fileID: 2100000, guid: 86fd78cba46b6ce41a6ace329ecfbed9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Model002_Material001
+    second: {fileID: 2100000, guid: 5d7c10fbcd3d2604697c1ac221f7b7a5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Model002_Material002
+    second: {fileID: 2100000, guid: 5d7c10fbcd3d2604697c1ac221f7b7a5, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 1
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 11
+    secondaryUVAreaDistortion: 17
+    secondaryUVHardAngle: 43
+    secondaryUVPackMargin: 8
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

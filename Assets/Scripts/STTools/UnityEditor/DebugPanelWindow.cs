@@ -5,6 +5,7 @@ using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using Scene = UnityEngine.SceneManagement.Scene;
 
 public class DebugPanelWindow : EditorWindow
 {
@@ -38,11 +39,12 @@ public class DebugPanelWindow : EditorWindow
 
     private void DrawTabs()
     {
-        GUILayout.BeginVertical("box", GUILayout.MaxWidth(100));
+        GUILayout.BeginHorizontal("box", GUILayout.MaxWidth(100));
         if (GUILayout.Button("场景快速切换")) currentTab = TabState.Tab1;
         if (GUILayout.Button("渲染，性能相关按钮")) currentTab = TabState.Tab2;
         if (GUILayout.Button("Tab 3")) currentTab = TabState.Tab3;
-        GUILayout.EndVertical();
+        
+        GUILayout.EndHorizontal();
     }
 
     private void DrawContentForCurrentTab()
@@ -60,7 +62,7 @@ public class DebugPanelWindow : EditorWindow
                 DrawQualityButton();
                 break;
             case TabState.Tab3:
-                if (GUILayout.Button("Button C1")) Debug.Log("Pressed C1");
+                DrawEditorToolsPanel();
                 break;
             default:
                 break;
@@ -72,6 +74,28 @@ public class DebugPanelWindow : EditorWindow
     
     public void DrawSceneSwitchPanel()
     {
+        if (GUILayout.Button("切换到场景对应资源文件夹"))
+        {
+            Scene currScene = SceneManager.GetActiveScene();
+            string fullPath = "Assets/Arts/scenes/" + currScene.name;
+            Debug.Log(fullPath);
+            UnityEngine.Object obj = AssetDatabase.LoadAssetAtPath(fullPath, typeof(UnityEngine.Object));
+            UnityEngine.Object[] selection = new UnityEngine.Object[1];
+            selection[0] = obj;
+            Selection.objects = selection;
+        }
+        
+        if (GUILayout.Button("切换到场景文件夹"))
+        {
+            Scene currScene = SceneManager.GetActiveScene();
+            string fullPath = "Assets/Scenes";
+            Debug.Log(fullPath);
+            UnityEngine.Object obj = AssetDatabase.LoadAssetAtPath(fullPath, typeof(UnityEngine.Object));
+            UnityEngine.Object[] selection = new UnityEngine.Object[1];
+            selection[0] = obj;
+            Selection.objects = selection;
+        }
+        
         if (GUILayout.Button("内城地表Shader测试场景"))
         {
             EditorSceneManager.OpenScene("Assets/Scenes/" + "MainCityTerrainShderTest.unity", OpenSceneMode.Single);
@@ -84,7 +108,12 @@ public class DebugPanelWindow : EditorWindow
         {
             EditorSceneManager.OpenScene("Assets/Scenes/SkinMesh/" + "SkinMeshScene.unity", OpenSceneMode.Single);
         }
-        
+
+    }    
+    
+    public void DrawEditorToolsPanel()
+    {
+
     }
     
     public void DrawQualityButton()
