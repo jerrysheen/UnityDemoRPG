@@ -399,6 +399,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 26c97fa6dd2f5444a9e86bb042eaf181,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 08dae7bfc2654ee4abb8ce543643a40c, type: 2}
     - target: {fileID: 919132149155446097, guid: 26c97fa6dd2f5444a9e86bb042eaf181,
         type: 3}
       propertyPath: m_Name
@@ -1704,7 +1709,52 @@ MonoBehaviour:
   arrowObj_mat: {fileID: 2100000, guid: 1787de9a01d94814a81e66d50e690bf1, type: 2}
   arrowObj_originRotation: {x: 0, y: 0, z: 0, w: 0}
   gameCam: {fileID: 1157547210}
+  pos: {x: 0, y: 0, z: 0}
+  angle: {x: 0, y: 0, z: 0}
+  scale: {x: 0, y: 0, z: 0}
   localToWorld_matrix:
+    c0:
+      x: 0
+      y: 0
+      z: 0
+      w: 0
+    c1:
+      x: 0
+      y: 0
+      z: 0
+      w: 0
+    c2:
+      x: 0
+      y: 0
+      z: 0
+      w: 0
+    c3:
+      x: 0
+      y: 0
+      z: 0
+      w: 0
+  worldToCamera_matrix:
+    c0:
+      x: 0
+      y: 0
+      z: 0
+      w: 0
+    c1:
+      x: 0
+      y: 0
+      z: 0
+      w: 0
+    c2:
+      x: 0
+      y: 0
+      z: 0
+      w: 0
+    c3:
+      x: 0
+      y: 0
+      z: 0
+      w: 0
+  projection_matrix:
     c0:
       x: 0
       y: 0
@@ -1870,7 +1920,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 26c97fa6dd2f5444a9e86bb042eaf181,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.79
+      value: 5.01
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 26c97fa6dd2f5444a9e86bb042eaf181,
         type: 3}
@@ -1895,12 +1945,12 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 26c97fa6dd2f5444a9e86bb042eaf181,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 26c97fa6dd2f5444a9e86bb042eaf181,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 26c97fa6dd2f5444a9e86bb042eaf181,
         type: 3}
@@ -1926,6 +1976,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Arrow_SelfEular
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 26c97fa6dd2f5444a9e86bb042eaf181,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

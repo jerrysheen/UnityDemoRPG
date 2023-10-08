@@ -44,7 +44,7 @@ Shader "Unlit/MatrixTranslate"
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 //o.vertex = mul(_ProjectionMatrix, mul(_ViewMatrix, mul(_LocalToWorldMatrix, float4(v.vertex.xyz, 1.0f))));
                 //o.vertex = mul(UNITY_MATRIX_V, (mul(UNITY_MATRIX_P, mul(_LocalToWorldMatrix, float4(v.vertex.xyz, 1.0f)))));
-    o.vertex = mul(UNITY_MATRIX_P, (mul(_ViewMatrix, mul(_LocalToWorldMatrix, float4(v.vertex.xyz, 1.0f)))));
+                o.vertex = mul(_ProjectionMatrix, (mul(_ViewMatrix, mul(_LocalToWorldMatrix, float4(v.vertex.xyz, 1.0f)))));
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 UNITY_TRANSFER_FOG(o,o.vertex);
                 return o;

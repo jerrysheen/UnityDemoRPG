@@ -3,7 +3,6 @@
   <component name="ContentModelUserStore">
     <attachedFolders />
     <explicitIncludes>
-      <Path>Assets</Path>
       <Path>Library/PackageCache/com.unity.ai.navigation@1.1.4</Path>
       <Path>Library/PackageCache/com.unity.burst@1.8.4</Path>
       <Path>Library/PackageCache/com.unity.burst@1.8.7</Path>
@@ -26,14 +25,12 @@
       <Path>Library/PackageCache/com.unity.timeline@1.7.4</Path>
       <Path>Library/PackageCache/com.unity.timeline@1.7.5</Path>
       <Path>Library/PackageCache/com.unity.visualscripting@1.8.0</Path>
-      <Path>Packages</Path>
       <Path>ProjectSettings</Path>
     </explicitIncludes>
     <explicitExcludes>
       <Path>.git</Path>
       <Path>.idea</Path>
       <Path>.vs</Path>
-      <Path>Library</Path>
       <Path>Logs</Path>
       <Path>MemoryCaptures</Path>
       <Path>Temp</Path>
