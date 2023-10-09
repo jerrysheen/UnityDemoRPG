@@ -294,12 +294,12 @@ namespace StylizedWater2
             lightingSection = new UI.Material.Section(materialEditor,"LIGHTING", new GUIContent("Lighting/Shading"));
             generalSection = new UI.Material.Section(materialEditor,"GENERAL", new GUIContent("General"));
             colorSection = new UI.Material.Section(materialEditor,"COLOR", new GUIContent("Color", "Controls for the base color of the water and transparency"));
-            underwaterSection = new UI.Material.Section(materialEditor,"UNDERWATER", new GUIContent("Underwater", "Pertains the appearance of anything seen under the water surface. Not related to any actual underwater rendering"));
-            normalsSection = new UI.Material.Section(materialEditor,"NORMALS", new GUIContent("Normals", "Normal maps represent the small-scale curvature of the water surface. This is used for lighting and reflections"));
+            underwaterSection = new UI.Material.Section(materialEditor,"UNDERWATER", new GUIContent("Underwater ———— 焦散效果", "Pertains the appearance of anything seen under the water surface. Not related to any actual underwater rendering"));
+            normalsSection = new UI.Material.Section(materialEditor,"NORMALS", new GUIContent("Normals  ———— 水体法线", "Normal maps represent the small-scale curvature of the water surface. This is used for lighting and reflections"));
             reflectionSection = new UI.Material.Section(materialEditor,"REFLECTIONS", new GUIContent("Reflections", "Sun specular reflection, and environment reflections (reflection probes and planar reflections)"));
-            foamSection = new UI.Material.Section(materialEditor,"FOAM", new GUIContent("Surface Foam"));
-            intersectionSection = new UI.Material.Section(materialEditor,"INTERSECTION", new GUIContent("Intersection Foam", "Draws a foam effects on opaque objects that are touching the water"));
-            wavesSection = new UI.Material.Section(materialEditor,"WAVES", new GUIContent("Waves", "Parametric gerstner waves, which modify the surface curvature and animate the mesh's vertices"));
+            foamSection = new UI.Material.Section(materialEditor,"FOAM", new GUIContent("Surface Foam ————表层泡沫"));
+            intersectionSection = new UI.Material.Section(materialEditor,"INTERSECTION", new GUIContent("Intersection Foam 岸边泡沫纹理", "Draws a foam effects on opaque objects that are touching the water"));
+            wavesSection = new UI.Material.Section(materialEditor,"WAVE", new GUIContent("Waves ———— 波浪运动", "Parametric gerstner waves, which modify the surface curvature and animate the mesh's vertices"));
             advancedSection = new UI.Material.Section(materialEditor,"ADVANCED", new GUIContent("Advanced"));
             
             underwaterRenderingInstalled = StylizedWaterEditor.UnderwaterRenderingInstalled();

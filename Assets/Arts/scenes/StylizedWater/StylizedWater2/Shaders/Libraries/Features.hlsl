@@ -116,9 +116,11 @@ float SampleFoam(float2 uv, float2 time, float2 flowmap, float clipping, float m
 	uvs = uvs * float4(1.0, 1-_SlopeParams.x, 1.0, 1-_SlopeParams.x);
 
 	//Cannot reuse the same UV, slope foam needs to be resampled and blended in
-	float f3 = SAMPLE_TEXTURE2D(_FoamTex, sampler_FoamTex, uvs.xy).r;
-	float f4 = SAMPLE_TEXTURE2D(_FoamTex, sampler_FoamTex, uvs.zw).r;
-
+	//float f3 = SAMPLE_TEXTURE2D(_FoamTex, sampler_FoamTex, uvs.xy).r;
+	///float f4 = SAMPLE_TEXTURE2D(_FoamTex, sampler_FoamTex, uvs.zw).r;
+	float f3 = 0.0f;
+	float f4 = 0.0f;
+	
 	#if UNITY_COLORSPACE_GAMMA
 	f3 = SRGBToLinear(f3);
 	f4 = SRGBToLinear(f4);

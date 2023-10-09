@@ -138,7 +138,7 @@ Shader "Universal Render Pipeline/FX/Stylized Water 2"
 			Name "ForwardLit"
 			Tags { "LightMode"="UniversalForward" }
 			
-			Blend SrcAlpha OneMinusSrcAlpha, One OneMinusSrcAlpha
+			Blend SrcAlpha OneMinusSrcAlpha
 			ZWrite [_ZWrite]
 			Cull [_Cull]
 			ZTest LEqual
@@ -253,11 +253,11 @@ Shader "Universal Render Pipeline/FX/Stylized Water 2"
 			#include "Libraries/Fog.hlsl"
 			#include "Libraries/Waves.hlsl"
 			#include "Libraries/Lighting.hlsl"
-
-			#ifdef UNDERWATER_ENABLED
-			#include "Underwater/UnderwaterFog.hlsl"
-			#include "Underwater/UnderwaterShading.hlsl"
-			#endif
+			
+			// #ifdef UNDERWATER_ENABLED
+			// #include "Underwater/UnderwaterFog.hlsl"
+			// #include "Underwater/UnderwaterShading.hlsl"
+			// #endif
 
 			#ifdef WAVE_SIMULATION
 			#include "Libraries/Simulation/Simulation.hlsl"
