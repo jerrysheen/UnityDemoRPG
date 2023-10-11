@@ -21,7 +21,9 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Sea
-  m_Shader: {fileID: 4800000, guid: 484463507ac88c446a0186e9363c7675, type: 3}
+  m_Shader: {fileID: 4800000, guid: e3e3f965c41da7742b62ba36f26f22b1, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -30,6 +32,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -121,6 +124,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: 866eb999e661ab64d99b9c03ccfe10f6, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _WaveNormal:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -163,19 +170,27 @@ Material:
     - _ReflectIntensity: 1
     - _ShoreAreaOffset: 0.3
     - _ShoreDepthRange: 0.3
+    - _ShoreWaveFoamTiling: 0.3
     - _ShoreWaveNoiseClip: 0.35
     - _ShoreWaveRampSize: 0.5
     - _ShoreWaveSpeed: 0.5
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
+    - _SpecularTiling: 1
     - _SrcBlend: 1
     - _Surface: 0
+    - _VertexShoreSpeed: 1
+    - _VertexShoreTiling: 1
+    - _VertexWaveIntensity: 0
+    - _VertexWaveSpeed: 1
+    - _VertexWaveTiling: 1
     - _WPO_MasterSpeed: 1
     - _WaveIntensity: 1
     - _WorkflowMode: 1
     - _ZWrite: 1
     - _test: 1
+    - t5_intensity: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _BumpMapST: {r: 0, g: 0, b: 0, a: 1}
@@ -190,8 +205,13 @@ Material:
     - _WPO_WaveScale: {r: 40, g: 20, b: 10, a: 0}
     - _WPO_WaveSpeed: {r: 1, g: 1, b: 1, a: 1}
     - _WaveColor: {r: 1, g: 1, b: 1, a: 1}
+    - _WaveDirection: {r: 1, g: 1, b: 1, a: 1}
     - _WaveScale: {r: 40, g: 20, b: 10, a: 1}
     - _WaveSpeed: {r: 0.1, g: 0.2, b: 0.4, a: 1}
+    - _WorldUVScale: {r: 0, g: 0, b: 500, a: 1}
     - _formScale: {r: 0, g: 0, b: 0, a: 1}
     - _wavescale: {r: 0, g: 0, b: 0, a: 1}
+    - t5_control: {r: 1, g: 1, b: 1, a: 1}
+    - t5_uv1: {r: 1, g: 1, b: 1, a: 1}
+    - t5_uv2: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

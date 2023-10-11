@@ -13,8 +13,16 @@ float4 _WaterProjectorUV;
 
 TEXTURE2D(_FoamTex);
 SAMPLER(sampler_FoamTex);
+
 TEXTURE2D(_BumpMapLarge);
 SAMPLER(sampler_BumpMapLarge);
+
+TEXTURE2D(_SpecTex);
+SAMPLER(sampler_SpecTex);
+
+
+TEXTURE2D(_DepthControlTex);
+SAMPLER(sampler_DepthControlTex);
 
 float3 SampleNormals(float2 uv, float3 wPos, float2 time, float2 flowmap, float speed, float slope, int vFace) 
 {
@@ -135,4 +143,19 @@ float SampleFoam(float2 uv, float2 time, float2 flowmap, float clipping, float m
 #else
 	return 0;
 #endif
+}
+
+float SampleSpecTex(float2 uv, float2 time, float specNum)
+{
+	float3 specTex = SAMPLE_TEXTURE2D(_SpecTex, sampler_SpecTex, uv).xyz;
+	float3 specTex2 = SAMPLE_TEXTURE2D(_SpecTex, sampler_SpecTex, uv + float2(.2,.5) + time.x * 0.01f).xyz;
+	//float spec = smoothstep(0.0,0.01,dot(specTex, specTex2));
+	float spec = smoothstep(0.0,specNum,dot(specTex, specTex2));
+	return spec;
+}
+
+float4 SampleControlTex(float2 uv)
+{
+	float4 depthTex = SAMPLE_TEXTURE2D(_DepthControlTex, sampler_DepthControlTex, uv).xyzw;
+	return depthTex;
 }

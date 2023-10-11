@@ -7,19 +7,17 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: StylizedWater2_Demo
-  m_Shader: {fileID: 4800000, guid: f04c9486b297dd848909db26983c9ddb, type: 3}
+  m_Name: StylizedWater2_Demo 1
+  m_Shader: {fileID: 4800000, guid: b5601729246863d4ab984cac36ed43cb, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _ADVANCED_SHADING
   - _CAUSTICS
-  - _DISTANCE_NORMALS
   - _FOAM
   - _NORMALMAP
   - _REFRACTION
   - _SHARP_INERSECTION
-  - _TRANSLUCENCY
   m_InvalidKeywords:
   - ADVANCED_LIGHTING
   - _DEPTH_TEX
@@ -40,7 +38,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: ec6f0adef15b52448a82f3f183525d84, type: 3}
+        m_Texture: {fileID: 2800000, guid: 6418bbb56e7d5464b87ee3f4b7ee97db, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMapLarge:
@@ -52,7 +50,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DepthControlTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: b3c0152a802a2304cab93bf9b51390e4, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DepthTex:
@@ -92,7 +90,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ReflectionTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: f635e8ad7be429c40b0c70e796479910, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Shadermap:
@@ -101,6 +99,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SpecTex:
+        m_Texture: {fileID: 2800000, guid: 19e9735f97246ad4cae7048029971f49, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _texcoord:
@@ -131,6 +133,7 @@ Material:
     - _Cull: 2
     - _Cutoff: 0.5
     - _Depth: 0.94
+    - _DepthControlTexTilling: 15
     - _DepthExp: 1
     - _DepthHorizontal: 1.7
     - _DepthMode: 0
@@ -151,7 +154,7 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _HorizonDistance: 8
+    - _HorizonDistance: 4
     - _IntersectionClipping: 0.605
     - _IntersectionFalloff: 0.816
     - _IntersectionLength: 3.04
@@ -169,9 +172,9 @@ Material:
     - _NORMALMAPOn: 1
     - _NormalMap: 1
     - _NormalMapOn: 1
-    - _NormalSpeed: 0.2
-    - _NormalStrength: 0.202
-    - _NormalTiling: -0.48000008
+    - _NormalSpeed: 0.05999998
+    - _NormalStrength: 0.379
+    - _NormalTiling: -0.03
     - _OcclusionStrength: 1
     - _PlanarReflectionsEnabled: 0
     - _PlanarReflectionsParams: 0
@@ -179,8 +182,8 @@ Material:
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _ReflectionBlur: 0
-    - _ReflectionDistortion: 0.09
-    - _ReflectionFresnel: 4.1
+    - _ReflectionDistortion: 0.089
+    - _ReflectionFresnel: 6.06
     - _ReflectionLighting: 0
     - _ReflectionStrength: 0.5
     - _Reflectivity: 1
@@ -200,6 +203,9 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SparkleIntensity: 0
     - _SparkleSize: 0.302
+    - _SpecNum: 0.01
+    - _SpecStrength: 10
+    - _SpecTexTilling: 0.01
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _SunReflectionDistortion: 0.49
@@ -231,14 +237,15 @@ Material:
     - _AnimationParams: {r: 1, g: 1, b: 1, a: 0}
     - _BaseColor: {r: 0, g: 0.17685069, b: 0.5943396, a: 0.9647059}
     - _Color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    - _DeepColor1: {r: 0, g: 0.08563689, b: 0.5471698, a: 0.8039216}
     - _DepthMapBounds: {r: -402.3, g: -459.43, b: 0.0012693577, a: 0}
     - _DistanceNormalParams: {r: 0, g: 242.56415, b: 0.25, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FoamColor: {r: 1, g: 1, b: 1, a: 0.12941177}
+    - _FoamColor: {r: 1, g: 1, b: 1, a: 0.19215687}
     - _HorizonColor: {r: 0.68, g: 1, b: 0.99, a: 0.15}
     - _IntersectionColor: {r: 1, g: 1, b: 1, a: 1}
     - _RimColor: {r: 1, g: 1, b: 1, a: 1}
-    - _ShallowColor: {r: 0, g: 1, b: 0.98136926, a: 0.3764706}
+    - _ShallowColor: {r: 0, g: 1, b: 0.98136926, a: 0.36862746}
     - _SlopeParams: {r: 0.5, g: 4, b: 0, a: 0}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
     - _TranslucencyParams: {r: 1, g: 2.51, b: 0, a: 0}

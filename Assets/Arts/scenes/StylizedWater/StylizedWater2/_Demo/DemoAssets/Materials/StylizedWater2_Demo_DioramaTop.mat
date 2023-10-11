@@ -12,11 +12,9 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
+  - _CAUSTICS
   - _ENVIRONMENTREFLECTIONS_OFF
-  - _FOAM
   - _NORMALMAP
-  - _SHARP_INERSECTION
-  - _TRANSLUCENCY
   m_InvalidKeywords:
   - ADVANCED_LIGHTING
   - _DEPTH_TEX
@@ -37,7 +35,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: be14d6e138bb2564d82b517f4f0785ec, type: 3}
+        m_Texture: {fileID: 2800000, guid: 6418bbb56e7d5464b87ee3f4b7ee97db, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMapLarge:
@@ -46,6 +44,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _CausticsTex:
         m_Texture: {fileID: 2800000, guid: 744ff0bbd92e5bd41a70b5102327485b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DepthControlTex:
+        m_Texture: {fileID: 2800000, guid: b3c0152a802a2304cab93bf9b51390e4, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DepthTex:
@@ -84,6 +86,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _ReflectionTex:
+        m_Texture: {fileID: 2800000, guid: f635e8ad7be429c40b0c70e796479910, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Shadermap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -113,7 +119,7 @@ Material:
     - _CROSSPAN_INTERSECTIONOn: 1
     - _CausticsBrightness: 2
     - _CausticsDistortion: 0.23
-    - _CausticsOn: 0
+    - _CausticsOn: 1
     - _CausticsSpeed: 0.1
     - _CausticsTiling: 0.2
     - _CrossPan_IntersectionOn: 0
@@ -132,24 +138,24 @@ Material:
     - _FlowSpeed: 1
     - _FoamOn: 0
     - _FoamOpacity: 1
-    - _FoamSize: 0.4
+    - _FoamSize: 0.38
     - _FoamSpeed: 0.1
-    - _FoamTiling: 0.19999993
+    - _FoamTiling: 0.18999997
     - _FoamWaveMask: 0.47
     - _FoamWaveMaskExp: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _HorizonDistance: 5.8
-    - _IntersectionClipping: 0.64
-    - _IntersectionFalloff: 1
-    - _IntersectionLength: 3.49
+    - _IntersectionClipping: 0.7
+    - _IntersectionFalloff: 0.71
+    - _IntersectionLength: 2.6
     - _IntersectionRippleDist: 35
     - _IntersectionRippleStrength: 0.51
     - _IntersectionSize: 0.944
     - _IntersectionSource: 0
     - _IntersectionSpeed: 0.1
-    - _IntersectionStyle: 1
+    - _IntersectionStyle: 0
     - _IntersectionTiling: -0.05000004
     - _IntersectionWaveDist: 33.28
     - _LightingMode: 2
@@ -187,8 +193,8 @@ Material:
     - _SimpleLighting: 1
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
-    - _SparkleIntensity: 0.02
-    - _SparkleSize: 0.155
+    - _SparkleIntensity: 0.4
+    - _SparkleSize: 0.46
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _SunReflectionDistortion: 0.75

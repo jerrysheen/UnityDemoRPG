@@ -10,7 +10,7 @@ TEXTURE2D(_DepthTex);
 CBUFFER_START(UnityPerMaterial)
 	float4 _ShallowColor;
 	float4 _BaseColor;
-
+	float4 _DeepColor1;
 	//float _Smoothness;
 	//float _Metallic;
 
@@ -40,13 +40,19 @@ CBUFFER_START(UnityPerMaterial)
 	float _ReflectionBlur;
 	float _ReflectionFresnel;
 	float _ReflectionStrength;
+	float _SpecTexTilling;
+	float _SpecNum;
+	float _SpecStrength;
 	half _ReflectionLighting;
 	half _PlanarReflectionsEnabled;
 	half _ShadowStrength;
 	float4 _AnimationParams;
 	float4 _SlopeParams;
 
-	//Foam
+// control map
+	float _DepthControlTexTilling;
+
+//Foam
 	float _FoamTiling;
 	float4 _FoamColor;
 	float _FoamSpeed;

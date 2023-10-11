@@ -251,12 +251,14 @@ Shader "sea"
                 float3 specTex2 = SAMPLE_TEXTURE2D(_SpecMap, sampler_SpecMap,
                                                    frac(input.positionWS.xz*_SpecMapST.zw)+float2(.2,.5)+_Time.x*_Blin).xyz;
                 float spec = smoothstep(0.0,0.02,dot(specTex, specTex2)) ;
-                // return spec;
+                
                 float speculer = pow(max(0, dot(normalize(input.normalWS), halfview)), 36);
                 spec *= smoothstep(0,1,speculer);//1-abs((1-(speculer*2))));
+
                 float4 final = lerp(_DepthColor, _ShoalColor, clamp(0, 1, exp(depth * _DepthTrans * NoL)));
                 final.rgb *= _BaseColor;
                 final.rgb = final.rgb + pow(NoH, 36) * .3;
+
                 final.rgb += (speculer*_LightDir.w)*_BaseColor+ spec*5;
                 //reflect
                 half3 reflectVector = reflect(-viewDir, normalWS);

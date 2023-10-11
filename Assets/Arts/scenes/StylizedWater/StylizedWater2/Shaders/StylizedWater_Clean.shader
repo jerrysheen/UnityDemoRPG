@@ -3,8 +3,8 @@
 //Copyright protected under Unity Asset Store EULA
 
 // 岸边接触部分泡沫
-
-Shader "Universal Render Pipeline/FX/Stylized Water 2"
+// 岸边采样修改后减少为两次。
+Shader "Universal Render Pipeline/FX/Stylized Water_clean"
 {
 	Properties
 	{
@@ -21,6 +21,7 @@ Shader "Universal Render Pipeline/FX/Stylized Water 2"
 
 		//[Header(Color)]
 		[HDR]_BaseColor("Deep", Color) = (0, 0.44, 0.62, 1)
+		[HDR]_DeepColor1("Deep1", Color) = (0, 0.44, 0.62, 1)
 		[HDR]_ShallowColor("Shallow", Color) = (0.1, 0.9, 0.89, 0.02)
 		[HDR]_HorizonColor("Horizon", Color) = (0.84, 1, 1, 0.15)
 
@@ -101,6 +102,10 @@ Shader "Universal Render Pipeline/FX/Stylized Water 2"
 		_PointSpotLightReflectionExp("Point/spot light exponent", Range(0.01 , 128)) = 64
 
 		//[Header(World Reflection)]
+		[NoScaleOffset][SingleLineTexture]_SpecTex("_SpecTex", 2D) = "black" {}
+		_SpecTexTilling("_SpecTexTilling", Range(0.001, 1)) = 0.05
+		_SpecStrength("_SpecStrength", Range(1, 50)) = 10
+		_SpecNum("_SpecNum", Range(0.0, 0.03)) = 0.01
 		_ReflectionStrength("Strength", Range( 0 , 1)) = 0
 		_ReflectionDistortion("Distortion", Range( 0 , 1)) = 0.05
 		_ReflectionBlur("Blur", Range( 0 , 1)) = 0	
@@ -122,6 +127,8 @@ Shader "Universal Render Pipeline/FX/Stylized Water 2"
 		_WaveCount("Count", Range(1 , 5)) = 1
 		_WaveDirection("Direction", vector) = (1,1,1,1)
 
+		[NoScaleOffset][SingleLineTexture]_DepthControlTex("DepthControlTex", 2D) = "black" {}
+		_DepthControlTexTilling("_DepthControlTexTilling", Float) = 2
 		/* start Tessellation */
 		//_TessValue("Max subdivisions", Range(1, 32)) = 16
 		//_TessMin("Start Distance", Float) = 0
@@ -277,7 +284,7 @@ Shader "Universal Render Pipeline/FX/Stylized Water 2"
 
 			#pragma vertex Vertex
 			#pragma fragment ForwardPass
-			
+			//#pragma fragment ForwardPassFragment
 			Varyings Vertex(Attributes v)
 			{
 				return LitPassVertex(v);
@@ -533,11 +540,23 @@ Shader "Universal Render Pipeline/FX/Stylized Water 2"
 				#endif
 
 				//Albedo
+				float4 depthContrl = SampleControlTex(input.uv.xy * _DepthControlTexTilling);
+				float depthContrlval =  dot(half3(1,1,1) , depthContrl);
+				//return half4(depthContrlval.xxx, 1.0f);
+				//waterDensity *= depthContrlval;
+				//baseColor = lerp(_ShallowColor, _BaseColor, dot(half3(1,1,1) , depthContrl));
+				//float4 baseColor = lerp(_ShallowColor, _BaseColor, saturate(waterDensity * depthContrlval));
 				float4 baseColor = lerp(_ShallowColor, _BaseColor, waterDensity);
+				float pureArea = 1.0f - pow(saturate(waterDensity), 15.0f);
+				//return half4(pureArea.xxx, 1.0f);
+				baseColor = pureArea * baseColor + (1.0 - pureArea) * lerp(_DeepColor1, _BaseColor, depthContrlval);
+				//baseColor = baseColor * 
+				float4 baseAlpha = lerp(_ShallowColor, _BaseColor, waterDensity);
+				//return half4(waterDensity.xxx, 1.0f);
 				baseColor.rgb += _WaveTint * height;
 				
 				albedo.rgb = baseColor.rgb;
-				alpha = baseColor.a;
+				alpha = baseAlpha.a;
 
 				float3 sparkles = 0;
 			#if _NORMALMAP
@@ -557,11 +576,18 @@ Shader "Universal Render Pipeline/FX/Stylized Water 2"
 				#if _FLAT_SHADING //Use face normals
 				sunReflectionNormals = waveNormal;
 				#endif
-				
-				sunSpec = SpecularReflection(mainLight, viewDirNorm, sunReflectionNormals, _SunReflectionDistortion, _SunReflectionSize, _SunReflectionStrength);
-				sunSpec.rgb *= saturate((1-foam) * (1-intersection) * shadowMask); //Hide
-			#endif
 
+				//Specular
+                float3 lightDir = normalize(half4(9.97f, 1.29f, 12.44f, 0.1f)); // normalize(_MainLightPosition);
+                float3 halfview = SafeNormalize(viewDirNorm + lightDir);
+				//sunSpec = SpecularReflection(mainLight, viewDirNorm, sunReflectionNormals, _SunReflectionDistortion, _SunReflectionSize, _SunReflectionStrength);
+				sunSpec = pow(max(0, dot(normalize(normalWS), halfview)), 36);
+				sunSpec.rgb *= saturate((1-foam) * (1-intersection) * shadowMask); //Hide
+				
+				float specularRes = SampleSpecTex(uv *  _SpecTexTilling, TIME, _SpecNum);
+                sunSpec *= smoothstep(0,1,specularRes) * _SpecStrength;
+				//return half4(specularRes.xxx * 100.0f, 1.0f);
+			#endif
 				//Reflection probe/planar
 				float3 reflections = 0;
 			#ifndef _ENVIRONMENTREFLECTIONS_OFF
@@ -652,7 +678,7 @@ Shader "Universal Render Pipeline/FX/Stylized Water 2"
 				
 				//Final alpha
 				float edgeFade = saturate(opaqueDist / (_EdgeFade * 0.01));
-
+				
 				#if UNDERWATER_ENABLED
 				edgeFade = lerp(1.0, edgeFade, vFace);
 				#endif
@@ -742,7 +768,7 @@ Shader "Universal Render Pipeline/FX/Stylized Water 2"
 				finalColor.rgb = lerp(sceneColor, finalColor.rgb, alpha);
 				alpha = lerp(1.0, edgeFade, vFace);
 				#endif
-
+				
 				ApplyFog(finalColor.rgb, input.fogFactorAndVertexLight.x, ScreenPos, wPos, vFace);
 
 				#if UNDERWATER_ENABLED
@@ -762,22 +788,26 @@ Shader "Universal Render Pipeline/FX/Stylized Water 2"
 				finalColor.rgb = lerp(underwaterColor, finalColor.rgb, vFace);
 				alpha = lerp(1.0, alpha, vFace);
 				#endif
-
+				
 				#if _RIVER
 				finalColor.a = alpha * saturate(alpha - vertexColor.g);
 				#endif
-				finalColor.a = waterDensity + intersection;;
+
+				// finalColor.a = max(0.8f, waterDensity);
+				// finalColor.a += intersection;
+				// finalColor.a += foam;
+				//return half4(waterDensity.xxx, 1.0f);
 				return finalColor;
 
-				SceneDepth depth00 = SampleDepth(ScreenPos);
-				return depth00.eye;
-				// // alpha 生成的这个部分，需要做修改，根据
-				// float3 NdotV = dot(viewDirNorm, normalWS);
-				// finalColor.a = saturate(1 - NdotV + 0.8) * saturate(1 - exp(depth * _Fade))*_BaseColor.a;
-    //             finalColor.a += foam;
-    //             finalColor.a *= saturate(depth * _AlphaFade);
-    //             finalColor.a += spec;
-				// return finalColor;
+				// SceneDepth depth00 = SampleDepth(ScreenPos);
+				// return depth00.eye;
+				// // // alpha 生成的这个部分，需要做修改，根据
+				// // float3 NdotV = dot(viewDirNorm, normalWS);
+				// // finalColor.a = saturate(1 - NdotV + 0.8) * saturate(1 - exp(depth * _Fade))*_BaseColor.a;
+    // //             finalColor.a += foam;
+    // //             finalColor.a *= saturate(depth * _AlphaFade);
+    // //             finalColor.a += spec;
+				// // return finalColor;
 
 			}
 			ENDHLSL
@@ -852,6 +882,6 @@ Shader "Universal Render Pipeline/FX/Stylized Water 2"
         }
 	}
 
-	CustomEditor "StylizedWater2.MaterialUI"
+	CustomEditor "StylizedWater2.MaterialUIClean"
 	Fallback "Hidden/InternalErrorShader"	
 }

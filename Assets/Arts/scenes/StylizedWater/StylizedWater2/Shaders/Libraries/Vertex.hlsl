@@ -47,6 +47,7 @@ struct Varyings
 	#if defined(SCREEN_POS)
 	float4 screenPos 	: TEXCOORD5;
 	#endif
+
 	
 	#ifdef DYNAMICLIGHTMAP_ON
 	float2  dynamicLightmapUV : TEXCOORD9; // Dynamic lightmap UVs
@@ -142,6 +143,6 @@ Varyings LitPassVertex(Attributes input)
 	vertexInput.positionCS = output.positionCS;
 	output.shadowCoord = GetShadowCoord(vertexInput);
 #endif
-	
+
 	return output;
 }
