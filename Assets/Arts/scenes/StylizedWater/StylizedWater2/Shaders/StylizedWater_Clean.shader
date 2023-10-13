@@ -103,6 +103,7 @@ Shader "Universal Render Pipeline/FX/Stylized Water_clean"
 
 		//[Header(World Reflection)]
 		[NoScaleOffset][SingleLineTexture]_SpecTex("_SpecTex", 2D) = "black" {}
+		_SpecLightDir("Specular Dir", vector) = (9.97, 1.29, 12.44, 0.1)
 		_SpecTexTilling("_SpecTexTilling", Range(0.001, 1)) = 0.05
 		_SpecStrength("_SpecStrength", Range(1, 50)) = 10
 		_SpecNum("_SpecNum", Range(0.0, 0.03)) = 0.01
@@ -122,6 +123,7 @@ Shader "Universal Render Pipeline/FX/Stylized Water_clean"
 		_WaveNormalStr("Normal Strength", Range(0 , 6)) = 0.5
 		_WaveDistance("Distance", Range(0 , 1)) = 0.8
 		_WaveFadeDistance("Fade Distance", vector) = (150, 300, 0, 0)
+
 
 		_WaveSteepness("Steepness", Range(0 , 5)) = 0.1
 		_WaveCount("Count", Range(1 , 5)) = 1
@@ -578,7 +580,8 @@ Shader "Universal Render Pipeline/FX/Stylized Water_clean"
 				#endif
 
 				//Specular
-                float3 lightDir = normalize(half4(9.97f, 1.29f, 12.44f, 0.1f)); // normalize(_MainLightPosition);
+                //float3 lightDir = normalize(half4(9.97f, 1.29f, 12.44f, 0.1f)); // normalize(_MainLightPosition);
+                float3 lightDir = normalize(_SpecLightDir); // normalize(_MainLightPosition);
                 float3 halfview = SafeNormalize(viewDirNorm + lightDir);
 				//sunSpec = SpecularReflection(mainLight, viewDirNorm, sunReflectionNormals, _SunReflectionDistortion, _SunReflectionSize, _SunReflectionStrength);
 				sunSpec = pow(max(0, dot(normalize(normalWS), halfview)), 36);

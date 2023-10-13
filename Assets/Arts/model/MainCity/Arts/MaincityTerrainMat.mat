@@ -29,11 +29,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _AlbedoPack1:
         m_Texture: {fileID: 2800000, guid: 763980e419e1bcc46bc07491c2841b61, type: 2}
-        m_Scale: {x: 1, y: 1}
+        m_Scale: {x: 60, y: 60}
         m_Offset: {x: 0, y: 0}
     - _AlbedoPack2:
         m_Texture: {fileID: 2800000, guid: a72fc05a58ca19c43b295d9b904c565f, type: 2}
-        m_Scale: {x: 1, y: 1}
+        m_Scale: {x: 60, y: 60}
         m_Offset: {x: 0, y: 0}
     - _GlobalNormal:
         m_Texture: {fileID: 2800000, guid: 24e447cd9d7d04d4aa5b2d196727d01d, type: 3}
@@ -71,9 +71,13 @@ Material:
     m_Floats:
     - _GLobalMipMapLimit: 0
     - _GlobalNormalBlendRate: 0.39
+    - _LODAdd: 1
+    - _LODPram: 1
     - _LODScale: 3
+    - _MULTI_TILING: 0
     - _NormalScale00: 1
     - _NormalScale01: 1
     - _NormalScale02: 1
+    - _SIMPLE_6LAYER_BLEND: 0
     m_Colors: []
   m_BuildTextureStacks: []

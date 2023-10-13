@@ -329,7 +329,6 @@
                 LODLevel = max(int(lambda + _LODAdd), 0);
                 LODLevel = LODLevel > 0.0 ? LODLevel : 0.0;
                 final_LOD = LODLevel;
-
                 // 得到正确的local坐标，0，0表示完全采样第一个texel的像素， 0，1则表示完全采样第三个texel的像素，
                 // 这一步就在求，我正确的LOD下，需要采样的texel的间隔是多少。
                 // Single_AlbedoTex_Width : 单张diffuse的大小

@@ -94,6 +94,7 @@ namespace StylizedWater2
         private MaterialProperty _PointSpotLightReflectionExp;
 
         private MaterialProperty _SpecTex;
+        private MaterialProperty _SpecLightDir;
         private MaterialProperty _SpecTexTilling;
         private MaterialProperty _SpecStrength;
         private MaterialProperty _SpecNum;
@@ -271,6 +272,7 @@ namespace StylizedWater2
 
             _SpecTex = FindProperty("_SpecTex", props);
             _SpecTexTilling = FindProperty("_SpecTexTilling", props);
+            _SpecLightDir = FindProperty("_SpecLightDir", props);
             _SpecStrength = FindProperty("_SpecStrength", props);
             _SpecNum = FindProperty("_SpecNum", props);
             _ReflectionStrength = FindProperty("_ReflectionStrength", props);
@@ -848,6 +850,7 @@ namespace StylizedWater2
                 EditorGUILayout.Space();
                 materialEditor.TextureProperty(_SpecTex, "_SpecTex");
                 UI.Material.DrawFloatField(_SpecTexTilling, tooltip:"This value is multiplied over the sun light's intensity");
+                UI.Material.DrawVector3(_SpecLightDir, "_SpecLightDir",tooltip:"This value is multiplied over the sun light's intensity");
                 UI.Material.DrawFloatField(_SpecStrength, tooltip:"This value is multiplied over the sun light's intensity");
                 UI.Material.DrawFloatField(_SpecNum, tooltip:"This value is multiplied over the sun light's intensity");
                 EditorGUILayout.LabelField("Light reflections", EditorStyles.boldLabel);

@@ -41,6 +41,7 @@ CBUFFER_START(UnityPerMaterial)
 	float _ReflectionFresnel;
 	float _ReflectionStrength;
 	float _SpecTexTilling;
+	float4 _SpecLightDir;
 	float _SpecNum;
 	float _SpecStrength;
 	half _ReflectionLighting;

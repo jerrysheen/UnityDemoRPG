@@ -248,6 +248,7 @@ Material:
     - _ShallowColor: {r: 0, g: 1, b: 0.98136926, a: 0.36862746}
     - _SlopeParams: {r: 0.5, g: 4, b: 0, a: 0}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
+    - _SpecLightDir: {r: 9.97, g: 1.29, b: 12.44, a: 0}
     - _TranslucencyParams: {r: 1, g: 2.51, b: 0, a: 0}
     - _VertexColorMask: {r: 0, g: 0, b: 0, a: 0}
     - _WaterColor: {r: 0.21176466, g: 0.6745098, b: 1, a: 1}
