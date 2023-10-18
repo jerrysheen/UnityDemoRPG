@@ -193,7 +193,8 @@ float3 ApplyLighting(inout SurfaceData surfaceData, InputData inputData, Translu
 	
 #ifdef LIT
 	Light mainLight = GetMainLight(inputData.shadowCoord);
-	
+	mainLight.distanceAttenuation = 1.0f;
+	mainLight.shadowAttenuation = 1.0f;
 	#if _CAUSTICS
 	causticsAttentuation = GetLightIntensity(mainLight) * (mainLight.distanceAttenuation * mainLight.shadowAttenuation);
 	#endif
@@ -207,7 +208,6 @@ float3 ApplyLighting(inout SurfaceData surfaceData, InputData inputData, Translu
 	float3 normalWS = lerp(normalData.geometryNormalWS, normalData.pixelNormalWS, saturate(normalData.lightingStrength - normalData.mask));
 
 	MixRealtimeAndBakedGI(mainLight, normalWS, inputData.bakedGI, shadowStrength.xxxx);
-
 	/*
 	//PBR shading
 	BRDFData brdfData;

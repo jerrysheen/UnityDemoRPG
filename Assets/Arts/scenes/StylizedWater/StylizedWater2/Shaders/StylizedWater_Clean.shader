@@ -136,7 +136,7 @@ Shader "Universal Render Pipeline/FX/Stylized Water_clean"
 		//_TessMin("Start Distance", Float) = 0
 		//_TessMax("End Distance", Float) = 15
  		/* end Tessellation */
-		
+		[NoScaleOffset][SingleLineTexture]_CubeMap("_CubeMap", cube) = "white" {}
 		//[CurvedWorldBendSettings] _CurvedWorldBendSettings("0|1|1", Vector) = (0, 0, 0, 0)
 	}
 
@@ -155,6 +155,8 @@ Shader "Universal Render Pipeline/FX/Stylized Water_clean"
 			ZTest LEqual
 			
 			HLSLPROGRAM
+
+
 
 			#pragma multi_compile_instancing
 			/* start UnityFog */
@@ -286,6 +288,10 @@ Shader "Universal Render Pipeline/FX/Stylized Water_clean"
 
 			#pragma vertex Vertex
 			#pragma fragment ForwardPass
+
+			TEXTURECUBE(_CubeMap);
+            SAMPLER(sampler_CubeMap);
+			
 			//#pragma fragment ForwardPassFragment
 			Varyings Vertex(Attributes v)
 			{
@@ -602,8 +608,12 @@ Shader "Universal Render Pipeline/FX/Stylized Water_clean"
 				
 				float3 reflectionVector = reflect(-viewDirNorm , refWorldTangentNormal);
 				float2 reflectionPerturbation = lerp(waveNormal.xz * 0.5, worldTangentNormal.xy, _ReflectionDistortion).xy;
-				reflections = SampleReflections(reflectionVector, _ReflectionBlur, _PlanarReflectionsEnabled, ScreenPos.xyzw, wPos, refWorldTangentNormal, viewDirNorm, reflectionPerturbation);
-				
+				//reflections = SampleReflections(reflectionVector, _ReflectionBlur, _PlanarReflectionsEnabled, ScreenPos.xyzw, wPos, refWorldTangentNormal, viewDirNorm, reflectionPerturbation);
+
+                //half4 encodedIrradiance = SAMPLE_TEXTURECUBE_LOD(unity_SpecCube0, samplerunity_SpecCube0, reflectionVector,0);
+
+				reflections = SAMPLE_TEXTURECUBE_LOD(_CubeMap, sampler_CubeMap, reflectionVector,0);
+				//return half4(encodedIrradiance.xyz, 1.0f);
 				half reflectionFresnel = ReflectionFresnel(refWorldTangentNormal, viewDirNorm, _ReflectionFresnel);
 				half reflectionMask = _ReflectionStrength * reflectionFresnel * vFace;
 				reflectionMask = saturate(reflectionMask - foam - intersection);
@@ -729,7 +739,6 @@ Shader "Universal Render Pipeline/FX/Stylized Water_clean"
 			    #endif
 
 				float4 finalColor = float4(ApplyLighting(surfaceData, inputData, translucencyData, normalData, caustics, reflections, _ShadowStrength, vFace), alpha);
-
 				#if VERSION_GREATER_EQUAL(12,0) && defined(DEBUG_DISPLAY)
 				inputData.positionCS = input.positionCS;
 				#if _NORMALMAP
