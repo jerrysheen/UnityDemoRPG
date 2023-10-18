@@ -114,6 +114,7 @@ namespace StylizedWater2
         private MaterialProperty _WaveDirection;
 
         private MaterialProperty _DepthControlTex;
+        private MaterialProperty _CubeMap;
         private MaterialProperty _DepthControlTexTilling;
         
         private MaterialProperty _TessValue;
@@ -293,6 +294,7 @@ namespace StylizedWater2
 
             _DepthControlTex = FindProperty("_DepthControlTex", props);
             _DepthControlTexTilling = FindProperty("_DepthControlTexTilling", props);
+            _CubeMap = FindProperty("_CubeMap", props);
             if(targetMat.HasProperty("_CurvedWorldBendSettings")) _CurvedWorldBendSettings = FindProperty("_CurvedWorldBendSettings", props);
 
             simpleShadingContent = new GUIContent("Simple", 
@@ -425,6 +427,7 @@ namespace StylizedWater2
             targetMat.SetTexture("_FoamTex", _FoamTex.textureValue);
             targetMat.SetTexture("_SpecTex", _SpecTex.textureValue);
             targetMat.SetTexture("_DepthControlTex", _DepthControlTex.textureValue);
+            targetMat.SetTexture("_CubeMap", _CubeMap.textureValue);
             targetMat.SetTexture("_IntersectionNoise", _IntersectionNoise.textureValue);
             
             Vector4 vertexColorMask = new Vector4(_IntersectionSource.floatValue != 0 ? 1f : 0f,
@@ -904,6 +907,7 @@ namespace StylizedWater2
                     UI.Material.DrawSlider(_ReflectionFresnel, tooltip:"Masks the reflection by the viewing angle in relationship to the surface (including wave curvature), which is more true to nature (known as fresnel)");
                     UI.Material.DrawSlider(_ReflectionDistortion, tooltip:"Distorts the reflection by the wave normals and normal map");
                     UI.Material.DrawSlider(_ReflectionBlur, tooltip:"Blurs the reflection probe, this can be used for a more general reflection of colors");
+                    materialEditor.TextureProperty(_CubeMap, "_CubeMap");
                 }
 
                 EditorGUILayout.Space();
@@ -984,6 +988,7 @@ namespace StylizedWater2
                  EditorGUILayout.Space();
                  materialEditor.TextureProperty(_DepthControlTex, "_DepthControlTex");
                  UI.Material.DrawFloatField(_DepthControlTexTilling, tooltip:"This value is multiplied over the sun light's intensity");
+                 
                  UI.DrawNotification(enableRiverMode, "Waves are automatically disabled when River Mode is enabled", MessageType.Info);
                 
                  using (new EditorGUI.DisabledGroupScope(enableRiverMode))

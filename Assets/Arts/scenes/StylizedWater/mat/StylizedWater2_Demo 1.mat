@@ -49,6 +49,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: 36b7496f7c0078b49a44468d3e120e62, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _CubeMap:
+        m_Texture: {fileID: 8900000, guid: 1f797d971ea65804ca7255fd1068f4c5, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _DepthControlTex:
         m_Texture: {fileID: 2800000, guid: b3c0152a802a2304cab93bf9b51390e4, type: 3}
         m_Scale: {x: 1, y: 1}
