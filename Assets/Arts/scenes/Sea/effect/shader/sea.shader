@@ -5,10 +5,13 @@ Shader "sea"
         _BaseColor("_BaseColor", Color) = (1, 1, 1, 1)
         _ShoalColor("shoalColor", Color) = (1, 1, 1, 1)
         _DepthColor("dpethColor", Color) = (1, 1, 1, 1)
-        _DepthTrans("_DepthTrans",float)=1
+        _DepthTrans("_DepthTrans",Range(-0.1, 0.1)) = -0.02 
+        _DepthContrl("控制泡沫距离_DepthContrl",Range(0.2, 3)) = 1.2 
         _CubeMap("_CubeMap", cube) = "white" {}
         _FormMap("FormMap", 2D) = "white" {}
         _ShoreMap("_ShoreMap", 2D) = "white" {}
+        _SpecMapDensity("_SpecMapDensity",Range(-0.02, 0.5))=0.085
+        _SpecMapIntensity("_SpecMapIntensity",Range(0.8, 5))=1
         _SpecMap("_SpecMap", 2D) = "white" {}
         _BumpMap("_BumpMap", 2D) = "bump" {}
         _BumpScale("_BumpScale", float) = 1
@@ -24,12 +27,14 @@ Shader "sea"
 
 
         _BumpMapST("_bumpuvscale",vector)=(0,0,0,1)
-        _SpecMapST("_SpecMapST",vector)=(0,0,0,1)
-        _wavescale("_wavescale",vector)=(0,0,0,1)
+        
+        //_SpecMapST("_SpecMapST",vector)=(0,0,0,1)
+        //("_wavescale",vector)=(0,0,0,1)
         _formScale("_formScale",vector)=(0,0,0,1)
         _LightDir("_LightDir",vector)=(0,0,0,1)
         _ReflectIntensity("_ReflectIntensity",float)=1
 
+        
         _Blin("_blin",float)=1
         _Fade("_Fade",float)=1
         _AlphaFade("_AlphaFade",float)=1
@@ -38,9 +43,10 @@ Shader "sea"
 
     SubShader
     {
+
         Tags
         {
-            "Queue"="Transparent" "IgnoreProjector" = "True" "RenderPipeline" = "UniversalPipeline" "ShaderModel"="2.0"
+            "Queue"="Transparent" "IgnoreProjector" = "True" "RenderPipeline" = "UniversalPipeline" "ShaderModel"="4.5"
         }
         LOD 100
 
@@ -50,10 +56,11 @@ Shader "sea"
 
         Pass
         {
-            Name "Unlit"
+            Name "ForwardLit"
+       Tags{"LightMode" = "UniversalForward"}
             HLSLPROGRAM
             #pragma only_renderers gles gles3 glcore d3d11
-            #pragma target 2.0
+            #pragma target 4.5
 
             #pragma vertex vert
             #pragma fragment frag
@@ -77,8 +84,11 @@ Shader "sea"
 
 
             half _test;
+            half _SpecMapDensity;
+            half _SpecMapIntensity;
             half _Blin;
-            float4 _BumpMapST, _wavescale, _SpecMapST, _formScale;
+            float4 _BumpMapST, _SpecMap_ST, _formScale;
+            //float4 _wavescale;
             half _Fade, _AlphaFade;
             half _NoiseIntensity;
             half _FormRange;
@@ -87,6 +97,7 @@ Shader "sea"
             float _FormIntensity;
             float _ReflectIntensity;
             float _DepthTrans;
+            float _DepthContrl;
             float _BumpScale;
             CBUFFER_END
 
@@ -182,7 +193,7 @@ Shader "sea"
                 float depthValue = LinearEyeDepth(depth, _ZBufferParams); //转换深度到0-1区间灰度值
                 float z = pos.w;
                 depth = abs(depthValue - z);
-                depth *= 1.2;
+                depth *= _DepthContrl;
                 half2 worldUV = input.positionWS.xz;
                 //
 
@@ -223,7 +234,7 @@ Shader "sea"
                 depuv.x = frac((depth / 3 + (noiseTex.z * 2) * noiseTex.g) + _Time.y * 0.2);
                 depuv.y = 0.5;
                 float4 wavetex = SAMPLE_TEXTURE2D(_ShoreMap, sampler_ShoreMap, depuv+noiseTex.b);
-                //  return float4(wavetex.rrr, 1);
+                // return float4(wavetex.rrr, 1);
                 float foam = dot(wavetex.xxy, formtex.yyz) * (1 - (depth / 20) - 0.6).xxx;
                 foam *= saturate(depth) * noiseTex.g;
                 foam *= 5;
@@ -231,7 +242,7 @@ Shader "sea"
 
                 // foam *= noiseTex.b;
                 foam = max(foam, shoreform) * 0.65;
-
+                
 
                 // foam*=0.6;
 
@@ -246,24 +257,26 @@ Shader "sea"
                 float NoH = saturate(dot(normalWS, halfview));
                 float NoV = saturate(dot(viewDir, normalWS));
                 // //spec
-                float3 specTex = SAMPLE_TEXTURE2D(_SpecMap, sampler_SpecMap, frac(input.positionWS.xz*_SpecMapST.xy)).
+                float3 specTex = SAMPLE_TEXTURE2D(_SpecMap, sampler_SpecMap, frac(input.positionWS.xz*_SpecMap_ST.xy)).
                     xyz;
                 float3 specTex2 = SAMPLE_TEXTURE2D(_SpecMap, sampler_SpecMap,
-                                                   frac(input.positionWS.xz*_SpecMapST.zw)+float2(.2,.5)+_Time.x*_Blin).xyz;
-                float spec = smoothstep(0.0,0.02,dot(specTex, specTex2)) ;
-                
+                                                   frac(input.positionWS.xz*_SpecMap_ST.zw)+float2(.2,.5)+_Time.x*_Blin).xyz;
+                float spec = smoothstep(0.0,_SpecMapDensity,dot(specTex, specTex2)) ;
+                half4(specTex2.xyz, 1.0f);
+                // return spec;
                 float speculer = pow(max(0, dot(normalize(input.normalWS), halfview)), 36);
                 spec *= smoothstep(0,1,speculer);//1-abs((1-(speculer*2))));
-
+                spec *= _SpecMapIntensity;
                 float4 final = lerp(_DepthColor, _ShoalColor, clamp(0, 1, exp(depth * _DepthTrans * NoL)));
+                
                 final.rgb *= _BaseColor;
                 final.rgb = final.rgb + pow(NoH, 36) * .3;
-
                 final.rgb += (speculer*_LightDir.w)*_BaseColor+ spec*5;
                 //reflect
                 half3 reflectVector = reflect(-viewDir, normalWS);
-                half4 encodedIrradiance = SAMPLE_TEXTURECUBE_LOD(unity_SpecCube0, samplerunity_SpecCube0, reflectVector,
-                                                                 _ReflectIntensity) * _ReflectIntensity;
+                half4 encodedIrradiance = SAMPLE_TEXTURECUBE_LOD(_CubeMap, sampler_CubeMap, reflectVector,
+                                                                 1) * _ReflectIntensity;
+                foam *= _FormIntensity;
                 final.rgb += encodedIrradiance.rgb;
                 final.rgb += foam;
                 

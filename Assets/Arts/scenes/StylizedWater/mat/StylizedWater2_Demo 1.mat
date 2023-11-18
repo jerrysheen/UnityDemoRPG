@@ -18,6 +18,7 @@ Material:
   - _NORMALMAP
   - _REFRACTION
   - _SHARP_INERSECTION
+  - _WAVES
   m_InvalidKeywords:
   - ADVANCED_LIGHTING
   - _DEPTH_TEX
@@ -150,7 +151,7 @@ Material:
     - _FlowSpeed: 1
     - _FoamOn: 0
     - _FoamOpacity: 0.104
-    - _FoamSize: 0.767
+    - _FoamSize: 0.149
     - _FoamSpeed: 0.050000012
     - _FoamTiling: 0.09999993
     - _FoamWaveMask: 0
@@ -228,12 +229,12 @@ Material:
     - _UnderwaterSurfaceSmoothness: 0.8
     - _WaveCount: 2
     - _WaveDistance: 0.775
-    - _WaveHeight: 0.15
-    - _WaveNormalStr: 0.14
-    - _WaveSpeed: 2.3999996
-    - _WaveSteepness: 0
+    - _WaveHeight: 1.34
+    - _WaveNormalStr: 1.56
+    - _WaveSpeed: 2.4999995
+    - _WaveSteepness: 1.59
     - _WaveTint: 0
-    - _WavesOn: 0
+    - _WavesOn: 1
     - _WorkflowMode: 1
     - _WorldSpaceUV: 1
     - _ZWrite: 1
@@ -258,7 +259,7 @@ Material:
     - _WaterColor: {r: 0.21176466, g: 0.6745098, b: 1, a: 1}
     - _WaterShallowColor: {r: 0, g: 0.9394503, b: 1, a: 1}
     - _WaveDirection: {r: -1, g: -1, b: -1, a: -1}
-    - _WaveFadeDistance: {r: 150, g: 300, b: 0, a: 0}
+    - _WaveFadeDistance: {r: 148.14825, g: 347.53094, b: 0, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &6498140463000427223
 MonoBehaviour:

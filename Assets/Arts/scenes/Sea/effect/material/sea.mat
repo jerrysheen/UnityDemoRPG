@@ -25,7 +25,7 @@ Material:
     m_TexEnvs:
     - _BumpMap:
         m_Texture: {fileID: 2800000, guid: be14d6e138bb2564d82b517f4f0785ec, type: 3}
-        m_Scale: {x: 1, y: 2}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _CubeMap:
         m_Texture: {fileID: 8900000, guid: 48828f3e1f586f241a8e4092475b289f, type: 3}
@@ -33,7 +33,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _FormMap:
         m_Texture: {fileID: 2800000, guid: f17ae84474641f24497e7941ad40162b, type: 3}
-        m_Scale: {x: 1, y: 1}
+        m_Scale: {x: 0.13, y: 0.2}
         m_Offset: {x: 0, y: 0}
     - _NoiseMap:
         m_Texture: {fileID: 2800000, guid: 2c1b0a0d7934a4a4bbcdb558f54ccbe4, type: 3}
@@ -45,8 +45,8 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _SpecMap:
         m_Texture: {fileID: 2800000, guid: 19e9735f97246ad4cae7048029971f49, type: 3}
-        m_Scale: {x: 100, y: 1}
-        m_Offset: {x: 0, y: 0}
+        m_Scale: {x: 0.03, y: 0.03}
+        m_Offset: {x: 0.03, y: 0.03}
     - _foamMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -54,27 +54,30 @@ Material:
     m_Ints: []
     m_Floats:
     - _AlphaFade: 1
-    - _Blin: 0.5
-    - _BumpScale: -0.59
-    - _DepthTrans: -0.03
+    - _Blin: 0.69
+    - _BumpScale: 0.46
+    - _DepthContrl: 1.23
+    - _DepthTrans: -0.075
     - _Fade: -0.32
-    - _FormIntensity: 1
+    - _FormIntensity: 3.11
     - _FormRange: 1
-    - _NoiseIntensity: 2.93
-    - _ReflectIntensity: 0.05
+    - _NoiseIntensity: 1.92
+    - _ReflectIntensity: 0.16
+    - _SpecMapDensity: 0.081
+    - _SpecMapIntensity: 5
     - _WaveIntensity: 1
     - _foamIntensity: 1
     - _foamRange: 1
     - _test: -0.64
     m_Colors:
-    - _BaseColor: {r: 0.32146668, g: 0.84720474, b: 0.990566, a: 0.8784314}
+    - _BaseColor: {r: 0.3739409, g: 0.80835426, b: 0.9811321, a: 1}
     - _BumpMapST: {r: 0.03, g: -0.04, b: 1, a: 1}
-    - _DepthColor: {r: 0.37134212, g: 0.5754717, b: 0.56346405, a: 0.65882355}
-    - _LightDir: {r: 9.97, g: 1.29, b: 12.44, a: 0.1}
-    - _ShoalColor: {r: 0.7080812, g: 0.8490566, b: 0.8279231, a: 0.62352943}
-    - _SpecMapST: {r: 0.02, g: 0.02, b: 0.02, a: 0.02}
+    - _DepthColor: {r: 0, g: 0.08571896, b: 0.3207547, a: 1}
+    - _LightDir: {r: 1.85, g: 0.62, b: 9.01, a: 0.1}
+    - _ShoalColor: {r: 0.46169454, g: 0.6554454, b: 0.9339623, a: 0.25490198}
+    - _SpecMapST: {r: -0.17, g: 0.02, b: 0.02, a: 0.02}
     - _WaveColor: {r: 1, g: 1, b: 1, a: 1}
     - _foamScale: {r: 0, g: 0, b: 0, a: 1}
-    - _formScale: {r: 0, g: 0, b: 0.03, a: 5}
+    - _formScale: {r: 0, g: 0, b: 0.04, a: 13.52}
     - _wavescale: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []
