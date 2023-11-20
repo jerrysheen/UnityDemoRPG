@@ -19,6 +19,8 @@ Shader "STtools/Wave_VSTexture02"
         _displacementSmallWaveScale ("_displacementSmallWaveScale", Float) = 0.162
         _displacementBigWaveScale ("_displacementBigWaveScale", Float) = 0.7
         _PG_WaterRendererHeight ("_PG_WaterRendererHeight", Float) =  83.0
+        _Color1 ("_Color1", Color) =  (0.0, 0.0, 0.0, 0.0)
+        _Color2 ("_Color2", Color) =  (0.0, 0.0, 0.0, 0.0)
           
 //        _GerstnerIterNum ("_MultiGerstnerPram", Int) = 64
 //        _GerstnerSpeed ("_MultiGerstnerPram", Float) = 1.0
@@ -67,6 +69,8 @@ Shader "STtools/Wave_VSTexture02"
             float4 _Azure_WaterInfo3;
             float4 _Azure_WaterInfo6;
             float4 _PG_UVOffset;
+            float4 _Color1;
+            float4 _Color2;
             float4x4 hlslcc_mtx4x4_PG_MatrixVPInverse;
             float4x4 hlslcc_mtx4x4unity_MatrixVP;
             float _displacementSmallWaveScale;
@@ -98,26 +102,35 @@ Shader "STtools/Wave_VSTexture02"
                 
                 float3 worldPos = mul(unity_ObjectToWorld, half4(v.vertex.xyz, 1.0f)).xyz;
                 worldPos.y += wave0.z +  wave0.x + wave0.y;
+                worldPos.x += wave0.x;
+                worldPos.z += wave0.y;
+                o.worldPos = worldPos;
                 o.vertex = UnityWorldToClipPos(worldPos);
                 
                 return o;
             }
 
             fixed4 frag (v2f i) : SV_Target {
-                return half4(0.9f, 0.9f, 0.9f, 1.0f);
+               float3 ddxPos = normalize(ddx(i.worldPos));
+               float3 ddyPos = normalize(ddy(i.worldPos));
+               float3 normal = normalize( cross(ddyPos, ddxPos));
+                
+               
                 //return half4(i.normal, 1.0f);
                 // Normalized direction to the light source
                 float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
                 // Calculate the Blinn-Phong reflection model
                 float3 viewDir = normalize(_WorldSpaceCameraPos - i.worldPos);
-
+                //
                 float3 halfDir = normalize(lightDir + viewDir);
-                float diff = max(0.0, dot(i.normal, lightDir));
-                float spec = pow(max(0.0, dot(i.normal, halfDir)), _Shininess * 128.0);
-
+                float diff = max(0.0, dot(normal, lightDir));
+                float spec = pow(max(0.0, dot(normal, halfDir)), _Shininess * 128.0);
+                
+                float waveHeight = saturate(i.worldPos.y/1.0f);
+                //col.rgb =  ;
                 // Combine the textures and light effects
                 //fixed4 col = tex2D(_MainTex, i.vertex.xy) * _Color;
-                fixed4 col = 1.0f;
+                fixed4 col = lerp(_Color1, _Color2,waveHeight);
                 float3 _LightColor0 = float3(1.0, 1.0, 1.0);
                 col.rgb *= _LightColor0.rgb * diff; // Diffuse lighting
                 col.rgb += _Specular.rgb * _LightColor0.rgb * spec; // Specular lighting

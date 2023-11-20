@@ -229,7 +229,7 @@ Material:
     - _UnderwaterSurfaceSmoothness: 0.8
     - _WaveCount: 2
     - _WaveDistance: 0.775
-    - _WaveHeight: 1.34
+    - _WaveHeight: 0.46
     - _WaveNormalStr: 1.56
     - _WaveSpeed: 2.4999995
     - _WaveSteepness: 1.59
@@ -255,7 +255,7 @@ Material:
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
     - _SpecLightDir: {r: 9.97, g: 1.29, b: 12.44, a: 0}
     - _TranslucencyParams: {r: 1, g: 2.51, b: 0, a: 0}
-    - _VertexColorMask: {r: 0, g: 0, b: 0, a: 0}
+    - _VertexColorMask: {r: 0, g: 0, b: 1, a: 0}
     - _WaterColor: {r: 0.21176466, g: 0.6745098, b: 1, a: 1}
     - _WaterShallowColor: {r: 0, g: 0.9394503, b: 1, a: 1}
     - _WaveDirection: {r: -1, g: -1, b: -1, a: -1}
