@@ -23,7 +23,10 @@ Shader "STtools/Wave_VSTexture02"
         _Color2 ("_Color2", Color) =  (0.0, 0.0, 0.0, 0.0)
           
 //        _GerstnerIterNum ("_MultiGerstnerPram", Int) = 64
-//        _GerstnerSpeed ("_MultiGerstnerPram", Float) = 1.0
+        _CameraDistance ("_CameraDistance", Float) = 1.0
+        _CameraRelatedFadeRange("_CameraRelatedFadeRange", Float) = 1.0
+        _CameraRelatedClipRange("_CameraRelatedClipRange", Vector) =  (0.5, 0.5, 0.0, 0.0)
+        //_GerstnerSpeed ("_MultiGerstnerPram", Float) = 1.0
 //        _GerstnerDir ("_MultiGerstnerPram", Vector) = (0.5, 0.5, 0.0, 0.0)
 
     }
@@ -86,24 +89,71 @@ Shader "STtools/Wave_VSTexture02"
             float _Wavelength;
             float _Steepness;
 
+            float _CameraDistance;
+            float _CameraRelatedFadeRange;
+            float4 _CameraRelatedClipRange;
+
             
             v2f vert (appdata v) {
                 v2f o;
-
-                float4 wave0 = 0.0f;
-                float2 wave0UV = v.uv.xy * _Azure_WaterInfo2.xy + float2(_Time.x * _Azure_WaterInfo2.zw);
-                wave0.x = tex2Dlod(_Waves, float4(wave0UV, 0.0, 0.0f)).y * _PG_UVOffset.x;
-
-                float2 wave1UV = v.uv.xy * _Azure_WaterInfo3.xy + float2(_Time.x * _Azure_WaterInfo3.zw);
-                wave0.y = tex2Dlod(_Waves, float4(wave1UV, 0.0, 0.0f)).y * _PG_UVOffset.y;
-
-                float2 wave2UV = v.uv.xy * _Azure_WaterInfo6.xy + float2(_Time.x * _Azure_WaterInfo6.zw);
-                wave0.z = 2.0f * (1.0 - tex2Dlod(_Waves, float4(wave2UV, 0.0, 0.0f)).z) * _PG_UVOffset.z;
+                // float4 _Azure_WaterInfo2 = float4( 9.64001, 0.29522, 0.80493, 2.36235);
+                // float4 _Azure_WaterInfo3 = float4(0.47582, 0.51156, 0.00, 0.47049);
+                // float4 _Azure_WaterInfo6 = float4(0.59965, 2.51537, 0.79, 0.00);
+                float4 _PG_UVOffset  = float4(0.0, 0.0, -1.0, -1.0);
                 
                 float3 worldPos = mul(unity_ObjectToWorld, half4(v.vertex.xyz, 1.0f)).xyz;
-                worldPos.y += wave0.z +  wave0.x + wave0.y;
-                worldPos.x += wave0.x;
-                worldPos.z += wave0.y;
+
+                float3 distance = (worldPos - _WorldSpaceCameraPos);
+                float d = sqrt(dot(distance, distance));
+                d -= _CameraRelatedFadeRange;
+                d = max(d, _CameraRelatedClipRange.x);
+                d = min(d, _CameraRelatedClipRange.y);
+                d /= _CameraRelatedClipRange.y;
+                d = 1.0 - d;
+
+                float3 u_xlat6;
+                float3 u_xlat1;
+                float4 u_xlat2;
+                float3 u_xlat3;
+                float3 u_xlat11;
+                float3 u_xlat16_4;
+                float3 u_xlat16_9;
+                u_xlat1.x = d;
+                
+                u_xlat6.xy = worldPos.xz + (-_PG_UVOffset.xy);
+                u_xlat6.xy = u_xlat6.xy * float2(-0.300000012, -0.300000012);
+                u_xlat2 = u_xlat6.xyxy * float4(_displacementSmallWaveScale, _displacementSmallWaveScale, _displacementBigWaveScale, _displacementBigWaveScale);
+                float time = _Time.x * 0.1;
+                u_xlat3.y = time * _Azure_WaterInfo6.z;
+                u_xlat3.x = (-u_xlat3.y);
+                u_xlat6.xy = u_xlat2.xy * float2(0.100000001, 0.100000001) + u_xlat3.xy;
+                u_xlat3.xy = u_xlat3.yy * float2(1.0, -1.0);
+                u_xlat6.xy = u_xlat6.xy * _Waves_ST.xy + _Waves_ST.zw;
+
+                u_xlat6.x = tex2Dlod(_Waves, float4(u_xlat6.xy, 0.0, 0.0f)).y    ;
+                u_xlat6.x = u_xlat1.x * u_xlat6.x;
+                u_xlat11.xy = u_xlat2.xy * float2(0.100000001, 0.100000001) + float2(0.5, 0.5);
+                u_xlat2.xy = u_xlat2.zw * float2(0.100000001, 0.100000001);
+                u_xlat2.xy = (-_Azure_WaterInfo2.ww) * time.xx + u_xlat2.xy;
+                u_xlat2.xy = u_xlat2.xy * _Waves_ST.xy + _Waves_ST.zw;
+                u_xlat2.x = tex2Dlod(_Waves, float4(u_xlat2.xy, 0.0, 0.0f)).z ;
+                u_xlat2.x = u_xlat1.x * u_xlat2.x;
+                u_xlat16_4.x = dot(u_xlat2.xxx, float3(0.300000012, 0.589999974, 0.109999999));
+                u_xlat11.xy = u_xlat11.xy * float2(0.75, 0.75) + u_xlat3.xy;
+                u_xlat11.xy = u_xlat11.xy * _Waves_ST.xy + _Waves_ST.zw;
+                u_xlat11.x = tex2Dlod(_Waves, float4(u_xlat11.xy, 0.0, 0.0f)).y;
+                 //wave0.xy*=5;
+                //wave0.xy*=abs(_SinTime.xz);
+                u_xlat16_9 = u_xlat11.x * u_xlat1.x + (-u_xlat6.x);
+                u_xlat16_9 = u_xlat16_9 * 0.5 + u_xlat6.x;
+                u_xlat1.x = u_xlat16_4.x * _Azure_WaterInfo3.x + u_xlat16_9;
+                u_xlat16_4.y = dot(float3(u_xlat16_9), float3(0.300000012, 0.589999974, 0.109999999));
+                //vs_TEXCOORD0.zw = u_xlat16_4.xy;
+                //u_xlat0.w = u_xlat1.x * _Azure_WaterInfo6.y + u_xlat0.y;
+                worldPos.y += u_xlat1.x * _Azure_WaterInfo6.y;
+                
+                // worldPos.x += wave0.x;
+                // worldPos.z += wave0.y;
                 o.worldPos = worldPos;
                 o.vertex = UnityWorldToClipPos(worldPos);
                 
@@ -114,7 +164,6 @@ Shader "STtools/Wave_VSTexture02"
                float3 ddxPos = normalize(ddx(i.worldPos));
                float3 ddyPos = normalize(ddy(i.worldPos));
                float3 normal = normalize( cross(ddyPos, ddxPos));
-                
                
                 //return half4(i.normal, 1.0f);
                 // Normalized direction to the light source

@@ -20,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: LiMingZhiHai
-  m_Shader: {fileID: 4800000, guid: 29fb3c25e4036e241be0077a7543cabd, type: 3}
+  m_Name: LiMingZhiHai 1
+  m_Shader: {fileID: 4800000, guid: b01aee466488bf94ba8e0e0ecb769850, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -82,7 +82,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _Waves:
         m_Texture: {fileID: 2800000, guid: 745a583e60d353349b6006432e69f0e2, type: 3}
-        m_Scale: {x: 1.5, y: 2}
+        m_Scale: {x: 10, y: 10}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
         m_Texture: {fileID: 0}
@@ -104,8 +104,6 @@ Material:
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
-    - _CameraDistance: 1
-    - _CameraRelatedFadeRange: -14.31
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _Cull: 2
@@ -122,7 +120,7 @@ Material:
     - _GlossyReflections: 0
     - _Metallic: 0
     - _OcclusionStrength: 1
-    - _PG_WaterRendererHeight: 34.65
+    - _PG_WaterRendererHeight: 83
     - _Parallax: 0.005
     - _QueueOffset: 0
     - _ReceiveShadows: 1
@@ -139,20 +137,19 @@ Material:
     - _Wavelength: 1
     - _WorkflowMode: 1
     - _ZWrite: 1
-    - _displacementBigWaveScale: 0.48
-    - _displacementSmallWaveScale: 0.12
+    - _displacementBigWaveScale: 0.7
+    - _displacementSmallWaveScale: 0.162
     m_Colors:
-    - _Azure_WaterInfo2: {r: 9.6, g: 0.3, b: 0.8, a: 2.3}
-    - _Azure_WaterInfo3: {r: 0.38, g: 0.51, b: 0, a: 0.47}
-    - _Azure_WaterInfo6: {r: 0.6, g: 2.5, b: 1.16, a: 0}
+    - _Azure_WaterInfo2: {r: 1, g: 1, b: 0.3, a: 1}
+    - _Azure_WaterInfo3: {r: 1.5, g: 1.5, b: -0.84, a: -1}
+    - _Azure_WaterInfo6: {r: 3, g: 3, b: 3, a: 1}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _CameraRelatedClipRange: {r: 0, g: 66.9, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Color1: {r: 0, g: 0.39215687, b: 1, a: 0}
-    - _Color2: {r: 0, g: 0.3921566, b: 1, a: 0}
+    - _Color1: {r: 0.20679955, g: 0.57540894, b: 0.6981132, a: 0}
+    - _Color2: {r: 0.22191167, g: 0.7981693, b: 0.8584906, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _GerstnerDir: {r: 0.5, g: 0.5, b: 0, a: 0}
     - _MultiGerstnerPram: {r: 0.1, g: 0.3, b: 0.3, a: 0.3}
-    - _PG_UVOffset: {r: 1, g: 0, b: 2.24, a: 1}
+    - _PG_UVOffset: {r: 5, g: 0, b: 2, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []

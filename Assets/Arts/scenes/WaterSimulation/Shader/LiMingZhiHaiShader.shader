@@ -12,14 +12,13 @@ Shader "STtools/Wave_VSTexture"
 //        [MaterialToggle(_GERSTNERWAVE_ON)] _Toggle0("Enable GerstnerWave", Float) = 0
 //        [MaterialToggle(_DIR_GERSTNERWAVE)] _Toggle1("Enable Dir GerstnerWave", Float) = 0
 //        [MaterialToggle(_Multi_GERSTNERWAVE)] _Toggle2("Multi Dir GerstnerWave", Float) = 0
-        _Azure_WaterInfo2 ("_Azure_WaterInfo2", Vector) = ( 9.64001, 0.29522, 0.80493, 2.36235)
-        _Azure_WaterInfo3 ("_Azure_WaterInfo3", Vector) = (0.47582, 0.51156, 0.00, 0.47049)
-        _Azure_WaterInfo6 ("_Azure_WaterInfo6", Vector) = (0.59965, 2.51537, 0.79, 0.00)
-        _PG_UVOffset ("_PG_UVOffset", Vector) = (0.0, 0.0, -1.0, -1.0)
+//        _Azure_WaterInfo2 ("_Azure_WaterInfo2", Vector) = ( 9.64001, 0.29522, 0.80493, 2.36235)
+//        _Azure_WaterInfo3 ("_Azure_WaterInfo3", Vector) = (0.47582, 0.51156, 0.00, 0.47049)
+//        _Azure_WaterInfo6 ("_Azure_WaterInfo6", Vector) = (0.59965, 2.51537, 0.79, 0.00)
+//        _PG_UVOffset ("_PG_UVOffset", Vector) = (0.0, 0.0, -1.0, -1.0)
         _displacementSmallWaveScale ("_displacementSmallWaveScale", Float) = 0.162
         _displacementBigWaveScale ("_displacementBigWaveScale", Float) = 0.7
         _PG_WaterRendererHeight ("_PG_WaterRendererHeight", Float) =  83.0
-          
 //        _GerstnerIterNum ("_MultiGerstnerPram", Int) = 64
 //        _GerstnerSpeed ("_MultiGerstnerPram", Float) = 1.0
 //        _GerstnerDir ("_MultiGerstnerPram", Vector) = (0.5, 0.5, 0.0, 0.0)
@@ -111,24 +110,24 @@ Shader "STtools/Wave_VSTexture"
                 hlslcc_mtx4x4_PG_MatrixVPInverse = transpose(hlslcc_mtx4x4_PG_MatrixVPInverse);
                 u_xlat0 = v.vertex.zzzz * hlslcc_mtx4x4_PG_MatrixVPInverse[1];
                 u_xlat0 = hlslcc_mtx4x4_PG_MatrixVPInverse[0] * v.vertex.xxxx + u_xlat0;
-                //u_xlat1 = u_xlat0 + hlslcc_mtx4x4_PG_MatrixVPInverse[2];
+                u_xlat1 = u_xlat0 + hlslcc_mtx4x4_PG_MatrixVPInverse[2];
                 u_xlat0 = u_xlat0 + hlslcc_mtx4x4_PG_MatrixVPInverse[3];
                 u_xlat0.xyz = u_xlat0.xyz / u_xlat0.www;
-                //u_xlat1 = u_xlat1 + hlslcc_mtx4x4_PG_MatrixVPInverse[3];
-                //u_xlat1.xyz = u_xlat1.xyz / u_xlat1.www;
-                //u_xlat1.xyz = (-u_xlat0.xyz) + u_xlat1.xyz;
+                u_xlat1 = u_xlat1 + hlslcc_mtx4x4_PG_MatrixVPInverse[3];
+                u_xlat1.xyz = u_xlat1.xyz / u_xlat1.www;
+                u_xlat1.xyz = (-u_xlat0.xyz) + u_xlat1.xyz;
 
                 // insert -----
                 //
-                hlslcc_mtx4x4unity_MatrixVP = UNITY_MATRIX_VP;
-                 hlslcc_mtx4x4unity_MatrixVP = transpose(hlslcc_mtx4x4unity_MatrixVP);
-                //hlslcc_mtx4x4unity_MatrixVP[2][2] = - hlslcc_mtx4x4unity_MatrixVP[2][2];
-                u_xlat1 = u_xlat0.yyyy * hlslcc_mtx4x4unity_MatrixVP[1];
-                u_xlat1 = hlslcc_mtx4x4unity_MatrixVP[0] * u_xlat0.xxxx + u_xlat1;
-                u_xlat1 = hlslcc_mtx4x4unity_MatrixVP[2] * u_xlat0.zzzz + u_xlat1;
-                u_xlat1 = u_xlat1 + hlslcc_mtx4x4unity_MatrixVP[3];
-                o.vertex = u_xlat1;
-                return o;
+                // hlslcc_mtx4x4unity_MatrixVP = UNITY_MATRIX_VP;
+                //  hlslcc_mtx4x4unity_MatrixVP = transpose(hlslcc_mtx4x4unity_MatrixVP);
+                // //hlslcc_mtx4x4unity_MatrixVP[2][2] = - hlslcc_mtx4x4unity_MatrixVP[2][2];
+                // u_xlat1 = u_xlat0.yyyy * hlslcc_mtx4x4unity_MatrixVP[1];
+                // u_xlat1 = hlslcc_mtx4x4unity_MatrixVP[0] * u_xlat0.xxxx + u_xlat1;
+                // u_xlat1 = hlslcc_mtx4x4unity_MatrixVP[2] * u_xlat0.zzzz + u_xlat1;
+                // u_xlat1 = u_xlat1 + hlslcc_mtx4x4unity_MatrixVP[3];
+                // o.vertex = u_xlat1;
+                // return o;
                 // insert -----
                 //
                 
@@ -158,18 +157,10 @@ Shader "STtools/Wave_VSTexture"
                 u_xlat6.xy = u_xlat2.xy * float2(0.100000001, 0.100000001) + u_xlat3.xy;
                 u_xlat3.xy = u_xlat3.yy * float2(1.0, -1.0);
 
-                
-                o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
-
-
-
-                u_xlat6.xy = v.uv.xy;
-                o.uv = v.uv;
-                //u_xlat6.xy = u_xlat6.xy * _Waves_ST.xy + _Waves_ST.zw;
-                u_xlat6.xy = u_xlat6.xy * _Waves_ST.xy + float2(0.0f, _Time.x);
-
-                u_xlat6.x = tex2Dlod(_Waves, float4(u_xlat6.xy, 0.0, 0.0f)).y * 0.5f;
-                //u_xlat6.x = tex2Dlod(_Waves, float4(u_xlat6.xy, 0.0, 0.0f)).y;
+                // u_xlat6.xy = v.uv.xy;
+                // o.uv = v.uv;
+                u_xlat6.xy = u_xlat6.xy * _Waves_ST.xy + _Waves_ST.zw;
+                u_xlat6.x = tex2Dlod(_Waves, float4(u_xlat6.xy, 0.0, 0.0f)).y;
                 u_xlat6.x = u_xlat1.x * u_xlat6.x;
                 u_xlat11.xy = u_xlat2.xy * float2(0.100000001, 0.100000001) + float2(0.5, 0.5);
                 u_xlat2.xy = u_xlat2.zw * float2(0.100000001, 0.100000001);
