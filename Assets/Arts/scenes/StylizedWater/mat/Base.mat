@@ -21,18 +21,22 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Base
-  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
+  m_Shader: {fileID: 4800000, guid: b5601729246863d4ab984cac36ed43cb, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _RECEIVE_SHADOWS_OFF
+  - _ADVANCED_SHADING
+  - _CAUSTICS
+  - _FOAM
+  - _NORMALMAP
+  - _REFRACTION
+  - _SHARP_INERSECTION
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
-  stringTagMap:
-    RenderType: Opaque
+  stringTagMap: {}
   disabledShaderPasses: []
   m_LockedProperties: 
   m_SavedProperties:
@@ -43,7 +47,23 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: b9f7556d3e84a834fb1af78196843f16, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMapLarge:
+        m_Texture: {fileID: 2800000, guid: 88908a7c7a1f0ed418d1048378c17411, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CausticsTex:
+        m_Texture: {fileID: 2800000, guid: 744ff0bbd92e5bd41a70b5102327485b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CubeMap:
+        m_Texture: {fileID: 8900000, guid: ddd9f5f47c3e70b419878036645ce0f7, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DepthControlTex:
+        m_Texture: {fileID: 2800000, guid: fcfaff953aac7a84ba208ea0aa58ae49, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -62,6 +82,14 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _FoamTex:
+        m_Texture: {fileID: 2800000, guid: 6a4aa5aa1ed7b9e4e9204a95f56f4d29, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _IntersectionNoise:
+        m_Texture: {fileID: 2800000, guid: 6a4aa5aa1ed7b9e4e9204a95f56f4d29, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: b3c0152a802a2304cab93bf9b51390e4, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -78,8 +106,16 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _PlanarReflectionLeft:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SpecTex:
+        m_Texture: {fileID: 2800000, guid: b96e7c55309948244854a08331df78b4, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -101,34 +137,107 @@ Material:
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
+    - _CausticsBrightness: 4
+    - _CausticsDistortion: 0.047
+    - _CausticsOn: 1
+    - _CausticsSpeed: 0.15
+    - _CausticsTiling: 0.3
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _Cull: 2
     - _Cutoff: 0.5
+    - _DepthControlTexTilling: 0.1
+    - _DepthExp: 1
+    - _DepthHorizontal: 1.7
+    - _DepthVertical: 4
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
+    - _DisableDepthTexture: 0
     - _DstBlend: 0
     - _DstBlendAlpha: 0
+    - _EdgeFade: 1.87
     - _EnvironmentReflections: 1
+    - _FoamSize: 0.905
+    - _FoamSpeed: 0.04
+    - _FoamTiling: 0.07
+    - _FoamWaveMask: 0
+    - _FoamWaveMaskExp: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
+    - _HorizonDistance: 4
+    - _IntersectionClipping: 1
+    - _IntersectionFalloff: 1
+    - _IntersectionLength: 5
+    - _IntersectionRippleDist: 32
+    - _IntersectionRippleStrength: 1
+    - _IntersectionSource: 0
+    - _IntersectionSpeed: 0.10999999
+    - _IntersectionStyle: 1
+    - _IntersectionTiling: 0.13
     - _Metallic: 0
+    - _NormalMapOn: 1
+    - _NormalSpeed: 0.050000004
+    - _NormalStrength: 0.2
+    - _NormalTiling: 0.07
     - _OcclusionStrength: 1
     - _Parallax: 0.005
+    - _PlanarReflectionsEnabled: 0
+    - _PointSpotLightReflectionExp: 64
     - _QueueOffset: 0
     - _ReceiveShadows: 0
+    - _ReflectionBlur: 0
+    - _ReflectionDistortion: 0.089
+    - _ReflectionFresnel: 6.06
+    - _ReflectionLighting: 0
+    - _ReflectionStrength: 0.5
+    - _RefractionOn: 1
+    - _RefractionStrength: 1
+    - _ShadingMode: 1
+    - _ShadowStrength: 1
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
+    - _SparkleIntensity: 0.2
+    - _SparkleSize: 0.318
+    - _SpecNum: 0.03
+    - _SpecStrength: 10
+    - _SpecTexTilling: 0.4
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
+    - _SunReflectionDistortion: 0.49
+    - _SunReflectionSize: 0.932
+    - _SunReflectionStrength: 10
     - _Surface: 0
+    - _UnderwaterRefractionOffset: 0.2
+    - _UnderwaterSurfaceSmoothness: 0.8
+    - _WaveCount: 1
+    - _WaveDistance: 0.8
+    - _WaveHeight: 0.25
+    - _WaveNormalStr: 0.5
+    - _WaveSpeed: 2
+    - _WaveSteepness: 0.1
+    - _WaveTint: 0
+    - _WavesOn: 0
     - _WorkflowMode: 1
+    - _WorldSpaceUV: 1
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _AnimationParams: {r: 1, g: 1, b: 1, a: 0}
+    - _BaseColor: {r: 0, g: 0.45490196, b: 0.6901961, a: 0.9647059}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _DeepColor1: {r: 0, g: 0.08627451, b: 0.41568628, a: 0.8039216}
+    - _DistanceNormalParams: {r: 100, g: 300, b: 0.25, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _FoamColor: {r: 4.9230526e+14, g: 5.077588e+14, b: 5.6294995e+14, a: 1}
+    - _HorizonColor: {r: 0.84, g: 1, b: 1, a: 0.15}
+    - _IntersectionColor: {r: 1, g: 1, b: 1, a: 1}
+    - _ShallowColor: {r: 0, g: 0.56078434, b: 1, a: 0.36862746}
+    - _SlopeParams: {r: 0.5, g: 4, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - _SpecLightDir: {r: 9.97, g: 1.29, b: 12.44, a: 0}
+    - _TranslucencyParams: {r: 1, g: 8, b: 1, a: 0}
+    - _VertexColorMask: {r: 0, g: 0, b: 0, a: 0}
+    - _WaveDirection: {r: 1, g: 1, b: 1, a: 1}
+    - _WaveFadeDistance: {r: 150, g: 300, b: 0, a: 0}
   m_BuildTextureStacks: []

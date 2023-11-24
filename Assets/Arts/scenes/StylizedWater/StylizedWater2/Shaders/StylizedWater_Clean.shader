@@ -460,7 +460,7 @@ Shader "Universal Render Pipeline/FX/Stylized Water_clean"
 				//surfaceDepth = depth.eye - LinearEyeDepth(input.positionCS.z, _ZBufferParams);
 				surfaceDepth = SurfaceDepth(depth, input.positionCS);
 				#endif
-				
+				//return half4(surfaceDepth.xxx, 1.0f);
 			#else
 				surfaceDepth = SurfaceDepth(depth, input.positionCS);
 			#endif
@@ -487,7 +487,7 @@ Shader "Universal Render Pipeline/FX/Stylized Water_clean"
 				#if !_RIVER
 				waterDensity = waterDensity * saturate(waterDensity - vertexColor.g);
 				#endif
-
+				
 				float intersection = 0;
 			#if _SHARP_INERSECTION || _SMOOTH_INTERSECTION
 
@@ -548,7 +548,8 @@ Shader "Universal Render Pipeline/FX/Stylized Water_clean"
 				#endif
 
 				//Albedo
-				float4 depthContrl = SampleControlTex(input.uv.xy * _DepthControlTexTilling);
+				float3 worldPos = float3(input.normalWS.w, input.tangent.w, input.bitangent.w);
+				float4 depthContrl = SampleControlTex(worldPos.xz * _DepthControlTexTilling * 0.01f);
 				float depthContrlval =  dot(half3(1,1,1) , depthContrl);
 				//return half4(depthContrlval.xxx, 1.0f);
 				//waterDensity *= depthContrlval;
@@ -561,11 +562,12 @@ Shader "Universal Render Pipeline/FX/Stylized Water_clean"
 				//baseColor = baseColor * 
 				float4 baseAlpha = lerp(_ShallowColor, _BaseColor, waterDensity);
 				//return half4(waterDensity.xxx, 1.0f);
+				
 				baseColor.rgb += _WaveTint * height;
 				
 				albedo.rgb = baseColor.rgb;
 				alpha = baseAlpha.a;
-
+				return half4(albedo.rgb,1.0f);
 				float3 sparkles = 0;
 			#if _NORMALMAP
 				float NdotL = saturate(dot(UP_VECTOR, worldTangentNormal));

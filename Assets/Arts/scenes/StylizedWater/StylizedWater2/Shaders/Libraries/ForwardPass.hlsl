@@ -247,7 +247,7 @@ half4 ForwardPassFragment(Varyings input) : SV_Target
 	#endif
 
 	foam = SampleFoam(uv * _FoamTiling, TIME, flowMap, _FoamSize, foamMask, slope);
-
+		
 	#if _RIVER
 	foam *= saturate(_FoamColor.a + 1-slope + vertexColor.a);
 	#else

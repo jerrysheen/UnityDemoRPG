@@ -35,6 +35,13 @@ Shader "STtools/Wave_VSTexture02"
         Tags { "RenderType"="Opaque" }
         LOD 100
         Pass {
+             Stencil
+             {
+                Ref 2
+                Comp Always
+                Pass Replace
+             }
+            
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
@@ -165,7 +172,7 @@ Shader "STtools/Wave_VSTexture02"
                float3 ddyPos = normalize(ddy(i.worldPos));
                float3 normal = normalize( cross(ddyPos, ddxPos));
                
-                //return half4(i.normal, 1.0f);
+                //return half4(normal, 1.0f);
                 // Normalized direction to the light source
                 float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
                 // Calculate the Blinn-Phong reflection model
@@ -179,7 +186,7 @@ Shader "STtools/Wave_VSTexture02"
                 //col.rgb =  ;
                 // Combine the textures and light effects
                 //fixed4 col = tex2D(_MainTex, i.vertex.xy) * _Color;
-                fixed4 col = lerp(_Color1, _Color2,waveHeight);
+                fixed4 col =  _Color1;
                 float3 _LightColor0 = float3(1.0, 1.0, 1.0);
                 col.rgb *= _LightColor0.rgb * diff; // Diffuse lighting
                 col.rgb += _Specular.rgb * _LightColor0.rgb * spec; // Specular lighting

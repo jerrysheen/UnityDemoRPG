@@ -50,14 +50,15 @@ Shader "sea"
         }
         LOD 100
 
-        Blend srcalpha oneminussrcalpha
-        ZWrite off
-        cull off
 
         Pass
         {
+            
+            Blend srcalpha oneminussrcalpha
+            ZWrite off
+            cull off
             Name "ForwardLit"
-       Tags{"LightMode" = "UniversalForward"}
+            Tags{"LightMode" = "UniversalForward"}
             HLSLPROGRAM
             #pragma only_renderers gles gles3 glcore d3d11
             #pragma target 4.5

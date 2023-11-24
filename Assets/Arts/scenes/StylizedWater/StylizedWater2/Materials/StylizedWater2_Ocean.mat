@@ -31,7 +31,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: 
+  m_LockedProperties: :m_CustomRenderQueue
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -211,7 +211,7 @@ Material:
     - _WaveNormalStr: 6
     - _WaveSpeed: 1.5
     - _WaveSteepness: 1
-    - _WaveTint: 0.047
+    - _WaveTint: -0.1
     - _WavesOn: 1
     - _WorkflowMode: 1
     - _WorldSpaceUV: 1
