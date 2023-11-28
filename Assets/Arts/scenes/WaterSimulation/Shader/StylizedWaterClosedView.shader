@@ -405,7 +405,7 @@ Shader "EngineSupport/StylizedWaterClosedView"
 				
 				float3 albedo;
 				float alpha;
-            	albedo.rgb = baseColor.rgb + foam;
+            	albedo.rgb = baseColor.rgb + foam * _FoamColor;
 				alpha = baseAlpha.a;
 				return half4(albedo.rgb, alpha);
 
