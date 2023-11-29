@@ -400,7 +400,7 @@ Shader "Universal Render Pipeline/FX/Stylized Water_clean"
 				
 			#if _NORMALMAP
 				NormalsCombined = SampleNormals(uv * _NormalTiling, wPos, TIME, flowMap, _NormalSpeed, slope, vFace);
-				//return float4((NormalsCombined.x * 0.5 + 0.5), (NormalsCombined.y * 0.5 + 0.5), 1, 1);
+				//return half4(NormalsCombined.rgb,1.0f);
 
 				worldTangentNormal = normalize(TransformTangentToWorld(NormalsCombined, half3x3(WorldTangent, WorldBiTangent, waveNormal)));
 
@@ -567,7 +567,7 @@ Shader "Universal Render Pipeline/FX/Stylized Water_clean"
 				
 				albedo.rgb = baseColor.rgb;
 				alpha = baseAlpha.a;
-				return half4(albedo.rgb,1.0f);
+				//return half4(albedo.rgb,1.0f);
 				float3 sparkles = 0;
 			#if _NORMALMAP
 				float NdotL = saturate(dot(UP_VECTOR, worldTangentNormal));
@@ -576,6 +576,7 @@ Shader "Universal Render Pipeline/FX/Stylized Water_clean"
 				sparkles = saturate(step(_SparkleSize, (saturate(NormalsCombined.y) * NdotL))) * _SparkleIntensity * mainLight.color * angleMask;
 				
 				albedo.rgb += sparkles.rgb;
+
 			#endif
 				//return float4(baseColor.rgb, alpha);
 
@@ -627,7 +628,7 @@ Shader "Universal Render Pipeline/FX/Stylized Water_clean"
 				
 				//Will be added to emission in lighting function
 				reflections *= reflectionMask * (1-_ReflectionLighting);
-				//return float4(reflections.rgb, 1);
+				return float4(reflections.rgb, 1);
 			#endif
 
 				float3 caustics = 0;

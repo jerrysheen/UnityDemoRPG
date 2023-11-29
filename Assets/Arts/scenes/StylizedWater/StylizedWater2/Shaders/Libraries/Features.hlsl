@@ -31,7 +31,7 @@ float3 SampleNormals(float2 uv, float3 wPos, float2 time, float2 flowmap, float 
 	float3 n2 = UnpackNormal(SAMPLE_TEXTURE2D(_BumpMap, sampler_BumpMap, uvs.zw));
 
 	float3 blendedNormals = BlendTangentNormals(n1, n2);
-
+	
 #if _DISTANCE_NORMALS
 	float pixelDist = length(_WorldSpaceCameraPos.xyz - wPos.xyz);
 

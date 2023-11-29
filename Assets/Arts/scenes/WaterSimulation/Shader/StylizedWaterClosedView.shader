@@ -43,7 +43,7 @@ Shader "EngineSupport/StylizedWaterClosedView"
     	
     	[Header(DepthVariation)]
 		[HDR]_BaseColor("Deep", Color) = (0, 0.44, 0.62, 1)
-		[HDR]_DeepColor1("Deep1", Color) = (0, 0.44, 0.62, 1)
+		[HDR]_DeepColor1("Deep1", Color) = (0, 0.44, 0.62, 1)    	
 		[HDR]_ShallowColor("Shallow", Color) = (0.1, 0.9, 0.89, 0.02)
 		[HDR]_HorizonColor("Horizon", Color) = (0.84, 1, 1, 0.15)
 
@@ -54,6 +54,23 @@ Shader "EngineSupport/StylizedWaterClosedView"
 		_DepthExp("Exponential Blend", Range(0 , 1)) = 1
 		_WaveTint("_WaveTint", Range(-0.1 , 1)) = 0
 
+    	[Header(Sparkle)]
+    	_SparkleSize("Sparkle Size", Range( 0 , 1)) = 0.318
+    	_SparkleIntensity("Sparkle Intensity", Range(0 , 10)) = 0.2
+		
+    	[Header(World Reflection)]
+		[NoScaleOffset][SingleLineTexture]_SpecTex("_SpecTex", 2D) = "black" {}
+		_SpecLightDir("Specular Dir", vector) = (9.97, 1.29, 12.44, 0.1)
+		_SpecTexTilling("_SpecTexTilling", Range(0.001, 1)) = 0.05
+		_SpecStrength("_SpecStrength", Range(1, 50)) = 10
+		_SpecNum("_SpecNum", Range(0.0, 0.03)) = 0.01
+		_ReflectionStrength("Strength", Range( 0 , 1)) = 0
+		_ReflectionDistortion("Distortion", Range( 0 , 1)) = 0.05
+		_ReflectionBlur("Blur", Range( 0 , 1)) = 0	
+		_ReflectionFresnel("Curvature mask", Range( 0.01 , 20)) = 5	
+		_ReflectionLighting("Lighting influence", Range( 0 , 1)) = 1	
+		_PlanarReflectionLeft("Planar Reflections", 2D) = "" {} //Instanced
+		_PlanarReflectionsEnabled("Planar Enabled", float) = 0 //Instanced
     	
 
     	//_IntersectionNoiseTex ("交互泡沫贴图", 2D) = "white" {}
@@ -162,6 +179,11 @@ Shader "EngineSupport/StylizedWaterClosedView"
             float4 _ShallowColor;
 			float4 _BaseColor;
 			float4 _DeepColor1;
+
+
+            // sparkles:
+            float _SparkleIntensity;
+			float _SparkleSize;
             
             CBUFFER_END
 
@@ -314,13 +336,13 @@ Shader "EngineSupport/StylizedWaterClosedView"
                 
                 // Sample Normal: 两次：
                 float2 NormalUV1 = _NormalTilling.xy * WorldUV.xy + (_Time.xx * _NormalFlowSpeed.xy);
-	            float2 NormalUV2 = _NormalTilling.zw * (WorldUV.xy * 0.5) + (_Time.xx * _NormalFlowSpeed.xy);
+	            float2 NormalUV2 = _NormalTilling.zw * (WorldUV.xy * 0.5) + ((1.0 - _Time.xx) * _NormalFlowSpeed.xy * 0.5f);
                 float3 n1 = UnpackNormal(SAMPLE_TEXTURE2D(_WaveNormalTex, sampler_WaveNormalTex, NormalUV1));
 	            float3 n2 = UnpackNormal(SAMPLE_TEXTURE2D(_WaveNormalTex, sampler_WaveNormalTex, NormalUV2));
 
 	            float3 blendedNormals = BlendNormalRNM(n1, n2);
             	float3 worldTangentNormal = normalize(TransformTangentToWorld(blendedNormals, half3x3(i.bitangent, i.tangent, normal)));
-
+				//return half4(blendedNormals.xyz, 1.0f);
                 //todo: do normal blend here----
 
                 
@@ -407,27 +429,81 @@ Shader "EngineSupport/StylizedWaterClosedView"
 				float alpha;
             	albedo.rgb = baseColor.rgb + foam * _FoamColor;
 				alpha = baseAlpha.a;
-				return half4(albedo.rgb, alpha);
-
-				float3 sparkles = 0;
-				
+				//return half4(albedo.rgb, alpha);
 				//-----------------------------------------------Depth part
-            	
-				return float4(foam, foam, foam, 1);
 
+            	
+            	//-----------------------------------------------sparkles part
+            	float3 sparkles = 0;
+				float NdotL = saturate(dot(float3(0.0f,1.0f,0.0f), worldTangentNormal));
+				half sunAngle = saturate(dot(float3(0.0f,1.0f,0.0f), _MainLightPosition));
+				half angleMask = saturate(sunAngle * 10); /* 1.0/0.10 = 10 */
+				sparkles = saturate(step(_SparkleSize, (saturate(blendedNormals.y) * NdotL))) * _SparkleIntensity * _MainLightColor * angleMask;
+				albedo.rgb += sparkles.rgb;
+            	return half4(albedo.xyz,1.0f);
+
+            	//-----------------------------------------------sparkles part
 				#if WAVE_SIMULATION
 				SampleWaveSimulationFoam(wPos, foam);
 				#endif
             	//-----------------------------------------------Foam part
 
+
+            	float3 sunReflectionNormals = worldTangentNormal;
+
+            	half3 sunSpec = 0;
+				//Specular
+                //float3 lightDir = normalize(half4(9.97f, 1.29f, 12.44f, 0.1f)); // normalize(_MainLightPosition);
+                float3 lightDir = normalize(_SpecLightDir); // normalize(_MainLightPosition);
+                float3 halfview = SafeNormalize(viewDirNorm + lightDir);
+				//sunSpec = SpecularReflection(mainLight, viewDirNorm, sunReflectionNormals, _SunReflectionDistortion, _SunReflectionSize, _SunReflectionStrength);
+				sunSpec = pow(max(0, dot(normalize(normalWS), halfview)), 36);
+				sunSpec.rgb *= saturate((1-foam) * (1-intersection) * shadowMask); //Hide
+				
+				float specularRes = SampleSpecTex(uv *  _SpecTexTilling, TIME, _SpecNum);
+                sunSpec *= smoothstep(0,1,specularRes) * _SpecStrength;
+				//return half4(specularRes.xxx * 100.0f, 1.0f);
+			#endif
+				//Reflection probe/planar
+				float3 reflections = 0;
+			// #ifndef _ENVIRONMENTREFLECTIONS_OFF
+			// 	float3 refWorldTangentNormal = lerp(waveNormal, normalize(waveNormal + worldTangentNormal), _ReflectionDistortion);
+   //
+			// 	#if _FLAT_SHADING //Skip, not a good fit
+			// 	refWorldTangentNormal = waveNormal;
+			// 	#endif
+			// 	
+			// 	float3 reflectionVector = reflect(-viewDirNorm , refWorldTangentNormal);
+			// 	float2 reflectionPerturbation = lerp(waveNormal.xz * 0.5, worldTangentNormal.xy, _ReflectionDistortion).xy;
+			// 	//reflections = SampleReflections(reflectionVector, _ReflectionBlur, _PlanarReflectionsEnabled, ScreenPos.xyzw, wPos, refWorldTangentNormal, viewDirNorm, reflectionPerturbation);
+   //
+   //              //half4 encodedIrradiance = SAMPLE_TEXTURECUBE_LOD(unity_SpecCube0, samplerunity_SpecCube0, reflectionVector,0);
+   //
+			// 	reflections = SAMPLE_TEXTURECUBE_LOD(_CubeMap, sampler_CubeMap, reflectionVector,0);
+			// 	//return half4(encodedIrradiance.xyz, 1.0f);
+			// 	half reflectionFresnel = ReflectionFresnel(refWorldTangentNormal, viewDirNorm, _ReflectionFresnel);
+			// 	half reflectionMask = _ReflectionStrength * reflectionFresnel * vFace;
+			// 	reflectionMask = saturate(reflectionMask - foam - intersection);
+			// 	//return float4(reflectionFresnel.xxx, 1);
+   //
+			// 	//Blend reflection with albedo. Diffuse lighting will affect it
+			// 	albedo.rgb = lerp(albedo, lerp(albedo.rgb, reflections, reflectionMask), _ReflectionLighting);
+			// 	//return float4(albedo.rgb, 1);
+			// 	
+			// 	//Will be added to emission in lighting function
+			// 	reflections *= reflectionMask * (1-_ReflectionLighting);
+			// 	return float4(reflections.rgb, 1);
+			// #endif
+
+            	
 				// #if UNDERWATER_ENABLED
 				// intersection *= vFace;
 				// #endif
 				
-				#if _WAVES
-				//Prevent from peering through waves when camera is at the water level
-				if(wPos.y < opaqueWorldPos.y) intersection = 0;
-				#endif
+				// #if _WAVES
+				// //Prevent from peering through waves when camera is at the water level
+				// if(wPos.y < opaqueWorldPos.y) intersection = 0;
+				// #endif
                 
                 // Normalized direction to the light source
                 float3 lightDir = normalize(_MainLightPosition.xyz);
