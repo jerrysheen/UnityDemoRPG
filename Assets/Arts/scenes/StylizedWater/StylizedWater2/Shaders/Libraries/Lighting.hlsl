@@ -185,12 +185,11 @@ float3 SpecularReflection(Light light, float3 viewDirectionWS, float3 normalWS, 
 //Based on UniversalFragmentBlinnPhong (no BRDF)
 float3 ApplyLighting(inout SurfaceData surfaceData, InputData inputData, TranslucencyData translucencyData, SurfaceNormalData normalData, float3 caustics, float3 reflections, float shadowStrength, float vFace)
 {
-	ApplyTranslucency(translucencyData, surfaceData.emission.rgb);
+	//ApplyTranslucency(translucencyData, surfaceData.emission.rgb);
 
 	#if _CAUSTICS
 	float causticsAttentuation = 1;
 	#endif
-	
 #ifdef LIT
 	Light mainLight = GetMainLight(inputData.shadowCoord);
 	mainLight.distanceAttenuation = 1.0f;
@@ -219,55 +218,55 @@ float3 ApplyLighting(inout SurfaceData surfaceData, InputData inputData, Translu
 
 	half3 diffuseColor = inputData.bakedGI + LightingLambert(attenuatedLightColor, mainLight.direction, normalWS);
 	
-#if _ADDITIONAL_LIGHTS //Per pixel lights
-	half specularPower = (_PointSpotLightReflectionExp * SPECULAR_POWER_RCP);
-	
-	uint pixelLightCount = GetAdditionalLightsCount();
-	for (uint lightIndex = 0u; lightIndex < pixelLightCount; ++lightIndex)
-	{
-		#if VERSION_GREATER_EQUAL(11,0) //2021.1+
-		Light light = GetAdditionalLight(lightIndex, inputData.positionWS, shadowStrength.xxxx);	
-		#else
-		Light light = GetAdditionalLight(lightIndex, inputData.positionWS);
-		#endif
-
-		#if _ADVANCED_SHADING
-			#if _CAUSTICS && !_LIGHT_COOKIES //Actually want to skip this when using cookies. Since they can be used for caustics instead
-			//Light attenuation adds caustics, mask by shadows
-			causticsAttentuation += GetLightIntensity(light) * (light.distanceAttenuation * light.shadowAttenuation);
-			#endif
-		
-			#if _TRANSLUCENCY
-			//Keep settings from main light pass, override these
-			translucencyData.lightDir = light.direction;
-			translucencyData.lightColor = light.color * light.distanceAttenuation;
-			translucencyData.strength *= light.shadowAttenuation;
-			
-			ApplyTranslucency(translucencyData, surfaceData.emission.rgb);
-			#endif
-		#endif
-
-		#if VERSION_GREATER_EQUAL(11,0) && _ADDITIONAL_LIGHT_SHADOWS //2021.1+
-		AdjustShadowStrength(light, shadowStrength, vFace);
-		#endif
-
-		half3 attenuatedLightColor = light.color * (light.distanceAttenuation * light.shadowAttenuation);
-		diffuseColor += LightingLambert(attenuatedLightColor, light.direction, normalWS);
-
-		#ifndef _SPECULARHIGHLIGHTS_OFF
-		//Fast blinn-phong specular
-		surfaceData.specular += LightingSpecular(attenuatedLightColor, light.direction, inputData.normalWS, inputData.viewDirectionWS, half4(light.color.rgb, 0), _PointSpotLightReflectionExp) * specularPower;
-		#endif
-	}
-#endif
-
-#ifdef _ADDITIONAL_LIGHTS_VERTEX //Previous calculated in vertex stage
-	diffuseColor += inputData.vertexLighting;
-#endif
-
-#else //Unlit
-	const half3 diffuseColor = 1;
-#endif
+// #if _ADDITIONAL_LIGHTS //Per pixel lights
+// 	half specularPower = (_PointSpotLightReflectionExp * SPECULAR_POWER_RCP);
+// 	
+// 	uint pixelLightCount = GetAdditionalLightsCount();
+// 	for (uint lightIndex = 0u; lightIndex < pixelLightCount; ++lightIndex)
+// 	{
+// 		#if VERSION_GREATER_EQUAL(11,0) //2021.1+
+// 		Light light = GetAdditionalLight(lightIndex, inputData.positionWS, shadowStrength.xxxx);	
+// 		#else
+// 		Light light = GetAdditionalLight(lightIndex, inputData.positionWS);
+// 		#endif
+//
+// 		#if _ADVANCED_SHADING
+// 			#if _CAUSTICS && !_LIGHT_COOKIES //Actually want to skip this when using cookies. Since they can be used for caustics instead
+// 			//Light attenuation adds caustics, mask by shadows
+// 			causticsAttentuation += GetLightIntensity(light) * (light.distanceAttenuation * light.shadowAttenuation);
+// 			#endif
+// 		
+// 			#if _TRANSLUCENCY
+// 			//Keep settings from main light pass, override these
+// 			translucencyData.lightDir = light.direction;
+// 			translucencyData.lightColor = light.color * light.distanceAttenuation;
+// 			translucencyData.strength *= light.shadowAttenuation;
+// 			
+// 			ApplyTranslucency(translucencyData, surfaceData.emission.rgb);
+// 			#endif
+// 		#endif
+//
+// 		#if VERSION_GREATER_EQUAL(11,0) && _ADDITIONAL_LIGHT_SHADOWS //2021.1+
+// 		AdjustShadowStrength(light, shadowStrength, vFace);
+// 		#endif
+//
+// 		half3 attenuatedLightColor = light.color * (light.distanceAttenuation * light.shadowAttenuation);
+// 		diffuseColor += LightingLambert(attenuatedLightColor, light.direction, normalWS);
+//
+// 		#ifndef _SPECULARHIGHLIGHTS_OFF
+// 		//Fast blinn-phong specular
+// 		surfaceData.specular += LightingSpecular(attenuatedLightColor, light.direction, inputData.normalWS, inputData.viewDirectionWS, half4(light.color.rgb, 0), _PointSpotLightReflectionExp) * specularPower;
+// 		#endif
+// 	}
+// #endif
+//
+// #ifdef _ADDITIONAL_LIGHTS_VERTEX //Previous calculated in vertex stage
+// 	diffuseColor += inputData.vertexLighting;
+// #endif
+//
+// #else //Unlit
+// 	const half3 diffuseColor = 1;
+ #endif
 
 	#if _CAUSTICS
 	surfaceData.emission.rgb += caustics * causticsAttentuation;

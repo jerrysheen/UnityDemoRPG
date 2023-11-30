@@ -153,6 +153,13 @@ Shader "Universal Render Pipeline/FX/Stylized Water_clean"
 			ZWrite [_ZWrite]
 			Cull [_Cull]
 			ZTest LEqual
+			Stencil
+            {
+               Ref 2
+               Comp NotEqual
+               Pass Replace
+            }
+			
 			
 			HLSLPROGRAM
 
@@ -604,10 +611,10 @@ Shader "Universal Render Pipeline/FX/Stylized Water_clean"
 				float3 reflections = 0;
 			#ifndef _ENVIRONMENTREFLECTIONS_OFF
 				float3 refWorldTangentNormal = lerp(waveNormal, normalize(waveNormal + worldTangentNormal), _ReflectionDistortion);
-
-				#if _FLAT_SHADING //Skip, not a good fit
-				refWorldTangentNormal = waveNormal;
-				#endif
+				//return half4(refWorldTangentNormal.xyz, 1.0f);
+				// #if _FLAT_SHADING //Skip, not a good fit
+				// refWorldTangentNormal = waveNormal;
+				// #endif
 				
 				float3 reflectionVector = reflect(-viewDirNorm , refWorldTangentNormal);
 				float2 reflectionPerturbation = lerp(waveNormal.xz * 0.5, worldTangentNormal.xy, _ReflectionDistortion).xy;
@@ -616,7 +623,6 @@ Shader "Universal Render Pipeline/FX/Stylized Water_clean"
                 //half4 encodedIrradiance = SAMPLE_TEXTURECUBE_LOD(unity_SpecCube0, samplerunity_SpecCube0, reflectionVector,0);
 
 				reflections = SAMPLE_TEXTURECUBE_LOD(_CubeMap, sampler_CubeMap, reflectionVector,0);
-				//return half4(encodedIrradiance.xyz, 1.0f);
 				half reflectionFresnel = ReflectionFresnel(refWorldTangentNormal, viewDirNorm, _ReflectionFresnel);
 				half reflectionMask = _ReflectionStrength * reflectionFresnel * vFace;
 				reflectionMask = saturate(reflectionMask - foam - intersection);
@@ -628,7 +634,6 @@ Shader "Universal Render Pipeline/FX/Stylized Water_clean"
 				
 				//Will be added to emission in lighting function
 				reflections *= reflectionMask * (1-_ReflectionLighting);
-				return float4(reflections.rgb, 1);
 			#endif
 
 				float3 caustics = 0;
@@ -649,18 +654,18 @@ Shader "Universal Render Pipeline/FX/Stylized Water_clean"
 
 				// Translucency
 				TranslucencyData translucencyData = (TranslucencyData)0;
-			#if _TRANSLUCENCY
-				
-				//Note: value is subtracted
-				float thickness = saturate(intersection + (foam * 0.25) + (1-shadowMask)); //Foam isn't 100% opaque; 
-				//return float4(thickness, thickness, thickness, 1);
-
-				translucencyData = PopulateTranslucencyData(_ShallowColor.rgb,mainLight.direction, mainLight.color, viewDirNorm, lerp(UP_VECTOR, waveNormal, vFace),worldTangentNormal, thickness, _TranslucencyParams);
-				#if UNDERWATER_ENABLED
-				//Override the strength of the effect for the backfaces, to match the underwater shading post effect
-				translucencyData.strength *= lerp(_UnderwaterFogBrightness * _UnderwaterSubsurfaceStrength, 1, vFace);
-				#endif
-			#endif
+			// #if _TRANSLUCENCY
+			// 	
+			// 	//Note: value is subtracted
+			// 	float thickness = saturate(intersection + (foam * 0.25) + (1-shadowMask)); //Foam isn't 100% opaque; 
+			// 	//return float4(thickness, thickness, thickness, 1);
+			//
+			// 	translucencyData = PopulateTranslucencyData(_ShallowColor.rgb,mainLight.direction, mainLight.color, viewDirNorm, lerp(UP_VECTOR, waveNormal, vFace),worldTangentNormal, thickness, _TranslucencyParams);
+			// 	#if UNDERWATER_ENABLED
+			// 	//Override the strength of the effect for the backfaces, to match the underwater shading post effect
+			// 	translucencyData.strength *= lerp(_UnderwaterFogBrightness * _UnderwaterSubsurfaceStrength, 1, vFace);
+			// 	#endif
+			// #endif
 
 				//Foam application on top of everything up to this point
 				#if _FOAM
@@ -686,7 +691,7 @@ Shader "Universal Render Pipeline/FX/Stylized Water_clean"
 				fresnel *= vFace;
 				#endif
 				albedo.rgb = lerp(albedo.rgb, _HorizonColor.rgb, fresnel * _HorizonColor.a);
-
+				//return half4(albedo.rgb, alpha);
 				#if UNITY_COLORSPACE_GAMMA
 				//Gamma-space is likely a choice, enabling this will have the water stand out from non gamma-corrected shaders
 				//albedo.rgb = LinearToSRGB(albedo.rgb);
@@ -700,7 +705,7 @@ Shader "Universal Render Pipeline/FX/Stylized Water_clean"
 				#endif
 
 				alpha *= edgeFade;
-
+				//return half4(alpha.xxx, 1.0f);
 				SurfaceData surfaceData = (SurfaceData)0;
 
 				surfaceData.albedo = albedo.rgb;
@@ -735,44 +740,44 @@ Shader "Universal Render Pipeline/FX/Stylized Water_clean"
 				inputData.vertexLighting = input.fogFactorAndVertexLight.yzw;
 
 				inputData.bakedGI = 0;
-				#if defined(DYNAMICLIGHTMAP_ON) && VERSION_GREATER_EQUAL(12,0)
-			    inputData.bakedGI = SAMPLE_GI(input.bakedLightmapUV, input.dynamicLightmapUV, input.vertexSH, inputData.normalWS);
-			    #else
+				// #if defined(DYNAMICLIGHTMAP_ON) && VERSION_GREATER_EQUAL(12,0)
+			 //    inputData.bakedGI = SAMPLE_GI(input.bakedLightmapUV, input.dynamicLightmapUV, input.vertexSH, inputData.normalWS);
+			 //    #else
 			    inputData.bakedGI = SAMPLE_GI(input.bakedLightmapUV, input.vertexSH, inputData.normalWS);
-			    #endif
 
 				float4 finalColor = float4(ApplyLighting(surfaceData, inputData, translucencyData, normalData, caustics, reflections, _ShadowStrength, vFace), alpha);
-				#if VERSION_GREATER_EQUAL(12,0) && defined(DEBUG_DISPLAY)
-				inputData.positionCS = input.positionCS;
-				#if _NORMALMAP
-				inputData.tangentToWorld = half3x3(WorldTangent, WorldBiTangent, inputData.normalWS);
-				#else
-				inputData.tangentToWorld = 0;
-				#endif
-				inputData.normalizedScreenSpaceUV = ScreenPos.xy / ScreenPos.w;
-				inputData.shadowMask = shadowCoords;
-				#if defined(DYNAMICLIGHTMAP_ON)
-				inputData.dynamicLightmapUV = input.dynamicLightmapUV;
-				#endif
-				#if defined(LIGHTMAP_ON)
-				inputData.staticLightmapUV = input.bakedLightmapUV;
-				#else
-				inputData.vertexSH = input.vertexSH;
-				#endif
-
-				inputData.brdfDiffuse = surfaceData.albedo;
-				inputData.brdfSpecular = surfaceData.specular;
-				inputData.uv = uv;
-				inputData.mipCount = 0;
-				inputData.texelSize = float4(1/uv.x, 1/uv.y, uv.x, uv.y);
-				inputData.mipInfo = 0;
-				half4 debugColor;
-
-				if (CanDebugOverrideOutputColor(inputData, surfaceData, debugColor))
-				{
-					return debugColor;
-				}
-				#endif
+				return half4(finalColor.rgb, 1.0f);
+				// #if VERSION_GREATER_EQUAL(12,0) && defined(DEBUG_DISPLAY)
+				// inputData.positionCS = input.positionCS;
+				// #if _NORMALMAP
+				// inputData.tangentToWorld = half3x3(WorldTangent, WorldBiTangent, inputData.normalWS);
+				// #else
+				// inputData.tangentToWorld = 0;
+				// #endif
+				// inputData.normalizedScreenSpaceUV = ScreenPos.xy / ScreenPos.w;
+				// inputData.shadowMask = shadowCoords;
+				// #if defined(DYNAMICLIGHTMAP_ON)
+				// inputData.dynamicLightmapUV = input.dynamicLightmapUV;
+				// #endif
+				// #if defined(LIGHTMAP_ON)
+				// inputData.staticLightmapUV = input.bakedLightmapUV;
+				// #else
+				// inputData.vertexSH = input.vertexSH;
+				// #endif
+				//
+				// inputData.brdfDiffuse = surfaceData.albedo;
+				// inputData.brdfSpecular = surfaceData.specular;
+				// inputData.uv = uv;
+				// inputData.mipCount = 0;
+				// inputData.texelSize = float4(1/uv.x, 1/uv.y, uv.x, uv.y);
+				// inputData.mipInfo = 0;
+				// half4 debugColor;
+				//
+				// if (CanDebugOverrideOutputColor(inputData, surfaceData, debugColor))
+				// {
+				// 	return debugColor;
+				// }
+				// #endif
 
 				float3 sceneColor = 0;
 				#if _REFRACTION || UNDERWATER_ENABLED
@@ -786,27 +791,27 @@ Shader "Universal Render Pipeline/FX/Stylized Water_clean"
 				
 				ApplyFog(finalColor.rgb, input.fogFactorAndVertexLight.x, ScreenPos, wPos, vFace);
 
-				#if UNDERWATER_ENABLED
-					float skyMask = 0;
-					
-					#if !_DISABLE_DEPTH_TEX
-					#if _ADVANCED_SHADING && _REFRACTION
-					//Use depth resampled with refracted screen UV
-					depth.raw = depthRefracted.raw;
-					#endif
-						
-					skyMask = (Linear01Depth(depth.raw, _ZBufferParams) > 0.99 ? 1 : 0);
-					//return float4(skyMask.xxx, 1.0);
-					#endif
-				
-				float3 underwaterColor = ShadeUnderwaterSurface(albedo.rgb, surfaceData.emission.rgb, surfaceData.specular.rgb, sceneColor, skyMask, backfaceShadows, inputData.positionWS, inputData.normalWS, worldTangentNormal, viewDirNorm,  _ShallowColor.rgb, _BaseColor.rgb, vFace);
-				finalColor.rgb = lerp(underwaterColor, finalColor.rgb, vFace);
-				alpha = lerp(1.0, alpha, vFace);
-				#endif
-				
-				#if _RIVER
-				finalColor.a = alpha * saturate(alpha - vertexColor.g);
-				#endif
+				// #if UNDERWATER_ENABLED
+				// 	float skyMask = 0;
+				// 	
+				// 	#if !_DISABLE_DEPTH_TEX
+				// 	#if _ADVANCED_SHADING && _REFRACTION
+				// 	//Use depth resampled with refracted screen UV
+				// 	depth.raw = depthRefracted.raw;
+				// 	#endif
+				// 		
+				// 	skyMask = (Linear01Depth(depth.raw, _ZBufferParams) > 0.99 ? 1 : 0);
+				// 	//return float4(skyMask.xxx, 1.0);
+				// 	#endif
+				//
+				// float3 underwaterColor = ShadeUnderwaterSurface(albedo.rgb, surfaceData.emission.rgb, surfaceData.specular.rgb, sceneColor, skyMask, backfaceShadows, inputData.positionWS, inputData.normalWS, worldTangentNormal, viewDirNorm,  _ShallowColor.rgb, _BaseColor.rgb, vFace);
+				// finalColor.rgb = lerp(underwaterColor, finalColor.rgb, vFace);
+				// alpha = lerp(1.0, alpha, vFace);
+				// #endif
+				//
+				// #if _RIVER
+				// finalColor.a = alpha * saturate(alpha - vertexColor.g);
+				// #endif
 
 				// finalColor.a = max(0.8f, waterDensity);
 				// finalColor.a += intersection;
