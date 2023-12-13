@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3015778595471726316
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3015778595471726314}
+  - component: {fileID: 3015778595471726315}
+  m_Layer: 0
+  m_Name: WaterCausticsTexGen_SampleC
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3015778595471726314
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3015778595471726316}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3015778595471726315
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3015778595471726316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce6f32962bedf3d4aa7f27136ff042df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_generateInEditMode: 1
+  m_density: 0.9
+  m_speed: 0.7
+  m_waves:
+  - Active: 1
+    Pause: 0
+    m_density: 4.5
+    m_height: 0.427
+    m_fluctuation: 0.6
+    m_flowU: 0.4
+    m_flowV: 0
+  - Active: 1
+    Pause: 0
+    m_density: 9.85
+    m_height: 0.065
+    m_fluctuation: 0.6
+    m_flowU: -0.7
+    m_flowV: 0
+  m_calcResolution: 160
+  m_renderTexture: {fileID: 8400000, guid: e174f8ce9d6981c41a5d0a6ebe04ae9c, type: 2}
+  m_FillGapAmount: 0.06
+  m_lightDirectionType: 0
+  m_lightTransform: {fileID: 0}
+  m_lightDir: {x: 0, y: -1, z: 0}
+  m_lightCondensingStyle: 1
+  m_rayStyle: 0
+  m_brightness: 0.4
+  m_gamma: 1.387
+  m_clamp: 2
+  m_refractionIndex: 1.333
+  m_useChromaticAberration: 0
+  m_chromaticAberration: 0.005
+  m_computeShader: {fileID: 7200000, guid: cf24bd9d2b71b65458b930c520b46e99, type: 3}
+  m_shader: {fileID: 4800000, guid: e031a2e28107901449265842632577a4, type: 3}

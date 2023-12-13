@@ -1,0 +1,85 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2492296966956588659
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1530210899911655379}
+  - component: {fileID: 5907205790788540564}
+  m_Layer: 0
+  m_Name: WaterCausticsEffect
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1530210899911655379
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2492296966956588659}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5907205790788540564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2492296966956588659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e975b56feadc05a4a9da076c953ae619, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_layerMask:
+    serializedVersion: 2
+    m_Bits: 2147483647
+  m_clipOutsideVolume: 1
+  m_useImageMask: 0
+  m_imageMaskTexture: {fileID: 0}
+  m_texture: {fileID: 8400000, guid: d8d75ba782bdf2d4d9a758c1dc53d504, type: 2}
+  m_scale: 2
+  m_waterSurfaceY: 2
+  m_useWaterSurfaceAtten: 1
+  m_waterSurfaceAttenWide: 0.5
+  m_intensity: 3
+  m_adjustMainLit: 1
+  m_adjustAddLit: 1
+  m_colorShiftU: 0.4
+  m_colorShiftV: -0.1
+  m_litSaturation: 0.2
+  m_multiplyOpaqueColor: 1
+  m_multiplyOpaqueIntensity: 0.75
+  m_normalAttenIntensity: 1
+  m_transparentBackside: 0
+  m_receiveShadows: 1
+  m_useMainLight: 1
+  m_useAdditionalLights: 1
+  m_syncWithShaderFunctions: 1
+  m_stencilRef: 0
+  m_stencilReadMask: 255
+  m_stencilWriteMask: 255
+  m_stencilComp: 8
+  m_stencilPass: 0
+  m_stencilFail: 0
+  m_stencilZFail: 0
+  m_cullMode: 0
+  m_zWriteMode: 0
+  m_zTestMode: 3
+  m_depthOffsetFactor: 0
+  m_depthOffsetUnits: 0
+  m_shader: {fileID: 4800000, guid: 348afebc23c3c6e4c8f05f2ea8f758fc, type: 3}
+  m_noTexture: {fileID: 2800000, guid: 27623e5a17b6fd44a9af57a733ee993a, type: 3}
+  m__material: {fileID: 0}

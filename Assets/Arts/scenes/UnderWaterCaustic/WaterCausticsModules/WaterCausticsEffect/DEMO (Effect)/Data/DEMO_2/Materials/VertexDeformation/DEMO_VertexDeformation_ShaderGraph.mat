@@ -1,0 +1,100 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7485755138218441092
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 7
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: DEMO_VertexDeformation_ShaderGraph
+  m_Shader: {fileID: -6465566751694194690, guid: b7a51fd5c756ac24f89374ac7430b62c,
+    type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - CausticsTexture:
+        m_Texture: {fileID: 8400000, guid: d8d75ba782bdf2d4d9a758c1dc53d504, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _WaterCausticsEmissionSubGraph_a72eaa4827da4fc18d5216a28b80d4e0_Texture2D9544caad8e664fd59dcdcf09462f3a6d_3163037872:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _WaterCausticsEmission_307e7132091c47129e4664418fd317f0_Texture2D9544caad8e664fd59dcdcf09462f3a6d_3163037872:
+        m_Texture: {fileID: 8400000, guid: d8d75ba782bdf2d4d9a758c1dc53d504, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _WaterCausticsEmission_76fbc94e0dc94c0c9ff1554f30e378ae_Texture2D9544caad8e664fd59dcdcf09462f3a6d_3163037872:
+        m_Texture: {fileID: 8400000, guid: d8d75ba782bdf2d4d9a758c1dc53d504, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _WaterCausticsEmission_d196933e110b4f74833bc8f2e3536cb7_Texture2D9544caad8e664fd59dcdcf09462f3a6d_3163037872:
+        m_Texture: {fileID: 8400000, guid: d8d75ba782bdf2d4d9a758c1dc53d504, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _WaterCausticsEmission_dd1b7707c562429ca46821321b9fafb4_Texture2D9544caad8e664fd59dcdcf09462f3a6d_3163037872:
+        m_Texture: {fileID: 8400000, guid: d8d75ba782bdf2d4d9a758c1dc53d504, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _WaterCausticsEmission_eb6f5ffad9fb4696ae7d232096057bd6_Texture2D9544caad8e664fd59dcdcf09462f3a6d_3163037872:
+        m_Texture: {fileID: 8400000, guid: d8d75ba782bdf2d4d9a758c1dc53d504, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - AdjustAlpha: -0.853
+    - Alpha: 1
+    - AlphaPow: 1
+    - DisplacementHeight: 0.81
+    - Hight: 0.092
+    - Metalic: 1
+    - NormalIntensity: 0.36
+    - Opacity: 3
+    - Smoothness: 1
+    - Speed: 0.319
+    - WaveCount: 43.7
+    - WaveDensity: 4
+    - _QueueControl: 0
+    - _QueueOffset: 0
+    m_Colors:
+    - BaseColor: {r: 0.30588233, g: 0.4352941, b: 0.8, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Specular: {r: 1, g: 1, b: 1, a: 0}
+  m_BuildTextureStacks: []

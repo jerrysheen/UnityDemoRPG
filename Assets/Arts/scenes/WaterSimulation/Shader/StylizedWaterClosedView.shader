@@ -416,6 +416,7 @@ Shader "EngineSupport/StylizedWaterClosedView"
 				
 				//"bakedLightmapUV" resolves to "staticLightmapUV" in URP12+
 				VertexNormalInputs normalInput = GetVertexNormalInputs(v.normalOS, v.tangentOS);
+				o.normalWS = float4(normalInput.normalWS, o.worldPos.x);
 				OUTPUT_LIGHTMAP_UV(input.bakedLightmapUV, unity_LightmapST, output.bakedLightmapUV);
 				OUTPUT_SH(o.normalWS.xyz, o.vertexSH);
 	
