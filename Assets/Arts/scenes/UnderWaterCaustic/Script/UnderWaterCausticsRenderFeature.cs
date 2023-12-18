@@ -16,13 +16,12 @@ namespace UnityEngine.Rendering.Universal
         
         UnderWaterCausticsRenderPass m_ScriptablePass;
         public Settings passSettings = new Settings();
-
         /// <inheritdoc/>
         public override void Create()
         {
             m_ScriptablePass = new UnderWaterCausticsRenderPass(passSettings);
             // Configures where the render pass should be injected.
-            m_ScriptablePass.renderPassEvent = RenderPassEvent.AfterRenderingTransparents;
+            m_ScriptablePass.renderPassEvent = RenderPassEvent.BeforeRenderingPostProcessing;
         }
 
         // Here you can inject one or multiple render passes in the renderer.
@@ -42,20 +41,20 @@ namespace UnityEngine.Rendering.Universal
         
         class UnderWaterCausticsRenderPass : ScriptableRenderPass
         {
+            private RenderTargetIdentifier source { get; set; }
             // Profiling tag
             private static string m_ProfilerTag = "UnderWaterCaustic";
             private static ProfilingSampler m_ProfilingSampler = new ProfilingSampler(m_ProfilerTag);
 
             // Private Variables
             private Material m_Material;
-            
             //private ScreenSpaceShadowsSettings m_CurrentSettings;
             private RTHandle m_RenderTarget;
             private Settings m_Settings;
             public UnderWaterCausticsRenderPass(Settings settings)
             {
                 m_Settings = settings;
-                m_Material = m_Settings.causticMat;
+                m_Material = settings.causticMat;
             }
 
             public void Dispose()
@@ -70,20 +69,17 @@ namespace UnityEngine.Rendering.Universal
             // The render pipeline will ensure target setup and clearing happens in a performant manner.
             public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
             {
-                var desc = renderingData.cameraData.cameraTargetDescriptor;
-                desc.depthBufferBits = 0;
-                desc.msaaSamples = 1;
-                desc.graphicsFormat = RenderingUtils.SupportsGraphicsFormat(GraphicsFormat.R8_UNorm,
-                    FormatUsage.Linear | FormatUsage.Render)
-                    ? GraphicsFormat.R8_UNorm
-                    : GraphicsFormat.B8G8R8A8_UNorm;
-
-                RenderingUtils.ReAllocateIfNeeded(ref m_RenderTarget, desc, FilterMode.Point, TextureWrapMode.Clamp,
-                    name: "_UnderWaterCausticTex");
-                cmd.SetGlobalTexture(m_RenderTarget.name, m_RenderTarget.nameID);
-
-                ConfigureTarget(renderingData.cameraData.renderer.cameraColorTargetHandle);
-                ConfigureClear(ClearFlag.All, Color.white);
+                
+                // var descriptor = new RenderTextureDescriptor(renderingData.cameraData.cameraTargetDescriptor.width, renderingData.cameraData.cameraTargetDescriptor.height);
+                // descriptor.graphicsFormat = renderingData.cameraData.cameraTargetDescriptor.graphicsFormat;
+                // descriptor.useMipMap = false;
+                // RenderingUtils.ReAllocateIfNeeded(ref m_RenderTarget, descriptor, FilterMode.Point, TextureWrapMode.Clamp,
+                //     name: "_UnderWaterCausticTex");
+                // //cmd.SetGlobalTexture(m_RenderTarget.name, m_RenderTarget.nameID);
+                //
+                // //ConfigureTarget(renderingData.cameraData.renderer.cameraColorTargetHandle);
+                // ConfigureTarget(m_RenderTarget);
+                // ConfigureClear(ClearFlag.None, Color.white);
             }
 
             // Here you can implement the rendering logic.
@@ -92,22 +88,32 @@ namespace UnityEngine.Rendering.Universal
             // You don't have to call ScriptableRenderContext.submit, the render pipeline will call it at specific points in the pipeline.
             public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
             {
+                var stack = VolumeManager.instance.stack;
                 if (m_Material == null)
                 {
                     Debug.LogErrorFormat(
-                        "{0}.Execute(): Missing material. ScreenSpaceShadows pass will not execute. Check for missing reference in the renderer resources.",
+                        "{0}.Execute(): Missing material. CausticRenderPass will not execute. Check for missing reference in the renderer resources.",
                         GetType().Name);
                     return;
                 }
+
 
                 Camera camera = renderingData.cameraData.camera;
                 
                 CommandBuffer cmd = CommandBufferPool.Get();
                 using (new ProfilingScope(cmd, m_ProfilingSampler))
                 {
-                    Blitter.BlitCameraTexture(cmd, m_RenderTarget, m_RenderTarget, m_Material, 0);
+                    var descriptor = new RenderTextureDescriptor(renderingData.cameraData.cameraTargetDescriptor.width, renderingData.cameraData.cameraTargetDescriptor.height);
+                    descriptor.graphicsFormat = renderingData.cameraData.cameraTargetDescriptor.graphicsFormat;
+                    descriptor.useMipMap = false;
+                    RenderingUtils.ReAllocateIfNeeded(ref m_RenderTarget, descriptor, FilterMode.Point, TextureWrapMode.Clamp,
+                        name: "_UnderWaterCausticTex");
+                    source = renderingData.cameraData.renderer.cameraColorTargetHandle;
+                    cmd.Blit(source, m_RenderTarget, m_Material, 0);
+                    cmd.Blit(m_RenderTarget, source);
                 }
                 context.ExecuteCommandBuffer(cmd);
+                cmd.Clear();
                 CommandBufferPool.Release(cmd);
             }
 
