@@ -71,6 +71,11 @@ Shader "Universal Render Pipeline/Lit"
         [HideInInspector][NoScaleOffset]unity_Lightmaps("unity_Lightmaps", 2DArray) = "" {}
         [HideInInspector][NoScaleOffset]unity_LightmapsInd("unity_LightmapsInd", 2DArray) = "" {}
         [HideInInspector][NoScaleOffset]unity_ShadowMasks("unity_ShadowMasks", 2DArray) = "" {}
+        
+        [HideInInspector] _CausticAtten0("_CausticAtten0", Float) = 0.0
+        [ToggleUI] _EnableCaustic("Receive Shadows", Float) = 1.0
+        [HideInInspector] _CausticTexture("_CausticTexture", 2D) = "white" {}
+        [HideInInspector] _CausticNoiseTex("_CausticNoiseTex", 2D) = "white" {}
     }
 
     SubShader
@@ -163,6 +168,10 @@ Shader "Universal Render Pipeline/Lit"
             // GPU Instancing
             #pragma multi_compile_instancing
             #pragma instancing_options renderinglayer
+
+            ///---------------------------VANGUARD_UNDERWATER_CAUSTIC_PROPERTY
+            #pragma shader_feature_local _ENABLE_CAUSTIC
+
             #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl"
 
             #include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"

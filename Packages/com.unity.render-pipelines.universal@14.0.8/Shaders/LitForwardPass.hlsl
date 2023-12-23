@@ -203,6 +203,8 @@ void LitPassFragment(
 #endif
 )
 {
+
+
     UNITY_SETUP_INSTANCE_ID(input);
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
 
@@ -218,6 +220,25 @@ void LitPassFragment(
 
     SurfaceData surfaceData;
     InitializeStandardLitSurfaceData(input.uv, surfaceData);
+
+//#if _ENABLE_CAUSTIC
+    surfaceData.emission +=  SAMPLE_TEXTURE2D(_CausticTexture, sampler_CausticTexture, input.positionWS);
+    float3 wpos = input.positionWS;
+    float2 noiseUV = wpos.xz * _NoiseTex_ST.xy + _NoiseTex_ST.zw + _Time.x * _NoiseAttan.zw;
+    float3 noise = SAMPLE_TEXTURE2D(_NoiseTex, sampler_NoiseTex, noiseUV);
+    noise = sin((noise - 0.5f) * 2.0f);
+    half2 worldPosWithCompensite0 = half2(wpos.x +_VerticalCompensate0.z* sin(_VerticalCompensate0.x * wpos.y), wpos.z + _VerticalCompensate0.w * cos( _VerticalCompensate0.y * wpos.y));
+    float2 causticUV0 = (worldPosWithCompensite0 + _NoiseAttan.x * noise.rg)* _FlowParam00.w + _Time.y * _FlowParam00.z * normalize(_FlowParam00.xy);
+    float4 caustic = SAMPLE_TEXTURE2D(_CausticTexture, sampler_CausticTexture, causticUV0) ;
+    half2 worldPosWithCompensite1 = half2(wpos.x +_VerticalCompensate1.z* sin(_VerticalCompensate1.x * wpos.y), wpos.z + _VerticalCompensate1.w * cos( _VerticalCompensate1.y * wpos.y));
+    float2 causticUV1 = (worldPosWithCompensite1 + _NoiseAttan.y * noise.rg)* _FlowParam01.w + _Time.y * _FlowParam01.z * normalize(_FlowParam01.xy);
+    float4 caustic1 = SAMPLE_TEXTURE2D(_CausticTexture, sampler_CausticTexture, 1.0 - causticUV1);
+
+    caustic *= _CausticAttan0;
+    caustic1 *= _CausticAttan1;
+    //outColor =  half4(_CausticTexture_ST.xy, _CausticTexture_ST.z, 1.0f);
+    //return;
+//#endif
 
 #ifdef LOD_FADE_CROSSFADE
     LODFadeCrossFade(input.positionCS);

@@ -14,8 +14,9 @@ Material:
   m_ValidKeywords:
   - _ADVANCED_SHADING
   - _CAUSTICS
-  - _ENVIRONMENTREFLECTIONS_OFF
-  - _SPECULARHIGHLIGHTS_OFF
+  - _FOAM
+  - _NORMALMAP
+  - _REFRACTION
   - _TRANSLUCENCY
   - _WAVES
   m_InvalidKeywords:
@@ -158,7 +159,7 @@ Material:
     - _Metallicness: 0.1
     - _NORMALMAPOn: 1
     - _NormalMap: 1
-    - _NormalMapOn: 0
+    - _NormalMapOn: 1
     - _NormalSpeed: 0.13000005
     - _NormalStrength: 0.322
     - _NormalTiling: 0.060000084
@@ -175,7 +176,7 @@ Material:
     - _ReflectionStrength: 1
     - _Reflectivity: 1
     - _RefractionAmount: 0.05
-    - _RefractionOn: 0
+    - _RefractionOn: 1
     - _RefractionStrength: 0
     - _RimRize: 1
     - _RimTiling: 0.025

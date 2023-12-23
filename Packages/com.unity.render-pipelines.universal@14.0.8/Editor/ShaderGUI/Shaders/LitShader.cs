@@ -49,6 +49,7 @@ namespace UnityEditor.Rendering.Universal.ShaderGUI
             LitGUI.Inputs(litProperties, materialEditor, material);
             DrawEmissionProperties(material, true);
             DrawTileOffset(materialEditor, baseMapProp);
+            DrawCausticProperties(material,true);
         }
 
         // material main advanced options

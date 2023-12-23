@@ -404,6 +404,69 @@ namespace UnityEditor
         /// </summary>
         protected MaterialProperty queueControlProp { get; set; }
 
+        ///---------------------------VANGUARD_UNDERWATER_CAUSTIC_PROPERTY
+        ///
+        /// <summary>
+        /// The MaterialProperty for receive shadows.
+        /// </summary>
+        protected MaterialProperty enableCaustic { get; set; }
+        /// 
+        /// <summary>
+        /// VANGUARD_UNDERWATER_CAUSTIC: The MaterialProperty for underwater caustic texture.
+        /// </summary>
+        protected MaterialProperty causticMapProp { get; set; }
+        
+        /// <summary>
+        /// VANGUARD_UNDERWATER_CAUSTIC: The MaterialProperty for underwater caustic noise texture.
+        /// </summary>
+        protected MaterialProperty causticNoiseMapProp { get; set; }
+        
+        
+        /// <summary>
+        /// VANGUARD_UNDERWATER_CAUSTIC: The MaterialProperty for underwater caustic noise attenuation.
+        /// </summary>
+        protected MaterialProperty noiseAttenProp { get; set; }
+        
+        /// <summary>
+        /// VANGUARD_UNDERWATER_CAUSTIC: The MaterialProperty for underwater caustic 0 flow param.
+        /// </summary>
+        protected MaterialProperty causticFlowParam0Prop { get; set; }        
+        
+        /// <summary>
+        /// VANGUARD_UNDERWATER_CAUSTIC: The MaterialProperty for underwater caustic attenuation param.
+        /// </summary>
+        protected MaterialProperty causticAtten0Prop { get; set; }
+        
+        /// <summary>
+        /// VANGUARD_UNDERWATER_CAUSTIC: The MaterialProperty for underwater caustic 1 flow param.
+        /// </summary>
+        protected MaterialProperty causticFlowParam1Prop { get; set; } 
+        
+        /// <summary>
+        /// VANGUARD_UNDERWATER_CAUSTIC: The MaterialProperty for underwater caustic attenuation param.
+        /// </summary>
+        protected MaterialProperty causticAtten1Prop { get; set; } 
+        
+        
+        /// <summary>
+        /// VANGUARD_UNDERWATER_CAUSTIC: The MaterialProperty for underwater vertical compensate.
+        /// </summary>
+        protected MaterialProperty verticalCompensate0Prop { get; set; }
+        
+        /// <summary>
+        /// VANGUARD_UNDERWATER_CAUSTIC: The MaterialProperty for underwater caustic normal dir.
+        /// </summary>
+        protected MaterialProperty causticNormalDIRProp { get; set; }
+        
+        /// <summary>
+        /// VANGUARD_UNDERWATER_CAUSTIC: The MaterialProperty for underwater caustic normal dir.
+        /// </summary>
+        protected MaterialProperty causticLightDIRProp { get; set; }
+
+
+        
+        
+        
         /// <summary>
         /// Used to sure that needed setup (ie keywords/render queue) are set up when switching some existing material to a universal shader.
         /// </summary>
@@ -464,6 +527,20 @@ namespace UnityEditor
             emissionMapProp = FindProperty(Property.EmissionMap, properties, false);
             emissionColorProp = FindProperty(Property.EmissionColor, properties, false);
             queueOffsetProp = FindProperty(Property.QueueOffset, properties, false);
+            
+            ///---------------------------VANGUARD_UNDERWATER_CAUSTIC_PROPERTY
+            enableCaustic = FindProperty(Property.EnableCaustic, properties, false);
+            causticMapProp = FindProperty(Property.CausticMap, properties, false);
+            causticNoiseMapProp = FindProperty(Property.CausticNoiseMap, properties, false);
+            noiseAttenProp = FindProperty(Property.NoiseAtten, properties, false);
+            causticFlowParam0Prop = FindProperty(Property.CausticFlowParam0, properties, false);
+            causticAtten0Prop = FindProperty(Property.CausticAtten0, properties, false);
+            causticFlowParam1Prop = FindProperty(Property.CausticFlowParam1, properties, false);
+            causticAtten1Prop = FindProperty(Property.CausticAtten1, properties, false);
+            verticalCompensate0Prop = FindProperty(Property.VerticalCompensate0, properties, false);
+            causticNormalDIRProp = FindProperty(Property.CausticNormalDIR, properties, false);
+            causticLightDIRProp = FindProperty(Property.CausticLightDIR, properties, false);
+            
         }
 
         /// <inheritdoc/>
@@ -686,6 +763,45 @@ namespace UnityEditor
                 // Change the GI emission flag and fix it up with emissive as black if necessary.
                 materialEditor.LightmapEmissionFlagsProperty(MaterialEditor.kMiniTextureFieldLabelIndentLevel, true);
             }
+        }
+        
+        ///---------------------------VANGUARD_UNDERWATER_CAUSTIC_PROPERTY
+        /// <summary>
+        /// Draws underwater caustic property.
+        /// </summary>
+        /// <param name="material">The material to use.</param>
+        /// <param name="keyword">The keyword used for caustic.</param>
+        protected virtual void DrawCausticProperties(Material material, bool keyword)
+        {
+            var caustic = true;
+            var Togglecontent = EditorGUIUtility.TrTextContent("Enable Caustic",
+                "When enabled, DrawCaustic Here");
+            var causticMapContent = EditorGUIUtility.TrTextContent("Caustic Map",
+                "When enabled, DrawCaustic Here");
+            var causticNoiseMapContent = EditorGUIUtility.TrTextContent("Caustic Noise Map",
+                "When enabled, DrawCaustic Here");
+            DrawFloatToggleProperty(Togglecontent, enableCaustic);
+            if (enableCaustic.floatValue == 1.0f)
+            {
+                using (new EditorGUI.IndentLevelScope(2))
+                {
+                    materialEditor.TexturePropertySingleLine(causticMapContent, causticMapProp);
+                    //causticAtten0Prop.floatValue = EditorGUILayout.Slider(new GUIContent("Test", null, "tooltip"), causticAtten0Prop.floatValue, 0.0f, 3.0f);
+                    DrawTileOffset(materialEditor, causticMapProp);
+                    materialEditor.TexturePropertySingleLine(causticNoiseMapContent, causticNoiseMapProp);
+                    DrawTileOffset(materialEditor, causticNoiseMapProp);
+                }
+            }
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                Debug.Log("Change Happened Here");
+                material.SetTexture("_CausticTexture", causticMapProp.textureValue);
+                CoreUtils.SetKeyword(material, "_ENABLE_CAUSTIC", enableCaustic.floatValue == 1.0f);
+                EditorUtility.SetDirty(material);
+            }
+       
+
         }
 
         /// <summary>

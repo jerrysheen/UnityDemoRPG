@@ -29,6 +29,12 @@ half _ClearCoatSmoothness;
 half _DetailAlbedoMapScale;
 half _DetailNormalMapScale;
 half _Surface;
+///---------------------------VANGUARD_UNDERWATER_CAUSTIC_PROPERTY
+half _CausticAtten0;
+float4 _CausticTexture_ST;
+float4 _CausticNoiseTex_ST;
+///---------------------------VANGUARD_UNDERWATER_CAUSTIC_PROPERTY
+
 CBUFFER_END
 
 // NOTE: Do not ifdef the properties for dots instancing, but ifdef the actual usage.
@@ -77,6 +83,10 @@ TEXTURE2D(_DetailNormalMap);    SAMPLER(sampler_DetailNormalMap);
 TEXTURE2D(_MetallicGlossMap);   SAMPLER(sampler_MetallicGlossMap);
 TEXTURE2D(_SpecGlossMap);       SAMPLER(sampler_SpecGlossMap);
 TEXTURE2D(_ClearCoatMap);       SAMPLER(sampler_ClearCoatMap);
+
+///---------------------------VANGUARD_UNDERWATER_CAUSTIC_PROPERTY
+TEXTURE2D(_CausticTexture);       SAMPLER(sampler_CausticTexture);
+TEXTURE2D(_CausticNoiseTex);       SAMPLER(sampler_CausticNoiseTex);
 
 #ifdef _SPECULAR_SETUP
     #define SAMPLE_METALLICSPECULAR(uv) SAMPLE_TEXTURE2D(_SpecGlossMap, sampler_SpecGlossMap, uv)

@@ -33,5 +33,21 @@ namespace UnityEditor.Rendering.Universal
         // Global Illumination requires some properties to be named specifically:
         public static readonly string EmissionMap = "_EmissionMap";
         public static readonly string EmissionColor = "_EmissionColor";
+        
+        
+        // VANGUARD_UNDERWATER_CAUSTIC: caustic properties.
+        public static readonly string EnableCaustic = "_EnableCaustic";
+        public static readonly string CausticMap = "_CausticTexture";
+        public static readonly string CausticNoiseMap = "_CausticNoiseTex";
+        public static readonly string NoiseAtten = "_CausticNoiseAtten";
+        public static readonly string CausticFlowParam0 = "_CausticFlowParam0";
+        public static readonly string CausticAtten0 = "_CausticAtten0";
+        public static readonly string CausticFlowParam1 = "_CausticFlowParam1";
+        public static readonly string CausticAtten1 = "_CausticAtten1";
+        public static readonly string VerticalCompensate0 = "_VerticalCompensate0";
+        public static readonly string CausticNormalDIR = "_CausticNormalDIR";
+        public static readonly string CausticLightDIR = "_CausticLightDIR";
+        
+
     }
 }
