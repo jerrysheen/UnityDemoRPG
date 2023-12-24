@@ -451,7 +451,14 @@ namespace UnityEditor
         /// <summary>
         /// VANGUARD_UNDERWATER_CAUSTIC: The MaterialProperty for underwater vertical compensate.
         /// </summary>
-        protected MaterialProperty verticalCompensate0Prop { get; set; }
+        protected MaterialProperty verticalCompensate0Prop { get; set; } 
+        
+        
+        
+        /// <summary>
+        /// VANGUARD_UNDERWATER_CAUSTIC: The MaterialProperty for underwater vertical compensate.
+        /// </summary>
+        protected MaterialProperty verticalCompensate1Prop { get; set; }
         
         /// <summary>
         /// VANGUARD_UNDERWATER_CAUSTIC: The MaterialProperty for underwater caustic normal dir.
@@ -461,7 +468,14 @@ namespace UnityEditor
         /// <summary>
         /// VANGUARD_UNDERWATER_CAUSTIC: The MaterialProperty for underwater caustic normal dir.
         /// </summary>
-        protected MaterialProperty causticLightDIRProp { get; set; }
+        protected MaterialProperty causticLightDIRProp { get; set; } 
+        
+        
+        /// <summary>
+        /// VANGUARD_UNDERWATER_CAUSTIC: The MaterialProperty for underwater caustic dir Pro.
+        /// </summary>
+        protected MaterialProperty causticDirParamProp { get; set; } 
+        
 
 
         
@@ -538,8 +552,10 @@ namespace UnityEditor
             causticFlowParam1Prop = FindProperty(Property.CausticFlowParam1, properties, false);
             causticAtten1Prop = FindProperty(Property.CausticAtten1, properties, false);
             verticalCompensate0Prop = FindProperty(Property.VerticalCompensate0, properties, false);
+            verticalCompensate1Prop = FindProperty(Property.VerticalCompensate1, properties, false);
             causticNormalDIRProp = FindProperty(Property.CausticNormalDIR, properties, false);
             causticLightDIRProp = FindProperty(Property.CausticLightDIR, properties, false);
+            causticDirParamProp = FindProperty(Property.causticDirParam, properties, false);
             
         }
 
@@ -774,7 +790,7 @@ namespace UnityEditor
         protected virtual void DrawCausticProperties(Material material, bool keyword)
         {
             var caustic = true;
-            var Togglecontent = EditorGUIUtility.TrTextContent("Enable Caustic",
+            var Togglecontent = EditorGUIUtility.TrTextContent("Caustic",
                 "When enabled, DrawCaustic Here");
             var causticMapContent = EditorGUIUtility.TrTextContent("Caustic Map",
                 "When enabled, DrawCaustic Here");
@@ -786,10 +802,28 @@ namespace UnityEditor
                 using (new EditorGUI.IndentLevelScope(2))
                 {
                     materialEditor.TexturePropertySingleLine(causticMapContent, causticMapProp);
-                    //causticAtten0Prop.floatValue = EditorGUILayout.Slider(new GUIContent("Test", null, "tooltip"), causticAtten0Prop.floatValue, 0.0f, 3.0f);
                     DrawTileOffset(materialEditor, causticMapProp);
                     materialEditor.TexturePropertySingleLine(causticNoiseMapContent, causticNoiseMapProp);
                     DrawTileOffset(materialEditor, causticNoiseMapProp);
+
+                    causticAtten0Prop.floatValue = EditorGUILayout.Slider(new GUIContent("焦散1强度", null, "tooltip"), causticAtten0Prop.floatValue, 0.0f, 3.0f);
+                    causticAtten1Prop.floatValue = EditorGUILayout.Slider(new GUIContent("焦散2强度", null, "tooltip"), causticAtten1Prop.floatValue, 0.0f, 3.0f);
+                    EditorGUILayout.LabelField("扭曲强度：xy控制焦散12的强度，zw控制速度");
+                    noiseAttenProp.vectorValue = materialEditor.VectorProperty(noiseAttenProp, "");
+                    EditorGUILayout.LabelField("焦散1参数：xy方向，z速度，wTiling");
+                    causticFlowParam0Prop.vectorValue = materialEditor.VectorProperty(causticFlowParam0Prop, "flowP1");
+                    EditorGUILayout.LabelField("焦散2参数：xy方向，z速度，wTiling");
+                    causticFlowParam1Prop.vectorValue = materialEditor.VectorProperty(causticFlowParam1Prop, "flowP2");
+                    EditorGUILayout.LabelField("焦散1垂直xz平面时候的采样补偿");
+                    verticalCompensate0Prop.vectorValue = materialEditor.VectorProperty(verticalCompensate0Prop, "Compensate0");
+                    EditorGUILayout.LabelField("焦散2垂直xz平面时候的采样补偿");
+                    verticalCompensate1Prop.vectorValue = materialEditor.VectorProperty(verticalCompensate1Prop, "Compensate1");
+                    EditorGUILayout.LabelField("焦散显示区域1的法向量，默认y方向，向上方向才有焦散显示");
+                    causticNormalDIRProp.vectorValue = materialEditor.VectorProperty(causticNormalDIRProp, "NormalDIRP");
+                    EditorGUILayout.LabelField("焦散显示区域2的法向量，设置为光照方向");
+                    causticLightDIRProp.vectorValue = materialEditor.VectorProperty(causticLightDIRProp, "LightDIR");
+                    EditorGUILayout.LabelField("方向参数，xy第一个区域的强度，zw第二个区域的强度，pow(lightdir, x) * y");
+                    causticDirParamProp.vectorValue = materialEditor.VectorProperty(causticDirParamProp, "causticDirParamProp");
                 }
             }
 
@@ -797,6 +831,7 @@ namespace UnityEditor
             {
                 Debug.Log("Change Happened Here");
                 material.SetTexture("_CausticTexture", causticMapProp.textureValue);
+                material.SetTexture("_CausticNoiseTex", causticNoiseMapProp.textureValue);
                 CoreUtils.SetKeyword(material, "_ENABLE_CAUSTIC", enableCaustic.floatValue == 1.0f);
                 EditorUtility.SetDirty(material);
             }

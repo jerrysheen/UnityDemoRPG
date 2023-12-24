@@ -72,8 +72,17 @@ Shader "Universal Render Pipeline/Lit"
         [HideInInspector][NoScaleOffset]unity_LightmapsInd("unity_LightmapsInd", 2DArray) = "" {}
         [HideInInspector][NoScaleOffset]unity_ShadowMasks("unity_ShadowMasks", 2DArray) = "" {}
         
-        [HideInInspector] _CausticAtten0("_CausticAtten0", Float) = 0.0
-        [ToggleUI] _EnableCaustic("Receive Shadows", Float) = 1.0
+        [ToggleUI] _EnableCaustic("Receive Shadows", Float) = 0.0
+        [HideInInspector] _CausticAtten0("_CausticAtten0", Float) = 0.36
+        [HideInInspector] _CausticAtten1("_CausticAtten1", Float) = 0.58
+        [HideInInspector] _VerticalCompensate0("_VerticalCompensate0", Vector) = (0.27, -0.17, 3.44, 0.0)
+        [HideInInspector] _VerticalCompensate1("_VerticalCompensate1", Vector) = (0.53, 0.91, 0.86, -0.17)
+        [HideInInspector] _CausticNoiseAtten("_CausticNoiseAtten", Vector) = (0.1, 0.03, 0.8, 0.8)
+        [HideInInspector] _CausticFlowParam00("_CausticFlowParam00", Vector) = (-0.15, 0.37, 0.15, 0.3)
+        [HideInInspector] _CausticFlowParam01("_CausticFlowParam01", Vector) = (0.46, 0.37, -0.08, 0.25)
+        [HideInInspector] _CausticNormalDIR("_CausticNormalDIR", Vector) = (0.0, 1.0, 0.0, 0.0)
+        [HideInInspector] _CausticLightDIR("_CausticLightDIR", Vector) = (-0.56, 0.25, -0.1, 0.0)
+        [HideInInspector] _CausticDirParam("_CausticDirParam", Vector) = (2.04, 0.2, 3.15, 0.34)
         [HideInInspector] _CausticTexture("_CausticTexture", 2D) = "white" {}
         [HideInInspector] _CausticNoiseTex("_CausticNoiseTex", 2D) = "white" {}
     }

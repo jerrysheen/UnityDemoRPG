@@ -31,8 +31,17 @@ half _DetailNormalMapScale;
 half _Surface;
 ///---------------------------VANGUARD_UNDERWATER_CAUSTIC_PROPERTY
 half _CausticAtten0;
-float4 _CausticTexture_ST;
-float4 _CausticNoiseTex_ST;
+half _CausticAtten1;
+half4 _VerticalCompensate0;
+half4 _CausticTexture_ST;
+half4 _CausticNoiseTex_ST;
+half4 _CausticNoiseAtten;
+half4 _VerticalCompensate1;
+half4 _CausticFlowParam00;
+half4 _CausticFlowParam01;
+half4 _CausticNormalDIR;
+half4 _CausticLightDIR;
+half4 _CausticDirParam;
 ///---------------------------VANGUARD_UNDERWATER_CAUSTIC_PROPERTY
 
 CBUFFER_END
