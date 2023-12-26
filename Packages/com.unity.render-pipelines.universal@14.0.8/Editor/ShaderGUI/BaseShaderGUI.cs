@@ -796,6 +796,7 @@ namespace UnityEditor
                 "When enabled, DrawCaustic Here");
             var causticNoiseMapContent = EditorGUIUtility.TrTextContent("Caustic Noise Map",
                 "When enabled, DrawCaustic Here");
+            EditorGUI.BeginChangeCheck();
             DrawFloatToggleProperty(Togglecontent, enableCaustic);
             if (enableCaustic.floatValue == 1.0f)
             {
@@ -829,7 +830,7 @@ namespace UnityEditor
 
             if (EditorGUI.EndChangeCheck())
             {
-                Debug.Log("Change Happened Here");
+                //Debug.Log("Change Happened Here");
                 material.SetTexture("_CausticTexture", causticMapProp.textureValue);
                 material.SetTexture("_CausticNoiseTex", causticNoiseMapProp.textureValue);
                 CoreUtils.SetKeyword(material, "_ENABLE_CAUSTIC", enableCaustic.floatValue == 1.0f);
