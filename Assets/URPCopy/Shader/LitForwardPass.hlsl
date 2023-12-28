@@ -223,7 +223,6 @@ void LitPassFragment(
     LODFadeCrossFade(input.positionCS);
 #endif
     outColor =  half4(SampleNormal(input.uv, TEXTURE2D_ARGS(_BumpMap, sampler_BumpMap), _BumpScale).xyz, 1.0f);
-    return;
     InputData inputData;
     InitializeInputData(input, surfaceData.normalTS, inputData);
     SETUP_DEBUG_TEXTURE_DATA(inputData, input.uv, _BaseMap);

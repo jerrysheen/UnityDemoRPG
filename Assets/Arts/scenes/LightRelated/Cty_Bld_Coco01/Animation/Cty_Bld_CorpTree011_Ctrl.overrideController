@@ -1,0 +1,15 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Cty_Bld_CorpTree011_Ctrl
+  m_Controller: {fileID: 9100000, guid: 6b0810d099c70494c97ba9dd4daad75b, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: d2d0a5d0b3c378a46931f23c7e8d186c, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 067741a546e46e74da2572c67c460096, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: bc3d73c66253f06438e644463ff65174, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 9f9b462662090c142910560db3973f85, type: 2}
