@@ -1,5 +1,10 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Scenes/CSMShadowRevisited.unity.meta
 guid: 0692f2d534b97ce41a1cdcf877f05cb3
+========
+guid: 67e8ad291f269dd4db576034e72376cc
+folderAsset: yes
+>>>>>>>> daf90b4514ebcb840887054a477a9b436b9ff701:Assets/Scenes/LightTestCityPark.meta
 DefaultImporter:
   externalObjects: {}
   userData: 

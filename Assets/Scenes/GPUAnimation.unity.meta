@@ -1,7 +1,13 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Scenes/GPUAnimation.unity.meta
 guid: 52d253ed6f1a8c14ea56c6bd527ebc38
 DefaultImporter:
+========
+guid: 8499f7c9b7da7d1408a8c63aee8d56d6
+NativeFormatImporter:
+>>>>>>>> daf90b4514ebcb840887054a477a9b436b9ff701:Assets/New Material.mat.meta
   externalObjects: {}
+  mainObjectFileID: 2100000
   userData: 
   assetBundleName: 
   assetBundleVariant: 

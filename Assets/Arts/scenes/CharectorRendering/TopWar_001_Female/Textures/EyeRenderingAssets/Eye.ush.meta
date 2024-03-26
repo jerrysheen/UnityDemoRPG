@@ -1,7 +1,13 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Arts/scenes/CharectorRendering/TopWar_001_Female/Textures/EyeRenderingAssets/Eye.ush.meta
 guid: 33fb975b334e5334e868e25283a4b79b
 DefaultImporter:
+========
+guid: e15edb051152bdd46975ebac813e0c20
+NativeFormatImporter:
+>>>>>>>> daf90b4514ebcb840887054a477a9b436b9ff701:Assets/Scenes/LightTestCityPark/LightingData.asset.meta
   externalObjects: {}
+  mainObjectFileID: 112000000
   userData: 
   assetBundleName: 
   assetBundleVariant: 
