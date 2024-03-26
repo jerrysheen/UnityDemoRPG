@@ -1245,10 +1245,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8887462530496171693}
-  - component: {fileID: -5451308682732223141}
-  - component: {fileID: 3276199726910475813}
   m_Layer: 0
-  m_Name: chr_city_baize
+  m_Name: chr_city_baize_cpuAnim
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1271,55 +1269,6 @@ Transform:
   - {fileID: 1308586239083682517}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &-5451308682732223141
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8078697668158805015}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 6f0bcdf964626da4781357a799c8bc80, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
---- !u!114 &3276199726910475813
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8078697668158805015}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 73f33f69122b3664cb08353e50779d63, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_BoneArray:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 9033913119966476438}
-  - {fileID: 3125455490517337976}
-  - {fileID: 4800999543494526357}
-  - {fileID: 4161071145984102862}
-  - {fileID: 2023189137331532155}
-  - {fileID: 4116144717617048835}
-  - {fileID: 5100030041451719309}
-  - {fileID: 5481772825828748024}
-  - {fileID: 1978574700469977702}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
 --- !u!1 &8253862501238888938
 GameObject:
   m_ObjectHideFlags: 0
