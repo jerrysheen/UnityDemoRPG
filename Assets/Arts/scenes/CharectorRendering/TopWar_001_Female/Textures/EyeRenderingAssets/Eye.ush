@@ -1,0 +1,92 @@
+
+float3 EyeReflection(
+    float2 coord, 
+    float ScaleByCenter,
+    float IrisUVRadius,
+    float2 LimbusUVWidth,
+    float internalIoR,
+    float3 normalW,
+    float3 cameraW,
+    float3 EyeDepth,
+    float DepthScale,
+    float3 EyeNormal,
+    float3 Tangent,
+    float PupilScale
+)
+{
+    float3 Ret = 0;
+
+    //Center the uv
+    float2 CenterUV = (coord / ScaleByCenter + 0.5) - (0.5 / ScaleByCenter);
+
+    // Iris Mask with Limbus Ring falloff mask
+    float2 UV = CenterUV - float2(0.5f, 0.5f);
+    float2 m, r;
+    r = (length(UV) - (IrisUVRadius - LimbusUVWidth)) / LimbusUVWidth;
+    m = saturate(1 - r);
+    m = smoothstep(0, 1, m);
+
+    //Reflection direction
+	float airIoR = 1.00029;
+	float n = airIoR / internalIoR;
+	float facing = dot(normalW, cameraW);
+	float w = n * facing;
+	float k = sqrt(1 + (w - n) * (w + n));
+	float3 t;
+	t = (w - k) * normalW - n * cameraW;
+	t = -normalize(t);
+    
+    //Scale the reflection direction
+	float3 IrisDepth = max(EyeDepth - 1.518, 0) * DepthScale;
+	float CosAlpha = dot(cameraW, EyeNormal);
+	float HeightW = IrisDepth / lerp(0.325, 1, CosAlpha * CosAlpha);
+    
+	float3 ScaleDir = HeightW * t;
+    
+    //Find tangent space coordinate
+	float3 EyeTangent = normalize(Tangent - (dot(Tangent, EyeNormal) * EyeNormal));
+	float TangentOffset = dot(EyeTangent, ScaleDir);
+	float3 Binorm = cross(EyeTangent, EyeNormal);
+	float BinomOffset = dot(Binorm, ScaleDir);
+	float2 RefractedUVOffset = float2(TangentOffset, BinomOffset);
+    
+    //Combine the offset with coord
+	float2 ScaleOffset = float2(-1, 1) * IrisUVRadius * RefractedUVOffset;
+	float2 RefractedUV = CenterUV + ScaleOffset;
+	RefractedUV = lerp(CenterUV, RefractedUV, m.r);
+    
+    //Scale Iris texture coordinates up by this amount before sampling iris
+	float2 AjuastUV = (RefractedUV - 0.5) * (1 / (2 * IrisUVRadius)) + 0.5;
+    
+    
+    //Scale the Pupil
+    // Scale UVs from from unit circle in or out from center
+    // float2 UV, float PupilScale
+	float2 UVcentered = AjuastUV - float2(0.5f, 0.5f);
+	float UVlength = length(UVcentered);
+    // UV on circle at distance 0.5 from the center, in direction of original UV
+	float2 UVmax = normalize(UVcentered) * 0.5f;
+
+	float2 UVscaled = lerp(UVmax, float2(0.f, 0.f), saturate((1.f - UVlength * 2.f) * PupilScale));
+
+	Ret.rg = UVscaled + float2(0.5f, 0.5f);
+	Ret.b = m.r;
+    
+    return Ret;
+}
+/*
+return EyeReflection(
+    coord, 
+    ScaleByCenter,
+    IrisUVRadius,
+    LimbusUVWidth,
+    internalIoR,
+    normalW,
+    cameraW,
+    EyeDepth,
+    DepthScale,
+    EyeNormal,
+    Tangent,
+    PupilScale
+);
+*/

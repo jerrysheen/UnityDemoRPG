@@ -79,21 +79,42 @@ public class DebugPanelWindow : EditorWindow
             Scene currScene = SceneManager.GetActiveScene();
             string fullPath = "Assets/Arts/scenes/" + currScene.name;
             Debug.Log(fullPath);
-            UnityEngine.Object obj = AssetDatabase.LoadAssetAtPath(fullPath, typeof(UnityEngine.Object));
-            UnityEngine.Object[] selection = new UnityEngine.Object[1];
-            selection[0] = obj;
-            Selection.objects = selection;
+            // 检查目录是否存在
+            if (AssetDatabase.IsValidFolder(fullPath))
+            {
+                Debug.Log("目录存在: " + fullPath);
+
+                // 在项目视图中选中文件夹
+                var folder = AssetDatabase.LoadAssetAtPath<Object>(fullPath);
+                Selection.activeObject = folder;
+                EditorGUIUtility.PingObject(folder);
+                //ProjectWindowUtil.ShowCreatedAsset(folder);
+            }
+            else
+            {
+                Debug.Log("目录不存在: " + fullPath);
+            }
         }
         
         if (GUILayout.Button("切换到场景文件夹"))
         {
             Scene currScene = SceneManager.GetActiveScene();
             string fullPath = "Assets/Scenes";
-            Debug.Log(fullPath);
-            UnityEngine.Object obj = AssetDatabase.LoadAssetAtPath(fullPath, typeof(UnityEngine.Object));
-            UnityEngine.Object[] selection = new UnityEngine.Object[1];
-            selection[0] = obj;
-            Selection.objects = selection;
+            
+            if (AssetDatabase.IsValidFolder(fullPath))
+            {
+                Debug.Log("目录存在: " + fullPath);
+
+                // 在项目视图中选中文件夹
+                var folder = AssetDatabase.LoadAssetAtPath<Object>(fullPath);
+                Selection.activeObject = folder;
+                EditorGUIUtility.PingObject(folder);
+                //ProjectWindowUtil.ShowCreatedAsset(folder);
+            }
+            else
+            {
+                Debug.Log("目录不存在: " + fullPath);
+            }
         }
         
         if (GUILayout.Button("内城地表Shader测试场景"))

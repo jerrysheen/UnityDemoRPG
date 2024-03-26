@@ -1,0 +1,280 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: mat_Wolf02
+  m_Shader: {fileID: -6465566751694194690, guid: 7cae41d53007e454ebe6b92942570472,
+    type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 2
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: 2000
+  stringTagMap:
+    RenderType: Opaque
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 2800000, guid: 575efcd05082a7e41b3faf02326ea10d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Dissolve_Derect:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Dissolve_Ramp:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EdgeTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 2800000, guid: 7f81e10e1a0b3d04ca074baaa62626fc, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissiveLight:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Flowmap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 575efcd05082a7e41b3faf02326ea10d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTexture:
+        m_Texture: {fileID: 2800000, guid: 0b337664ecd3cac4d848c82532465f78, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Mask02:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MaskTex01:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Ref_Noise:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SpecGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Tex_Base:
+        m_Texture: {fileID: 2800000, guid: 50b72ee1353818c478a3f7eeffb85b4a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Tex_DissolveNoise:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Tex_Emissive:
+        m_Texture: {fileID: 2800000, guid: 7f81e10e1a0b3d04ca074baaa62626fc, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Tex_MSA:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Tex_Normal:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TurTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _AlphaClip: 0
+    - _AlphaToMask: 0
+    - _Alpha_intensity: 1
+    - _Blend: 0
+    - _BlendModePreserveSpecular: 1
+    - _BumpScale: 1
+    - _CastShadows: 1
+    - _ClearCoatMask: 0
+    - _ClearCoatSmoothness: 0
+    - _Cull: 2
+    - _CustonUV1_RG_UV_BA_Ref_Dissolve: 0
+    - _Cutoff: 0.5
+    - _DepthFade: 3
+    - _DerectUsePolarUV: 0
+    - _Derect_Rotation: 0
+    - _DetailAlbedoMapScale: 1
+    - _DetailNormalMapScale: 1
+    - _DissUserandomUV: 0
+    - _Diss_E_G_Intensity: 1
+    - _Dissolve: 0
+    - _DissolveRotation: 0
+    - _DissolveUsePolarUV: 0
+    - _Divide: 1
+    - _DstBlend: 0
+    - _DstBlendAlpha: 0
+    - _EdgeTex_Rotation: 0
+    - _EdgeUse_Polar: 0
+    - _Edge_Area: 1
+    - _Edge_Smooth: 0.3
+    - _Edge_Spread: 0.2
+    - _Edge_With: 0.2
+    - _EnvironmentReflections: 1
+    - _FlowUV_Polar: 0
+    - _Flow_Rotation: 0
+    - _Flow_Strength: 0
+    - _Fresnel_Color_Intensity: 1
+    - _Fresnel_Power: 2
+    - _GlossMapScale: 0
+    - _Glossiness: 0
+    - _GlossyReflections: 0
+    - _MainRotation: 0
+    - _MainUsePolarUV: 0
+    - _Mask01Rotation: 0
+    - _Mask01UsePolarUV: 0
+    - _Mask02Rotation: 0
+    - _Mask02UsePolarUV: 0
+    - _Metallic: 0
+    - _Normal_Strength: 0
+    - _OcclusionStrength: 1
+    - _Parallax: 0.005
+    - _QueueControl: 0
+    - _QueueOffset: 0
+    - _ReceiveShadows: 0
+    - _Ref_Rotation: 0
+    - _Ref_Strength: 0.1
+    - _Rotation: 0
+    - _Smoothness: 0
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
+    - _SrcBlend: 1
+    - _SrcBlendAlpha: 1
+    - _StencilCmp: 8
+    - _StencilPassOp: 2
+    - _StencilRef: 2
+    - _Surface: 0
+    - _TurRotation: 0
+    - _TurUsePolarUV: 0
+    - _Turbulence_Strength: 0.05
+    - _UseCustomDissolve: 0
+    - _UseCustom_Ref: 0
+    - _UseFlowmap: 0
+    - _UseFresnel: 1
+    - _UseGreenChannel: 0
+    - _UseMask: 0
+    - _UseMask02: 0
+    - _UseOnceUV: 0
+    - _UsePolar: 0
+    - _UseSoftedge: 0
+    - _UseTur: 0
+    - _Use_CustomTUr_UV3: 0
+    - _Use_Dissolve: 0
+    - _Use_Edge: 0
+    - _Use_FresnelAlpha: 0
+    - _Use_PolarUV: 0
+    - _Use_Ref: 0
+    - _WorkflowMode: 1
+    - _ZTest: 4
+    - _ZWrite: 1
+    - _ZWriteControl: 0
+    - _power: 1
+    m_Colors:
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Base_EimissvieColor: {r: 0, g: 0, b: 0, a: 0}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Derect_R_L_U_V: {r: 0, g: 0, b: 0, a: 0}
+    - _Derect_Tilling_offset: {r: 1, g: 1, b: 0, a: 0}
+    - _DissolvePolarR_L_U_V: {r: 1, g: 1, b: 0, a: 0}
+    - _DissolveTiling_Offset: {r: 1, g: 1, b: 0, a: 0}
+    - _Dissolve_EdgeColor: {r: 1, g: 1, b: 1, a: 0}
+    - _EdgeColor: {r: 1, g: 1, b: 1, a: 0}
+    - _EdgeTex_RLUV: {r: 1, g: 1, b: 0, a: 0}
+    - _EdgeTex_T_O: {r: 0, g: 0, b: 0, a: 0}
+    - _EimissiveColor: {r: 0, g: 0.69240856, b: 4, a: 0}
+    - _EmissionColor: {r: 0.30267745, g: 3.6379304, b: 7.129739, a: 1}
+    - _FlowTilling_Offset: {r: 1, g: 1, b: 0, a: 0}
+    - _Flow_R_L_U_V: {r: 0, g: 0, b: 0, a: 0}
+    - _Fresnel_Color: {r: 1, g: 0.81582606, b: 0, a: 0}
+    - _MSA: {r: 0, g: 0, b: 0, a: 0}
+    - _MainPolarR_L_U_V: {r: 1, g: 1, b: 0, a: 0}
+    - _MainTiling_Offset: {r: 1, g: 1, b: 0, a: 0}
+    - _Mask01PolarR_L_U_V: {r: 1, g: 1, b: 0, a: 0}
+    - _Mask01Tiling_Offset: {r: 1, g: 1, b: 0, a: 0}
+    - _Mask02PolarR_L_U_V: {r: 0, g: 0, b: 0, a: 0}
+    - _Mask02Tiling_Offset: {r: 0, g: 0, b: 0, a: 0}
+    - _RLUV: {r: 1, g: 1, b: 0, a: 0}
+    - _R_L_U_V: {r: 0, g: 0, b: 0, a: 0}
+    - _Ref_Tilling_Offset: {r: 1, g: 1, b: 0, a: 0}
+    - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - _T_O: {r: 1, g: 1, b: 0, a: 0}
+    - _TurPolarR_L_U_V: {r: 1, g: 1, b: 0, a: 0}
+    - _TurTiling_Offset: {r: 1, g: 1, b: 0, a: 0}
+  m_BuildTextureStacks: []
+--- !u!114 &4053109531186277081
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 7

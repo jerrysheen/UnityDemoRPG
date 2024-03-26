@@ -20,7 +20,7 @@ public class TextureAnimationExporter:Editor
 	private static string s_shaderNameEcs = "Faster/Character/ECS_AnimationInstanceLit";
 #endif
 	
-	[MenuItem("Assets/【模型】烘焙动作骨点到贴图，并加入Game_Prefab", priority = 101)]
+	[MenuItem("Assets/【GPU Animation】烘焙动作骨点到贴图，并加入Game_Prefab", priority = 101)]
 	public static void Export()
 	{
 #if ENABLE_ELEX_ECS
@@ -28,6 +28,7 @@ public class TextureAnimationExporter:Editor
 #endif
 		//EditorCommon.ClearConsole();
 		Object[] SelectionAsset = Selection.GetFiltered(typeof(Object), SelectionMode.Assets);
+
 		foreach(Object obj in SelectionAsset)
 		{
 			string folder = AssetDatabase.GetAssetPath(obj);
@@ -35,34 +36,37 @@ public class TextureAnimationExporter:Editor
 		}
         
 		EditorUtility.DisplayDialog("提示", "操作成功", "知道了");
-		
-//		var objs = Selection.objects;
-//		if (objs==null||objs.Length<=0)
-//        {
-//			return;
-//        }
-//
-//		foreach(GameObject obj in objs)
-//        {
-//			Animation anim = obj.GetComponent<Animation>();
-//		
-//			if (anim==null)
-//            {
-//				continue;
-//            }
-//			ExportAnimation(obj);
-//		}
+		//
+		// var objs = Selection.objects;
+		// if (objs==null||objs.Length<=0)
+  //       {
+		// 	return;
+  //       }
+		//
+		// Debug.Log(objs[0].name);
+		// foreach(GameObject obj in objs)
+  //       {
+	 //        
+  //
+		// 	Animation anim = obj.GetComponent<Animation>();
+		//
+		// 	if (anim==null)
+  //           {
+		// 		continue;
+  //           }
+		// 	ExportAnimation(obj);
+		// }
 
         #region
-        //foreach(Object selection in Selection.objects){
-        //	if(selection is DefaultAsset){
-        //		string path=AssetDatabase.GetAssetPath(selection);
-        //		GameObject prefab=LoadPrefabOrFBX(path+"/"+selection.name);
-        //		if(prefab.transform.childCount>0){
-        //			ExportAnimation(prefab);
-        //		}
-        //	}
-        //}
+        // foreach(Object selection in Selection.objects){
+        // 	if(selection is DefaultAsset){
+        // 		string path=AssetDatabase.GetAssetPath(selection);
+        // 		GameObject prefab=LoadPrefabOrFBX(path+"/"+selection.name);
+        // 		if(prefab.transform.childCount>0){
+        // 			ExportAnimation(prefab);
+        // 		}
+        // 	}
+        // }
         #endregion
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
@@ -98,6 +102,7 @@ public class TextureAnimationExporter:Editor
 		}
 
 		// 加载所有动画资源
+		Debug.Log("加载所有动画资源");
 		List<AnimationClip> animationClips = new List<AnimationClip>();
 		foreach (string anim_file in anim_files)
 		{
@@ -107,6 +112,7 @@ public class TextureAnimationExporter:Editor
 		}
 
 		// 先烘焙一次动画，规范上同一共用动画的模型骨点也一样，只用烘焙一次
+		Debug.Log("先烘焙一次动画，规范上同一共用动画的模型骨点也一样，只用烘焙一次");
 		GameObject gameObj = AssetDatabase.LoadAssetAtPath<GameObject>(prefab_files[0]);
 		Texture2D tex = ExportAnimation(gameObj, animationClips);
 		if (tex == null)
@@ -391,6 +397,7 @@ public class TextureAnimationExporter:Editor
 	
 	public static void ExportMaterial(GameObject prefab, Texture2D texture)
 	{
+		Debug.Log("ExportMaterial");
 		var shaderName = s_shaderName;
 		var prfabName = prefab.name.ToLower();
 #if ENABLE_ELEX_ECS // ECS相关的额外处理
@@ -475,6 +482,7 @@ public class TextureAnimationExporter:Editor
 				skinnedMeshRenderer.bones = children;
 				skinnedMeshRenderer.sharedMesh = newMesh;
 				AssetDatabase.CreateAsset(newMesh,s_materialsFolderPath + "/" + prefab.name + ".asset");
+				Debug.Log("new mesh place : " + s_materialsFolderPath + "/" + prefab.name + ".asset");
 				meshMap.Add(sharedMesh, newMesh);
 			}
 
@@ -561,7 +569,29 @@ public class TextureAnimationExporter:Editor
 		}
 		
 		//PrefabUtility.CreatePrefab(AssetBundleCollectorSettingData.ModelPackPath() + "/" + prfabName + ".prefab", animation.gameObject);
-		PrefabUtility.CreatePrefab("Assets/Arts/model" + "/" + prfabName + ".prefab", animation.gameObject);
+				
+		string prefabPath = AssetDatabase.GetAssetPath(prefab);
+		string rawFolderPath = Path.GetDirectoryName(prefabPath);
+		string AnimationPath = rawFolderPath + "/" + "GPUAnimation_" + prfabName ; // 设置你的目录路径
+
+		// 检查目录是否存在
+		if (Directory.Exists(AnimationPath))
+		{
+			// 清除目录中的所有内容
+			DirectoryInfo directory = new DirectoryInfo(AnimationPath);
+			foreach (FileInfo file in directory.GetFiles()) file.Delete();
+			foreach (DirectoryInfo subDirectory in directory.GetDirectories()) subDirectory.Delete(true);
+		}
+		else
+		{
+			// 如果目录不存在，创建它
+			Directory.CreateDirectory(AnimationPath);
+		}
+
+		// 刷新Unity编辑器
+		AssetDatabase.Refresh();
+
+		PrefabUtility.CreatePrefab(AnimationPath + "/" + prfabName + "@gpuAnim.prefab", animation.gameObject);
 		DestroyImmediate(animation.gameObject);
 		DestroyImmediate(gameObject);
 	}
