@@ -23,9 +23,8 @@ public class ClipInfo : EditorWindow
             {
                 AnimationCurve curve = AnimationUtility.GetEditorCurve(clip, binding);
                 //if(binding.propertyName == "m_LocalPosition.x")
-                if(binding.propertyName == "m_LocalScale.x")
-                EditorGUILayout.LabelField(binding.path + "||| PropertyName: " + binding.propertyName + "|||  Keys: " + curve.keys[0].value);
-                
+                if(binding.propertyName == "m_LocalPosition.x")
+                EditorGUILayout.LabelField(binding.path + "||| PropertyName: " + binding.propertyName + "|||  Keys: " + curve.keys[0].value );
             }
         }
     }

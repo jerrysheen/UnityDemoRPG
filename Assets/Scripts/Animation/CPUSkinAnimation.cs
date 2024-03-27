@@ -25,6 +25,7 @@ public class CPUSkinAnimation : MonoBehaviour
     public Matrix4x4[] bindPose;
     public BoneWeight[] boneWeights;
     public Transform[] currentTransform;
+    public Dictionary<string, AnimationCurveStruct[]> animationCurveDataDic;
 
     private static void ClipSample(GameObject go, TextureAnimationClip textureAnimationClip, AnimationClip animationClip, int frame)
     {
@@ -48,6 +49,9 @@ public class CPUSkinAnimation : MonoBehaviour
         sharedMesh.boneWeights = sharedMesh.boneWeights;
         //currentTransform 在开始的时候等于bones初始姿态
         currentTransform = bones;
+
+        animationCurveDataDic = new Dictionary<string, AnimationCurveStruct[]>();
+        ConstructOffsetMatrix();
     }
 
     // Update is called once per frame
@@ -67,13 +71,174 @@ public class CPUSkinAnimation : MonoBehaviour
         if (timer > animationClip.length) timer = 0;
     }
 
-    public void PlayAnimationUsingCpuSkinAnimation()
+    public void PlayAnimationUsingCpuSkinAnimation(int frame)
     {
-        //首先简单的从获取Vertices, Normal, Tangent三个参数来做吧
-        
+        // 首先移动骨骼到位置
+        CalculateCurrentPose(frame);
+        // //首先简单的从获取Vertices, Normal, Tangent三个参数来做吧
+        // for (int i = 0; i < sharedMesh.vertices.Length; i++)
+        // {
+        //     // 针对每个vertices，我需要先计算权重，然后混合
+        //     //设置顶点的骨骼权重
+        //     BoneWeight weight = boneWeights[i];
+        //     float weight0 = weight.weight0;
+        //     float weight1 = weight.weight1;
+        //     float weight2 = weight.weight2;
+        //     float weight3 = weight.weight3;
+        //     //设置顶点的骨骼的index
+        //     int boneIndex0 = indexMap[transforms[weight.boneIndex0].name];
+        //     int boneIndex1 = indexMap[transforms[weight.boneIndex1].name];
+        //     int boneIndex2 = indexMap[transforms[weight.boneIndex2].name];
+        //     int boneIndex3 = indexMap[transforms[weight.boneIndex3].name];
+        //     indices.Add(new Vector4(boneIndex0,boneIndex1,boneIndex2,boneIndex3));
+        //     weights.Add(new Vector4(weight0,weight1,weight2,weight3));
+        //     if(v < vertices.Length)
+        //         vertices[v] = meshMatrix * sharedMesh.vertices[v];
+        //     if(v < normals.Length)
+        //         normals[v] = meshMatrix * sharedMesh.normals[v];
+        //     if(v < tangents.Length)
+        //         tangents[v]=meshMatrix * sharedMesh.tangents[v];
+        //     weight.boneIndex0 = boneIndex0;
+        //     weight.boneIndex1 = boneIndex1;
+        //     weight.boneIndex2 = boneIndex2;
+        //     weight.boneIndex3 = boneIndex3;
+        //     boneWeights[v] = weight;
+        //     
+        // }
         // 获取当前的动画数据：
+
+    }
+
+    public void CalculateCurrentPose(int frame)
+    {
+        Vector3 OldPosition = new Vector3(this.transform.position.x, this.transform.position.y, this.transform.position.z);
+        Vector3 OldScale = new Vector3(this.transform.localScale.x, this.transform.localScale.y, this.transform.localScale.z);
+        Quaternion OldRotation = new Quaternion(this.transform.rotation.x, this.transform.rotation.y, this.transform.rotation.z, this.transform.rotation.w);
+        Transform currPrefabTransform = this.transform;
+        int frameCount = (int)(animationClip.frameRate * animationClip.length);
+        frame %= frameCount;
+        animationCurveDataDic;
+
+        
+        Matrix4x4[] bindposesSet = currSkinMeshRenderer.sharedMesh.bindposes;
+        Transform[] bonesSet = currSkinMeshRenderer.bones;
+        Debug.Log("Bone Count: " + bonesSet.Length);
+        //提取bonesSet的名字以及默认的序号
+        Dictionary<string, int> bonesIndexMap = new Dictionary<string, int>();
+        for (int i = 0; i < bonesSet.Length; i++)
+        {
+            if (!bonesIndexMap.ContainsKey(bonesSet[i].name))
+            {
+                bonesIndexMap[bonesSet[i].name] = i;
+            }
+        }
+        
+        // 得到的是一个乱序的， 我们直接按照transform 设置就可以了,transform中的骨骼有主从顺序。
+        // 我的bindPose记录的相当于是我当前骨骼的 worldToLocal * prefab.localToWorld;
+        // 但是这个记录似乎是非传递性的，就是只是记录的这一个节点，针对于上一个节点的位置变化关系.
+        // 在更新的时候，BindPose中的matrix代表当前骨骼节点的Tpose变换，是基于上一个父节点的。
+        // 所以需要先将父节点还原，再还原子节点。。
+        Transform[] trans = this.GetComponentsInChildren<Transform>();
+        foreach (var currTransform in trans)
+        {
+            Matrix4x4 matrix;
+            if (!bonesIndexMap.ContainsKey(currTransform.name))
+            {
+                Debug.Log("Unused Bone" + currTransform.name);
+                matrix = Matrix4x4.identity.inverse;
+            }
+            else
+            {
+                Matrix4x4 bindPoseWorldToLocalmatrix = bindposesSet[bonesIndexMap[currTransform.name]];
+                Quaternion worldToModelQuaternion = Quaternion.LookRotation(Vector3.up, Vector3.back);
+                Matrix4x4 worldToModel = Matrix4x4.TRS(Vector3.zero, worldToModelQuaternion, Vector3.one);
+                matrix = worldToModel * bindPoseWorldToLocalmatrix.inverse;;
+            }
+
+            currTransform.position = matrix.GetColumn(3);
+            currTransform.rotation = Quaternion.LookRotation(matrix.GetColumn(2), matrix.GetColumn(1));
+            currTransform.localScale = new Vector3(
+                matrix.GetColumn(0).magnitude,
+                matrix.GetColumn(1).magnitude,
+                matrix.GetColumn(2).magnitude
+            );
+        }
+
+        this.transform.position = OldPosition;
+        this.transform.localScale = OldScale;
+        this.transform.rotation = OldRotation;
+    }
+
+    public struct AnimationCurveStruct
+    {
+        public Vector3 position;
+        public Quaternion rotation;
+        public Vector3 scale;
         
     }
+
+    public void ConstructOffsetMatrix()
+    {
+        if (animationClip == null)
+        {
+            Debug.LogError("Doesn't have animation clip");
+            return;
+        }
+
+        foreach (var binding in AnimationUtility.GetCurveBindings(animationClip))
+        {
+            AnimationCurve curve = AnimationUtility.GetEditorCurve(animationClip, binding);
+            //if(binding.propertyName == "m_LocalPosition.x")
+            //if(binding.propertyName == "m_LocalRotation.x")
+            // if(binding.propertyName == "m_LocalScale.x")
+            //     EditorGUILayout.LabelField(binding.path + "||| PropertyName: " + binding.propertyName + "|||  Keys: " + curve.keys[0].value);
+            if (!animationCurveDataDic.ContainsKey(binding.path))
+            {
+                animationCurveDataDic[binding.path] = new AnimationCurveStruct[curve.keys.Length];
+            }
+            
+            {
+                //值已经有了，那么就只要将当前的数据塞进去即可
+                for (int i = 0; i < curve.keys.Length; i++)
+                {
+                    switch (binding.propertyName)
+                    {
+                        case "m_LocalPosition.x":
+                            animationCurveDataDic[binding.path][i].position.x = curve.keys[i].value;
+                            break;
+                        case "m_LocalPosition.y":
+                            animationCurveDataDic[binding.path][i].position.y = curve.keys[i].value;
+                            break;
+                        case "m_LocalPosition.z":
+                            animationCurveDataDic[binding.path][i].position.z = curve.keys[i].value;
+                            break;
+                        case "m_LocalRotation.x":
+                            animationCurveDataDic[binding.path][i].rotation.x = curve.keys[i].value;
+                            break;
+                        case "m_LocalRotation.y":
+                            animationCurveDataDic[binding.path][i].rotation.y = curve.keys[i].value;
+                            break;
+                        case "m_LocalRotation.z":
+                            animationCurveDataDic[binding.path][i].rotation.z = curve.keys[i].value;
+                            break;
+                        case "m_LocalRotation.w":
+                            animationCurveDataDic[binding.path][i].rotation.w = curve.keys[i].value;
+                            break;
+                        case "m_LocalScale.x":
+                            animationCurveDataDic[binding.path][i].scale.x = curve.keys[i].value;
+                            break;
+                        case "m_LocalScale.y":
+                            animationCurveDataDic[binding.path][i].scale.y = curve.keys[i].value;
+                            break;
+                        case "m_LocalScale.z":
+                            animationCurveDataDic[binding.path][i].scale.z = curve.keys[i].value;
+                            break;
+                    }
+                }    
+            }
+        }
+    }
+    
 
     public void PlayAnimationUsingAnimationClip()
     {
