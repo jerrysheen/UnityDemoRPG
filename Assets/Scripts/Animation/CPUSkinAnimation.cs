@@ -28,7 +28,7 @@ public class CPUSkinAnimation : MonoBehaviour
     public Dictionary<string, AnimationCurveStruct[]> animationCurveDataDic;
     public Dictionary<string, int> bonesIndexMap;
 
-    private int currFrame = 0;
+    private float currFrame = 0;
         public struct AnimationCurveStruct
     {
         public Vector3 position;
@@ -78,11 +78,11 @@ public class CPUSkinAnimation : MonoBehaviour
             PlayAnimationUsingCpuSkinAnimation( currFrame);
         }
 
-        currFrame++;
+        currFrame += Time.deltaTime * animationClip.frameRate;
         if (timer > animationClip.length) timer = 0;
     }
 
-    public void PlayAnimationUsingCpuSkinAnimation(int frame)
+    public void PlayAnimationUsingCpuSkinAnimation(float frame)
     {
         // 首先移动骨骼到位置
         CalculateCurrentPose(frame);
@@ -120,7 +120,7 @@ public class CPUSkinAnimation : MonoBehaviour
 
     }
 
-    public void CalculateCurrentPose(int frame)
+    public void CalculateCurrentPose(float frame)
     {
         Vector3 OldPosition = new Vector3(this.transform.position.x, this.transform.position.y, this.transform.position.z);
         Vector3 OldScale = new Vector3(this.transform.localScale.x, this.transform.localScale.y, this.transform.localScale.z);
@@ -128,9 +128,11 @@ public class CPUSkinAnimation : MonoBehaviour
         Transform currPrefabTransform = this.transform;
         int frameCount = (int)(animationClip.frameRate * animationClip.length);
         frame %= frameCount;
+        frame = (int) frame;
         // 当前的frame，根据主从关系遍历所有骨骼
         Transform[] trans = this.GetComponentsInChildren<Transform>();
-        
+        Matrix4x4[] toBone = new Matrix4x4[trans.Length];
+        int index = 0;
         foreach (var currTransform in trans)
         {
             Matrix4x4 matrix;
@@ -141,13 +143,14 @@ public class CPUSkinAnimation : MonoBehaviour
             }
             else
             {
-                AnimationCurveStruct currStruct = animationCurveDataDic[currTransform.name][frame];
+                AnimationCurveStruct currStruct = animationCurveDataDic[currTransform.name][(int)frame];
                 Matrix4x4 boneOffsetMatrix = Matrix4x4.TRS(currStruct.position, currStruct.rotation, currStruct.scale);
                 
                 Matrix4x4 bindPoseWorldToLocalmatrix = bindPose[bonesIndexMap[currTransform.name]];
+                
                 Quaternion worldToModelQuaternion = Quaternion.LookRotation(Vector3.up, Vector3.back);
                 Matrix4x4 worldToModel = Matrix4x4.TRS(Vector3.zero, worldToModelQuaternion, Vector3.one);
-                matrix = worldToModel * bindPoseWorldToLocalmatrix.inverse * boneOffsetMatrix;
+                matrix =  bindPoseWorldToLocalmatrix.inverse;
             }
 
             currTransform.position = matrix.GetColumn(3);
@@ -157,9 +160,38 @@ public class CPUSkinAnimation : MonoBehaviour
                 matrix.GetColumn(1).magnitude,
                 matrix.GetColumn(2).magnitude
             );
-            
-            
+
+            toBone[index++] = currTransform.localToWorldMatrix;
         }
+
+        index = 0;
+        foreach (var currTransform in trans)
+        {
+            Matrix4x4 matrix;
+            if (!bonesIndexMap.ContainsKey(currTransform.name)||!animationCurveDataDic.ContainsKey(currTransform.name))
+            {
+                matrix = Matrix4x4.identity.inverse;
+            }
+            else
+            {
+                AnimationCurveStruct currStruct = animationCurveDataDic[currTransform.name][(int)frame];
+                Matrix4x4 boneOffsetMatrix = Matrix4x4.TRS(currStruct.position, currStruct.rotation, currStruct.scale);
+                Quaternion worldToModelQuaternion = Quaternion.LookRotation(Vector3.up, Vector3.back);
+                Matrix4x4 worldToModel = Matrix4x4.TRS(Vector3.zero, worldToModelQuaternion, Vector3.one);
+                matrix =   currTransform.localToWorldMatrix * boneOffsetMatrix;
+            }
+        
+            currTransform.position = matrix.GetColumn(3);
+            currTransform.rotation = Quaternion.LookRotation(matrix.GetColumn(2), matrix.GetColumn(1));
+            currTransform.localScale = new Vector3(
+                matrix.GetColumn(0).magnitude,
+                matrix.GetColumn(1).magnitude,
+                matrix.GetColumn(2).magnitude
+            );
+            index++;
+        
+        }
+
 
         this.transform.position = OldPosition;
         this.transform.localScale = OldScale;
