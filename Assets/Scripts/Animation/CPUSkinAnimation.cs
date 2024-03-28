@@ -26,7 +26,16 @@ public class CPUSkinAnimation : MonoBehaviour
     public BoneWeight[] boneWeights;
     public Transform[] currentTransform;
     public Dictionary<string, AnimationCurveStruct[]> animationCurveDataDic;
+    public Dictionary<string, int> bonesIndexMap;
 
+    private int currFrame = 0;
+        public struct AnimationCurveStruct
+    {
+        public Vector3 position;
+        public Quaternion rotation;
+        public Vector3 scale;
+        
+    }
     private static void ClipSample(GameObject go, TextureAnimationClip textureAnimationClip, AnimationClip animationClip, int frame)
     {
         float timer = frame * (animationClip.length / textureAnimationClip.frameCount);
@@ -52,6 +61,7 @@ public class CPUSkinAnimation : MonoBehaviour
 
         animationCurveDataDic = new Dictionary<string, AnimationCurveStruct[]>();
         ConstructOffsetMatrix();
+        CalculateBoneIndex();
     }
 
     // Update is called once per frame
@@ -65,9 +75,10 @@ public class CPUSkinAnimation : MonoBehaviour
         }
         else if (UsingCpuSkinAnimation)
         {
-            PlayAnimationUsingCpuSkinAnimation();
+            PlayAnimationUsingCpuSkinAnimation( currFrame);
         }
 
+        currFrame++;
         if (timer > animationClip.length) timer = 0;
     }
 
@@ -117,42 +128,26 @@ public class CPUSkinAnimation : MonoBehaviour
         Transform currPrefabTransform = this.transform;
         int frameCount = (int)(animationClip.frameRate * animationClip.length);
         frame %= frameCount;
-        animationCurveDataDic;
-
-        
-        Matrix4x4[] bindposesSet = currSkinMeshRenderer.sharedMesh.bindposes;
-        Transform[] bonesSet = currSkinMeshRenderer.bones;
-        Debug.Log("Bone Count: " + bonesSet.Length);
-        //提取bonesSet的名字以及默认的序号
-        Dictionary<string, int> bonesIndexMap = new Dictionary<string, int>();
-        for (int i = 0; i < bonesSet.Length; i++)
-        {
-            if (!bonesIndexMap.ContainsKey(bonesSet[i].name))
-            {
-                bonesIndexMap[bonesSet[i].name] = i;
-            }
-        }
-        
-        // 得到的是一个乱序的， 我们直接按照transform 设置就可以了,transform中的骨骼有主从顺序。
-        // 我的bindPose记录的相当于是我当前骨骼的 worldToLocal * prefab.localToWorld;
-        // 但是这个记录似乎是非传递性的，就是只是记录的这一个节点，针对于上一个节点的位置变化关系.
-        // 在更新的时候，BindPose中的matrix代表当前骨骼节点的Tpose变换，是基于上一个父节点的。
-        // 所以需要先将父节点还原，再还原子节点。。
+        // 当前的frame，根据主从关系遍历所有骨骼
         Transform[] trans = this.GetComponentsInChildren<Transform>();
+        
         foreach (var currTransform in trans)
         {
             Matrix4x4 matrix;
-            if (!bonesIndexMap.ContainsKey(currTransform.name))
+            if (!bonesIndexMap.ContainsKey(currTransform.name)||!animationCurveDataDic.ContainsKey(currTransform.name))
             {
-                Debug.Log("Unused Bone" + currTransform.name);
+//                Debug.Log("Unused Bone" + currTransform.name);
                 matrix = Matrix4x4.identity.inverse;
             }
             else
             {
-                Matrix4x4 bindPoseWorldToLocalmatrix = bindposesSet[bonesIndexMap[currTransform.name]];
+                AnimationCurveStruct currStruct = animationCurveDataDic[currTransform.name][frame];
+                Matrix4x4 boneOffsetMatrix = Matrix4x4.TRS(currStruct.position, currStruct.rotation, currStruct.scale);
+                
+                Matrix4x4 bindPoseWorldToLocalmatrix = bindPose[bonesIndexMap[currTransform.name]];
                 Quaternion worldToModelQuaternion = Quaternion.LookRotation(Vector3.up, Vector3.back);
                 Matrix4x4 worldToModel = Matrix4x4.TRS(Vector3.zero, worldToModelQuaternion, Vector3.one);
-                matrix = worldToModel * bindPoseWorldToLocalmatrix.inverse;;
+                matrix = worldToModel * bindPoseWorldToLocalmatrix.inverse * boneOffsetMatrix;
             }
 
             currTransform.position = matrix.GetColumn(3);
@@ -162,6 +157,8 @@ public class CPUSkinAnimation : MonoBehaviour
                 matrix.GetColumn(1).magnitude,
                 matrix.GetColumn(2).magnitude
             );
+            
+            
         }
 
         this.transform.position = OldPosition;
@@ -169,12 +166,22 @@ public class CPUSkinAnimation : MonoBehaviour
         this.transform.rotation = OldRotation;
     }
 
-    public struct AnimationCurveStruct
+
+
+    public void CalculateBoneIndex()
     {
-        public Vector3 position;
-        public Quaternion rotation;
-        public Vector3 scale;
-        
+        Matrix4x4[] bindposesSet = sharedMesh.bindposes;
+        Transform[] bonesSet = currSkinMeshRenderer.bones;
+        Debug.Log("Bone Count: " + bonesSet.Length);
+        //提取bonesSet的名字以及默认的序号
+        bonesIndexMap = new Dictionary<string, int>();
+        for (int i = 0; i < bonesSet.Length; i++)
+        {
+            if (!bonesIndexMap.ContainsKey(bonesSet[i].name))
+            {
+                bonesIndexMap[bonesSet[i].name] = i;
+            }
+        }
     }
 
     public void ConstructOffsetMatrix()
@@ -192,9 +199,21 @@ public class CPUSkinAnimation : MonoBehaviour
             //if(binding.propertyName == "m_LocalRotation.x")
             // if(binding.propertyName == "m_LocalScale.x")
             //     EditorGUILayout.LabelField(binding.path + "||| PropertyName: " + binding.propertyName + "|||  Keys: " + curve.keys[0].value);
-            if (!animationCurveDataDic.ContainsKey(binding.path))
+            string realBoneName;
+            int lastIndex = binding.path.LastIndexOf('/');
+
+            if (lastIndex != -1)
             {
-                animationCurveDataDic[binding.path] = new AnimationCurveStruct[curve.keys.Length];
+                realBoneName = binding.path.Substring(lastIndex + 1);
+            }
+            else
+            {
+                realBoneName = binding.path;
+            }
+            string result = binding.path.Substring(lastIndex + 1);
+            if (!animationCurveDataDic.ContainsKey(realBoneName))
+            {
+                animationCurveDataDic[realBoneName] = new AnimationCurveStruct[curve.keys.Length];
             }
             
             {
@@ -204,34 +223,34 @@ public class CPUSkinAnimation : MonoBehaviour
                     switch (binding.propertyName)
                     {
                         case "m_LocalPosition.x":
-                            animationCurveDataDic[binding.path][i].position.x = curve.keys[i].value;
+                            animationCurveDataDic[realBoneName][i].position.x = curve.keys[i].value;
                             break;
                         case "m_LocalPosition.y":
-                            animationCurveDataDic[binding.path][i].position.y = curve.keys[i].value;
+                            animationCurveDataDic[realBoneName][i].position.y = curve.keys[i].value;
                             break;
                         case "m_LocalPosition.z":
-                            animationCurveDataDic[binding.path][i].position.z = curve.keys[i].value;
+                            animationCurveDataDic[realBoneName][i].position.z = curve.keys[i].value;
                             break;
                         case "m_LocalRotation.x":
-                            animationCurveDataDic[binding.path][i].rotation.x = curve.keys[i].value;
+                            animationCurveDataDic[realBoneName][i].rotation.x = curve.keys[i].value;
                             break;
                         case "m_LocalRotation.y":
-                            animationCurveDataDic[binding.path][i].rotation.y = curve.keys[i].value;
+                            animationCurveDataDic[realBoneName][i].rotation.y = curve.keys[i].value;
                             break;
                         case "m_LocalRotation.z":
-                            animationCurveDataDic[binding.path][i].rotation.z = curve.keys[i].value;
+                            animationCurveDataDic[realBoneName][i].rotation.z = curve.keys[i].value;
                             break;
                         case "m_LocalRotation.w":
-                            animationCurveDataDic[binding.path][i].rotation.w = curve.keys[i].value;
+                            animationCurveDataDic[realBoneName][i].rotation.w = curve.keys[i].value;
                             break;
                         case "m_LocalScale.x":
-                            animationCurveDataDic[binding.path][i].scale.x = curve.keys[i].value;
+                            animationCurveDataDic[realBoneName][i].scale.x = curve.keys[i].value;
                             break;
                         case "m_LocalScale.y":
-                            animationCurveDataDic[binding.path][i].scale.y = curve.keys[i].value;
+                            animationCurveDataDic[realBoneName][i].scale.y = curve.keys[i].value;
                             break;
                         case "m_LocalScale.z":
-                            animationCurveDataDic[binding.path][i].scale.z = curve.keys[i].value;
+                            animationCurveDataDic[realBoneName][i].scale.z = curve.keys[i].value;
                             break;
                     }
                 }    
