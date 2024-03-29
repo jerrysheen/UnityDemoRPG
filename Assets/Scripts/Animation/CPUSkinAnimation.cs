@@ -18,15 +18,16 @@ public class CPUSkinAnimation : MonoBehaviour
     public bool UsingSampleAnimation;
     public bool UsingCpuSkinAnimation = false;
     private float timer;
+    public Transform rootBoneTransform;
 
-    public SkinnedMeshRenderer currSkinMeshRenderer;
-    public Mesh sharedMesh;
-    public Transform[] bones;
-    public Matrix4x4[] bindPose;
-    public BoneWeight[] boneWeights;
-    public Transform[] currentTransform;
-    public Dictionary<string, AnimationCurveStruct[]> animationCurveDataDic;
-    public Dictionary<string, int> bonesIndexMap;
+    private SkinnedMeshRenderer currSkinMeshRenderer;
+    private Mesh sharedMesh;
+    private Transform[] bones;
+    private Matrix4x4[] bindPose;
+    private BoneWeight[] boneWeights;
+    private Transform[] currentTransform;
+    private Dictionary<string, AnimationCurveStruct[]> animationCurveDataDic;
+    private Dictionary<string, int> bonesIndexMap;
 
     private float currFrame = 0;
         public struct AnimationCurveStruct
@@ -122,80 +123,33 @@ public class CPUSkinAnimation : MonoBehaviour
 
     public void CalculateCurrentPose(float frame)
     {
-        Vector3 OldPosition = new Vector3(this.transform.position.x, this.transform.position.y, this.transform.position.z);
-        Vector3 OldScale = new Vector3(this.transform.localScale.x, this.transform.localScale.y, this.transform.localScale.z);
-        Quaternion OldRotation = new Quaternion(this.transform.rotation.x, this.transform.rotation.y, this.transform.rotation.z, this.transform.rotation.w);
-        Transform currPrefabTransform = this.transform;
         int frameCount = (int)(animationClip.frameRate * animationClip.length);
         frame %= frameCount;
         frame = (int) frame;
         // 当前的frame，根据主从关系遍历所有骨骼
-        Transform[] trans = this.GetComponentsInChildren<Transform>();
-        Matrix4x4[] toBone = new Matrix4x4[trans.Length];
+        Transform[] trans = rootBoneTransform.GetComponentsInChildren<Transform>();
         int index = 0;
+
+        // 后来发现，动画数据记录的其实就是每一帧的骨骼的localTransformation，每一帧计算骨点的位置，只要直接取这个数据，还原到
+        // localpositon,rotation里面就好了
         foreach (var currTransform in trans)
         {
-            Matrix4x4 matrix;
-            if (!bonesIndexMap.ContainsKey(currTransform.name)||!animationCurveDataDic.ContainsKey(currTransform.name))
+            AnimationCurveStruct currStruct;
+            if (!animationCurveDataDic.ContainsKey(currTransform.name))
             {
-//                Debug.Log("Unused Bone" + currTransform.name);
-                matrix = Matrix4x4.identity.inverse;
+                currStruct.position = Vector3.zero;
+                currStruct.rotation = Quaternion.identity;
+                currStruct.scale = Vector3.one;
             }
             else
             {
-                AnimationCurveStruct currStruct = animationCurveDataDic[currTransform.name][(int)frame];
-                Matrix4x4 boneOffsetMatrix = Matrix4x4.TRS(currStruct.position, currStruct.rotation, currStruct.scale);
-                
-                Matrix4x4 bindPoseWorldToLocalmatrix = bindPose[bonesIndexMap[currTransform.name]];
-                
-                Quaternion worldToModelQuaternion = Quaternion.LookRotation(Vector3.up, Vector3.back);
-                Matrix4x4 worldToModel = Matrix4x4.TRS(Vector3.zero, worldToModelQuaternion, Vector3.one);
-                matrix =  bindPoseWorldToLocalmatrix.inverse;
+                currStruct = animationCurveDataDic[currTransform.name][(int)frame];
             }
 
-            currTransform.position = matrix.GetColumn(3);
-            currTransform.rotation = Quaternion.LookRotation(matrix.GetColumn(2), matrix.GetColumn(1));
-            currTransform.localScale = new Vector3(
-                matrix.GetColumn(0).magnitude,
-                matrix.GetColumn(1).magnitude,
-                matrix.GetColumn(2).magnitude
-            );
-
-            toBone[index++] = currTransform.localToWorldMatrix;
+            currTransform.localPosition = currStruct.position;
+            currTransform.localRotation = currStruct.rotation;
+            currTransform.localScale = currStruct.scale;
         }
-
-        index = 0;
-        foreach (var currTransform in trans)
-        {
-            Matrix4x4 matrix;
-            if (!bonesIndexMap.ContainsKey(currTransform.name)||!animationCurveDataDic.ContainsKey(currTransform.name))
-            {
-                matrix = Matrix4x4.identity.inverse;
-            }
-            else
-            {
-                AnimationCurveStruct currStruct = animationCurveDataDic[currTransform.name][(int)frame];
-                Matrix4x4 boneOffsetMatrix = Matrix4x4.TRS(currStruct.position, currStruct.rotation, currStruct.scale);
-                Quaternion worldToModelQuaternion = Quaternion.LookRotation(Vector3.up, Vector3.back);
-                Matrix4x4 worldToModel = Matrix4x4.TRS(Vector3.zero, worldToModelQuaternion, Vector3.one);
-                matrix =   currTransform.localToWorldMatrix * boneOffsetMatrix;
-            }
-        
-            currTransform.position = matrix.GetColumn(3);
-            currTransform.rotation = Quaternion.LookRotation(matrix.GetColumn(2), matrix.GetColumn(1));
-            currTransform.localScale = new Vector3(
-                matrix.GetColumn(0).magnitude,
-                matrix.GetColumn(1).magnitude,
-                matrix.GetColumn(2).magnitude
-            );
-            index++;
-        
-        }
-
-
-        this.transform.position = OldPosition;
-        this.transform.localScale = OldScale;
-        this.transform.rotation = OldRotation;
     }
 
 
@@ -227,10 +181,6 @@ public class CPUSkinAnimation : MonoBehaviour
         foreach (var binding in AnimationUtility.GetCurveBindings(animationClip))
         {
             AnimationCurve curve = AnimationUtility.GetEditorCurve(animationClip, binding);
-            //if(binding.propertyName == "m_LocalPosition.x")
-            //if(binding.propertyName == "m_LocalRotation.x")
-            // if(binding.propertyName == "m_LocalScale.x")
-            //     EditorGUILayout.LabelField(binding.path + "||| PropertyName: " + binding.propertyName + "|||  Keys: " + curve.keys[0].value);
             string realBoneName;
             int lastIndex = binding.path.LastIndexOf('/');
 

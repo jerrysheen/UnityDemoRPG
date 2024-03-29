@@ -23,7 +23,9 @@ public class ClipInfo : EditorWindow
             {
                 AnimationCurve curve = AnimationUtility.GetEditorCurve(clip, binding);
                 //if(binding.propertyName == "m_LocalPosition.x")
-                if(binding.propertyName == "m_LocalPosition.x")
+                string propertyPrefix=binding.propertyName.Substring(0,15);
+                if(propertyPrefix=="m_LocalRotation")
+                //if(binding.propertyName == "m_LocalPosition.x")
                 EditorGUILayout.LabelField(binding.path + "||| PropertyName: " + binding.propertyName + "|||  Keys: " + curve.keys[0].value );
             }
         }
