@@ -393,6 +393,9 @@ namespace UnityEngine.Rendering.Universal
         /// </summary>
         public bool xrRendering;
 
+        public bool nextToUICamera;
+        public bool isUICamera;
+
         internal bool requireSrgbConversion
         {
             get

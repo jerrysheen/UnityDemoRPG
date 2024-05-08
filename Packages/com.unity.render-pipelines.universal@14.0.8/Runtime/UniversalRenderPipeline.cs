@@ -810,6 +810,19 @@ namespace UnityEngine.Rendering.Universal
                 if (asset.useAdaptivePerformance)
                     ApplyAdaptivePerformance(ref baseCameraData);
 #endif
+
+                if (isStackedRendering)
+                {
+                    var nextCamera = cameraStack[0];
+                    if (nextCamera.isActiveAndEnabled)
+                    {
+                        if (nextCamera.CompareTag("UICamera"))
+                        {
+                            baseCameraData.nextToUICamera = true;
+                        }
+                    }
+                }
+
                 // update the base camera flag so that the scene depth is stored if needed by overlay cameras later in the frame
                 baseCameraData.postProcessingRequiresDepthTexture |= cameraStackRequiresDepthForPostprocessing;
 
@@ -857,6 +870,12 @@ namespace UnityEngine.Rendering.Universal
 
                             xrLayout.ReconfigurePass(overlayCameraData.xr, currCamera);
 
+                            if (currCamera.CompareTag("UICamera"))
+                            {
+                                overlayCameraData.isUICamera = true;
+                                overlayCameraData.renderScale = 1.0f;
+                            }
+
                             RenderSingleCamera(context, ref overlayCameraData, anyPostProcessingEnabled);
 
                             using (new ProfilingScope(null, Profiling.Pipeline.endCameraRendering))
@@ -864,6 +883,14 @@ namespace UnityEngine.Rendering.Universal
                                 EndCameraRendering(context, currCamera);
                             }
                         }
+                    }
+                }
+                else
+                {
+                    if (baseCameraData.camera.CompareTag("UICamera"))
+                    {
+                        baseCameraData.isUICamera = true;
+                        baseCameraData.renderScale = 1.0f;
                     }
                 }
 

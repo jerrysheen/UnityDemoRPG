@@ -529,6 +529,14 @@ namespace UnityEngine.Rendering.Universal
 
             // Special path for depth only offscreen cameras. Only write opaques + transparents.
             bool isOffscreenDepthTexture = cameraData.targetTexture != null && cameraData.targetTexture.format == RenderTextureFormat.Depth;
+
+            bool isUICamera = cameraData.isUICamera;
+
+            if (isUICamera)
+            {
+                useRenderPassEnabled = false;
+            }
+
             if (isOffscreenDepthTexture)
             {
                 ConfigureCameraTarget(k_CameraTarget, k_CameraTarget);
@@ -586,6 +594,7 @@ namespace UnityEngine.Rendering.Universal
                 m_DeferredLights.IsOverlay = cameraData.renderType == CameraRenderType.Overlay;
             }
 
+            bool shouldRenderUI = cameraData.rendersOverlayUI;
             // Should apply post-processing after rendering this camera?
             bool applyPostProcessing = cameraData.postProcessEnabled && m_PostProcessPasses.isCreated;
 
@@ -693,8 +702,8 @@ namespace UnityEngine.Rendering.Universal
             // If there is any scaling, the color and depth need to be the same resolution and the target texture
             // will not be the proper size in this case. Same happens with GameView.
             // This introduces the final blit pass.
-            if (RTHandles.rtHandleProperties.rtHandleScale.x != 1.0f || RTHandles.rtHandleProperties.rtHandleScale.y != 1.0f)
-                createColorTexture |= createDepthTexture;
+            //if (RTHandles.rtHandleProperties.rtHandleScale.x != 1.0f || RTHandles.rtHandleProperties.rtHandleScale.y != 1.0f)
+            //    createColorTexture |= createDepthTexture;
 
             if (useRenderPassEnabled || useDepthPriming)
                 createColorTexture |= createDepthTexture;
@@ -745,8 +754,10 @@ namespace UnityEngine.Rendering.Universal
                     m_ColorBufferSystem.Dispose();
                     m_ColorBufferSystem = baseRenderer.m_ColorBufferSystem;
                 }
-                m_ActiveCameraColorAttachment = m_ColorBufferSystem.PeekBackBuffer();
-                m_ActiveCameraDepthAttachment = baseRenderer.m_ActiveCameraDepthAttachment;
+                //m_ActiveCameraColorAttachment = m_ColorBufferSystem.PeekBackBuffer();
+                //m_ActiveCameraDepthAttachment = baseRenderer.m_ActiveCameraDepthAttachment;
+                m_ActiveCameraColorAttachment = isUICamera ? k_CameraTarget : m_ColorBufferSystem.PeekBackBuffer();
+                m_ActiveCameraDepthAttachment = isUICamera ? k_CameraTarget : baseRenderer.m_ActiveCameraDepthAttachment;
                 m_XRTargetHandleAlias = baseRenderer.m_XRTargetHandleAlias;
             }
 
@@ -771,7 +782,7 @@ namespace UnityEngine.Rendering.Universal
 
             bool requiresDepthCopyPass = !requiresDepthPrepass
                 && (renderingData.cameraData.requiresDepthTexture || cameraHasPostProcessingWithDepth || renderPassInputs.requiresDepthTexture)
-                && createDepthTexture;
+                && createDepthTexture && !isUICamera;
 
             if ((DebugHandler != null) && DebugHandler.IsActiveForCamera(ref cameraData))
             {
@@ -980,6 +991,7 @@ namespace UnityEngine.Rendering.Universal
 #endif
 
             bool lastCameraInTheStack = cameraData.resolveFinalTarget;
+            bool nextToUI = cameraData.nextToUICamera;
 
             if (this.renderingModeActual == RenderingMode.Deferred)
             {
@@ -1131,7 +1143,7 @@ namespace UnityEngine.Rendering.Universal
             }
             EnqueuePass(m_OnRenderObjectCallbackPass);
 
-            bool shouldRenderUI = cameraData.rendersOverlayUI;
+            //bool shouldRenderUI = cameraData.rendersOverlayUI;
             bool outputToHDR = cameraData.isHDROutputActive;
             if (shouldRenderUI && outputToHDR)
             {
@@ -1147,7 +1159,7 @@ namespace UnityEngine.Rendering.Universal
             //    The FinalPost pass is guaranteed to execute after user authored passes so FXAA is always run inside of it.
             // 2. UberPost can only handle upscaling with linear filtering. All other filtering methods require the FinalPost pass.
             // 3. TAA sharpening using standalone RCAS pass is required. (When upscaling is not enabled).
-            bool applyFinalPostProcessing = anyPostProcessing && lastCameraInTheStack &&
+            bool applyFinalPostProcessing = anyPostProcessing && (lastCameraInTheStack || nextToUI) &&
                 ((renderingData.cameraData.antialiasing == AntialiasingMode.FastApproximateAntialiasing) ||
                  ((renderingData.cameraData.imageScalingMode == ImageScalingMode.Upscaling) && (renderingData.cameraData.upscalingFilter != ImageUpscalingFilter.Linear)) ||
                  (renderingData.cameraData.IsTemporalAAEnabled() && renderingData.cameraData.taaSettings.contrastAdaptiveSharpening > 0.0f));
@@ -1163,9 +1175,14 @@ namespace UnityEngine.Rendering.Universal
                 RenderingUtils.ReAllocateIfNeeded(ref m_PostProcessPasses.m_AfterPostProcessColor, desc, FilterMode.Point, TextureWrapMode.Clamp, name: "_AfterPostProcessTexture");
             }
 
-            if (lastCameraInTheStack)
+            if (lastCameraInTheStack || nextToUI)
             {
                 SetupFinalPassDebug(ref cameraData);
+
+                if (isUICamera)
+                {
+                    applyFinalPostProcessing = false;
+                }
 
                 // Post-processing will resolve to final target. No need for final blit pass.
                 if (applyPostProcessing)
