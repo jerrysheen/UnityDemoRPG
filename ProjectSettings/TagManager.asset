@@ -11,6 +11,7 @@ TagManager:
   - Rubber
   - BuddyBot
   - HUD
+  - UICamera
   layers:
   - Default
   - TransparentFX

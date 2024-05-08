@@ -876,6 +876,15 @@ namespace UnityEngine.Rendering.Universal
                                 overlayCameraData.renderScale = 1.0f;
                             }
 
+                            if (i == cameraStack.Count - 2 && i >= 0)
+                            {
+                                var nextCam = cameraStack[cameraStack.Count - 1];
+                                if (nextCam.CompareTag("UICamera"))
+                                {
+                                    overlayCameraData.nextToUICamera = true;
+                                }
+                            }
+
                             RenderSingleCamera(context, ref overlayCameraData, anyPostProcessingEnabled);
 
                             using (new ProfilingScope(null, Profiling.Pipeline.endCameraRendering))
