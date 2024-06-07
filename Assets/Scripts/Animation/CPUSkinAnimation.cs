@@ -101,11 +101,12 @@ public class CPUSkinAnimation : MonoBehaviour
     public void PlayAnimationUsingCpuSkinAnimation(float frame)
     {
         // 首先移动骨骼到位置
+        // 这个是根据animationDic的点去算 原来的gameobject的位移的， 就是不用skinedmesh Renderer渲染了。。
+        // 这里我更新骨骼的位置， 因为现在Unity自动在骨骼上更新顶点的， 所以我只需要更新骨骼的Transform而已。
         CalculateCurrentBonePose(frame);
         
         // 接下来取到sharedmesh,并且重新生成
-        // 第一步，取到，让蒙皮不动起来
-        //
+        // 在另外一个新的puremesh里面，我去计算纯骨骼+蒙皮的计算。
         CalculateSkinMesh();
 
 
@@ -287,91 +288,130 @@ public class CPUSkinAnimation : MonoBehaviour
 
     public void ConstructOffsetMatrix()
     {
-        // 这个地方用animationClip的方式， 记录所有的骨点信息， 先存所有的。
-        
-        
         if (animationClip == null)
         {
             Debug.LogError("Doesn't have animation clip");
             return;
         }
-
-        float frameRate = Mathf.RoundToInt(animationClip.frameRate);//帧率
-        float frameCount = Mathf.RoundToInt(animationClip.length * frameRate);
-        Debug.Log("frameRate : " + frameRate + " frameCount : " + frameCount);
-        foreach (var binding in AnimationUtility.GetCurveBindings(animationClip))
+        
+        // 这个地方用animationClip的方式， 记录所有的骨点信息， 先存所有的。
+        int animationCount = (int)(animationClip.length * animationClip.frameRate);
+        for (int i = 0; i < animationCount; i++)
         {
-            
-            AnimationCurve curve = AnimationUtility.GetEditorCurve(animationClip, binding);
-            string realBoneName;
-            int lastIndex = binding.path.LastIndexOf('/');
-
-            if (lastIndex != -1)
+            // 遍历所有的骨骼节点。 
+            float timer = i / animationClip.frameRate;
+            timer = Mathf.Min(timer, animationClip.length);
+            animationClip.SampleAnimation(this.gameObject, timer);
+            Debug.Log("animation clip update");
+            // traverse from rootbone:
+            Transform rootBone = this.GetComponentInChildren<SkinnedMeshRenderer>()?.rootBone;
+            if (rootBone == null)
             {
-                realBoneName = binding.path.Substring(lastIndex + 1);
-            }
-            else
-            {
-                realBoneName = binding.path;
+                Debug.Log("没有设置根骨骼");
             }
 
-            //Debug.Log(realBoneName + " , " + binding.path);
-            string result = binding.path.Substring(lastIndex + 1);
-            if (!animationCurveDataDic.ContainsKey(realBoneName))
+            Transform[] transforms = rootBone.GetComponentsInChildren<Transform>();
+            foreach (var transform in transforms)
             {
-                animationCurveDataDic[realBoneName] = new AnimationCurveStruct[(int)frameCount];
-            }
-            
-            {
-                //值已经有了，那么就只要将当前的数据塞进去即可
-                for (int i = 0; i < frameCount; i++)
+                if (!animationCurveDataDic.ContainsKey(transform.name))
                 {
-                    switch (binding.propertyName)
-                    {
-                        case "m_LocalPosition.x":
-                        {
-                            try
-                            {
-                                animationCurveDataDic[realBoneName][i].position.x = curve.Evaluate(i / frameRate);
-                            }
-                            catch (IndexOutOfRangeException exp)
-                            {
-                                Debug.LogError("111");
-                            }
+                    animationCurveDataDic[transform.name] = new AnimationCurveStruct[(int)animationCount];
+                }
 
-                            break;
-                        }
-                        case "m_LocalPosition.y":
-                            animationCurveDataDic[realBoneName][i].position.y = curve.Evaluate(i / frameRate);
-                            break;
-                        case "m_LocalPosition.z":
-                            animationCurveDataDic[realBoneName][i].position.z = curve.Evaluate(i / frameRate);
-                            break;
-                        case "m_LocalRotation.x":
-                            animationCurveDataDic[realBoneName][i].rotation.x = curve.Evaluate(i / frameRate);
-                            break;
-                        case "m_LocalRotation.y":
-                            animationCurveDataDic[realBoneName][i].rotation.y = curve.Evaluate(i / frameRate);
-                            break;
-                        case "m_LocalRotation.z":
-                            animationCurveDataDic[realBoneName][i].rotation.z = curve.Evaluate(i / frameRate);
-                            break;
-                        case "m_LocalRotation.w":
-                            animationCurveDataDic[realBoneName][i].rotation.w = curve.Evaluate(i / frameRate);
-                            break;
-                        case "m_LocalScale.x":
-                            animationCurveDataDic[realBoneName][i].scale.x = curve.Evaluate(i / frameRate);
-                            break;
-                        case "m_LocalScale.y":
-                            animationCurveDataDic[realBoneName][i].scale.y = curve.Evaluate(i / frameRate);
-                            break;
-                        case "m_LocalScale.z":
-                            animationCurveDataDic[realBoneName][i].scale.z = curve.Evaluate(i / frameRate);
-                            break;
-                    }
-                }    
+                animationCurveDataDic[transform.name][i].position.x = transform.localPosition.x;
+                animationCurveDataDic[transform.name][i].position.y = transform.localPosition.y;
+                animationCurveDataDic[transform.name][i].position.z = transform.localPosition.z;
+                
+                animationCurveDataDic[transform.name][i].rotation.x = transform.localRotation.x;
+                animationCurveDataDic[transform.name][i].rotation.y = transform.localRotation.y;
+                animationCurveDataDic[transform.name][i].rotation.z = transform.localRotation.z;
+                animationCurveDataDic[transform.name][i].rotation.w = transform.localRotation.w;
+                
+                animationCurveDataDic[transform.name][i].scale.x = transform.localScale.x;
+                animationCurveDataDic[transform.name][i].scale.y = transform.localScale.y;
+                animationCurveDataDic[transform.name][i].scale.z = transform.localScale.z;
+                    
             }
+
         }
+
+
+        // float frameRate = Mathf.RoundToInt(animationClip.frameRate);//帧率
+        // float frameCount = Mathf.RoundToInt(animationClip.length * frameRate);
+        // Debug.Log("frameRate : " + frameRate + " frameCount : " + frameCount);
+        // foreach (var binding in AnimationUtility.GetCurveBindings(animationClip))
+        // {
+        //     
+        //     AnimationCurve curve = AnimationUtility.GetEditorCurve(animationClip, binding);
+        //     string realBoneName;
+        //     int lastIndex = binding.path.LastIndexOf('/');
+        //
+        //     if (lastIndex != -1)
+        //     {
+        //         realBoneName = binding.path.Substring(lastIndex + 1);
+        //     }
+        //     else
+        //     {
+        //         realBoneName = binding.path;
+        //     }
+        //
+        //     //Debug.Log(realBoneName + " , " + binding.path);
+        //     string result = binding.path.Substring(lastIndex + 1);
+        //     if (!animationCurveDataDic.ContainsKey(realBoneName))
+        //     {
+        //         animationCurveDataDic[realBoneName] = new AnimationCurveStruct[(int)frameCount];
+        //     }
+        //     
+        //     {
+        //         //值已经有了，那么就只要将当前的数据塞进去即可
+        //         for (int i = 0; i < frameCount; i++)
+        //         {
+        //             switch (binding.propertyName)
+        //             {
+        //                 case "m_LocalPosition.x":
+        //                 {
+        //                     try
+        //                     {
+        //                         animationCurveDataDic[realBoneName][i].position.x = curve.Evaluate(i / frameRate);
+        //                     }
+        //                     catch (IndexOutOfRangeException exp)
+        //                     {
+        //                         Debug.LogError("111");
+        //                     }
+        //
+        //                     break;
+        //                 }
+        //                 case "m_LocalPosition.y":
+        //                     animationCurveDataDic[realBoneName][i].position.y = curve.Evaluate(i / frameRate);
+        //                     break;
+        //                 case "m_LocalPosition.z":
+        //                     animationCurveDataDic[realBoneName][i].position.z = curve.Evaluate(i / frameRate);
+        //                     break;
+        //                 case "m_LocalRotation.x":
+        //                     animationCurveDataDic[realBoneName][i].rotation.x = curve.Evaluate(i / frameRate);
+        //                     break;
+        //                 case "m_LocalRotation.y":
+        //                     animationCurveDataDic[realBoneName][i].rotation.y = curve.Evaluate(i / frameRate);
+        //                     break;
+        //                 case "m_LocalRotation.z":
+        //                     animationCurveDataDic[realBoneName][i].rotation.z = curve.Evaluate(i / frameRate);
+        //                     break;
+        //                 case "m_LocalRotation.w":
+        //                     animationCurveDataDic[realBoneName][i].rotation.w = curve.Evaluate(i / frameRate);
+        //                     break;
+        //                 case "m_LocalScale.x":
+        //                     animationCurveDataDic[realBoneName][i].scale.x = curve.Evaluate(i / frameRate);
+        //                     break;
+        //                 case "m_LocalScale.y":
+        //                     animationCurveDataDic[realBoneName][i].scale.y = curve.Evaluate(i / frameRate);
+        //                     break;
+        //                 case "m_LocalScale.z":
+        //                     animationCurveDataDic[realBoneName][i].scale.z = curve.Evaluate(i / frameRate);
+        //                     break;
+        //             }
+        //         }    
+        //     }
+        // }
     }
     
     private static float GetCurveValue(AnimationClip clip,string path,string prop,float time){

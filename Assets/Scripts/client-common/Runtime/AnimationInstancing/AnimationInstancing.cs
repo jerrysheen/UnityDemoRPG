@@ -343,7 +343,6 @@ public partial class AnimationInstancing : MonoBehaviour
             _curFrameIndex = curFrameIndex;
         }
         
-        Debug.Log(_curFrameIndex);
     }
 
     private float ComputeCrossFade(float changeTime)

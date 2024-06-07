@@ -66,5 +66,10 @@ public class AnimationSamplerEditor : Editor
         {
             script.isPlaying = true;
         }
+        
+        if (GUILayout.Button("Sample Frame"))
+        {
+            script.SampleAnimation(script.frameIndex);
+        }
     }
 }
