@@ -52,7 +52,7 @@
             #pragma fragment AnimationFrag
             #pragma multi_compile_instancing
             #define CUSTOM_ANIMATION_INPUT
-            
+            #pragma enable_d3d11_debug_symbols
             #include "Assets/Shaders/Include/Math/AnimationInput.hlsl"
             // #include "Assets/Shaders/Include/Math/AnimationDQ.hlsl"
             // #include "Assets/Shaders/Include/HSV.hlsl"

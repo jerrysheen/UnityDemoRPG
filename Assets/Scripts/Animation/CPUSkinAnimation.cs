@@ -287,14 +287,21 @@ public class CPUSkinAnimation : MonoBehaviour
 
     public void ConstructOffsetMatrix()
     {
+        // 这个地方用animationClip的方式， 记录所有的骨点信息， 先存所有的。
+        
+        
         if (animationClip == null)
         {
             Debug.LogError("Doesn't have animation clip");
             return;
         }
 
+        float frameRate = Mathf.RoundToInt(animationClip.frameRate);//帧率
+        float frameCount = Mathf.RoundToInt(animationClip.length * frameRate);
+        Debug.Log("frameRate : " + frameRate + " frameCount : " + frameCount);
         foreach (var binding in AnimationUtility.GetCurveBindings(animationClip))
         {
+            
             AnimationCurve curve = AnimationUtility.GetEditorCurve(animationClip, binding);
             string realBoneName;
             int lastIndex = binding.path.LastIndexOf('/');
@@ -307,47 +314,59 @@ public class CPUSkinAnimation : MonoBehaviour
             {
                 realBoneName = binding.path;
             }
+
+            //Debug.Log(realBoneName + " , " + binding.path);
             string result = binding.path.Substring(lastIndex + 1);
             if (!animationCurveDataDic.ContainsKey(realBoneName))
             {
-                animationCurveDataDic[realBoneName] = new AnimationCurveStruct[curve.keys.Length];
+                animationCurveDataDic[realBoneName] = new AnimationCurveStruct[(int)frameCount];
             }
             
             {
                 //值已经有了，那么就只要将当前的数据塞进去即可
-                for (int i = 0; i < curve.keys.Length; i++)
+                for (int i = 0; i < frameCount; i++)
                 {
                     switch (binding.propertyName)
                     {
                         case "m_LocalPosition.x":
-                            animationCurveDataDic[realBoneName][i].position.x = curve.keys[i].value;
+                        {
+                            try
+                            {
+                                animationCurveDataDic[realBoneName][i].position.x = curve.Evaluate(i / frameRate);
+                            }
+                            catch (IndexOutOfRangeException exp)
+                            {
+                                Debug.LogError("111");
+                            }
+
                             break;
+                        }
                         case "m_LocalPosition.y":
-                            animationCurveDataDic[realBoneName][i].position.y = curve.keys[i].value;
+                            animationCurveDataDic[realBoneName][i].position.y = curve.Evaluate(i / frameRate);
                             break;
                         case "m_LocalPosition.z":
-                            animationCurveDataDic[realBoneName][i].position.z = curve.keys[i].value;
+                            animationCurveDataDic[realBoneName][i].position.z = curve.Evaluate(i / frameRate);
                             break;
                         case "m_LocalRotation.x":
-                            animationCurveDataDic[realBoneName][i].rotation.x = curve.keys[i].value;
+                            animationCurveDataDic[realBoneName][i].rotation.x = curve.Evaluate(i / frameRate);
                             break;
                         case "m_LocalRotation.y":
-                            animationCurveDataDic[realBoneName][i].rotation.y = curve.keys[i].value;
+                            animationCurveDataDic[realBoneName][i].rotation.y = curve.Evaluate(i / frameRate);
                             break;
                         case "m_LocalRotation.z":
-                            animationCurveDataDic[realBoneName][i].rotation.z = curve.keys[i].value;
+                            animationCurveDataDic[realBoneName][i].rotation.z = curve.Evaluate(i / frameRate);
                             break;
                         case "m_LocalRotation.w":
-                            animationCurveDataDic[realBoneName][i].rotation.w = curve.keys[i].value;
+                            animationCurveDataDic[realBoneName][i].rotation.w = curve.Evaluate(i / frameRate);
                             break;
                         case "m_LocalScale.x":
-                            animationCurveDataDic[realBoneName][i].scale.x = curve.keys[i].value;
+                            animationCurveDataDic[realBoneName][i].scale.x = curve.Evaluate(i / frameRate);
                             break;
                         case "m_LocalScale.y":
-                            animationCurveDataDic[realBoneName][i].scale.y = curve.keys[i].value;
+                            animationCurveDataDic[realBoneName][i].scale.y = curve.Evaluate(i / frameRate);
                             break;
                         case "m_LocalScale.z":
-                            animationCurveDataDic[realBoneName][i].scale.z = curve.keys[i].value;
+                            animationCurveDataDic[realBoneName][i].scale.z = curve.Evaluate(i / frameRate);
                             break;
                     }
                 }    
@@ -355,6 +374,10 @@ public class CPUSkinAnimation : MonoBehaviour
         }
     }
     
+    private static float GetCurveValue(AnimationClip clip,string path,string prop,float time){
+        EditorCurveBinding binding=EditorCurveBinding.FloatCurve(path,typeof(Transform),prop);
+        return AnimationUtility.GetEditorCurve(clip,binding).Evaluate(time);
+    }
 
     public void PlayAnimationUsingAnimationClip()
     {

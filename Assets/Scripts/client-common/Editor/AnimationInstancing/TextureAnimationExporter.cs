@@ -395,6 +395,15 @@ public class TextureAnimationExporter:Editor
 		return texture;
 	}
 	
+	private static Transform GetRootBone(GameObject gameObject)
+	{
+		var skinmeshRenderer = gameObject.GetComponentInChildren<SkinnedMeshRenderer>();
+		if (skinmeshRenderer == null)
+			return null;
+		return skinmeshRenderer.rootBone;
+	}
+
+	
 	public static void ExportMaterial(GameObject prefab, Texture2D texture)
 	{
 		Debug.Log("ExportMaterial");
@@ -442,7 +451,7 @@ public class TextureAnimationExporter:Editor
 				Vector3[] vertices = new Vector3[sharedMesh.vertices.Length];
 				Vector3[] normals = new Vector3[sharedMesh.normals.Length];
 				Vector4[] tangents = new Vector4[sharedMesh.tangents.Length];
-				Matrix4x4 meshMatrix = bonePoses[indexMap[transforms[0].name]]*sharedMesh.bindposes[0];
+				Matrix4x4 meshMatrix = bonePoses[indexMap[transforms[2].name]]*sharedMesh.bindposes[2];
 				BoneWeight[] boneWeights = sharedMesh.boneWeights;
 				for(int v=0; v<vertexCount; v++)
 				{
@@ -523,6 +532,7 @@ public class TextureAnimationExporter:Editor
 					if (newMaterial.HasProperty("_SkinningTexSize"))
 					{
 						newMaterial.SetVector("_SkinningTexSize", new Vector4(texture.width, texture.height, 1, 1));
+						
 					}
 //				}
 //#endif

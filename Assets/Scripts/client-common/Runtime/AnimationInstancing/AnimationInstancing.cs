@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
+using UnityEditor;
 
 /// <summary>
 /// 暂时不支持cross;
@@ -20,7 +21,8 @@ public partial class AnimationInstancing : MonoBehaviour
     [NonSerialized]
     public float _time;
     public string _curclipName;
-    private int _curFrameIndex = -1;
+    public float _curclipTime;
+    public int _curFrameIndex = -1;
     private TextureAnimationClip _curClip;
     private bool _curFrameDirty = true;
     
@@ -174,7 +176,7 @@ public partial class AnimationInstancing : MonoBehaviour
     //	return Matrix4x4.identity;
     //}
 
-    void Awake()
+    public void Awake()
     {
         propertyBlock = new MaterialPropertyBlock();
         
@@ -264,7 +266,7 @@ public partial class AnimationInstancing : MonoBehaviour
         PlayInternal(name, normalizedTime);
     }
 
-    private void PlayInternal(string name, float normalizedTime)
+    public void PlayInternal(string name, float normalizedTime)
     {
         bool isDirty = _curFrameDirty;
         if (_curclipName != name)
@@ -296,7 +298,7 @@ public partial class AnimationInstancing : MonoBehaviour
         }
     }
     
-    private void UpdateAnimation(float changeTime)
+    public void UpdateAnimation(float changeTime)
     {
         if (_curClip == null)
         {
@@ -340,6 +342,8 @@ public partial class AnimationInstancing : MonoBehaviour
             _curFrameDirty = true;
             _curFrameIndex = curFrameIndex;
         }
+        
+        Debug.Log(_curFrameIndex);
     }
 
     private float ComputeCrossFade(float changeTime)
@@ -408,7 +412,7 @@ public partial class AnimationInstancing : MonoBehaviour
             meshRenderer.GetPropertyBlock(propertyBlock);
             
             propertyBlock.SetFloat(CUR_FRAME_IDX_ID, shaderCurFrameIndex);
-            
+            Debug.Log("Shader CurrFrame Index : " + shaderCurFrameIndex);
             propertyBlock.SetFloat(HORIZONAL_PLANE, meshRenderer.gameObject.transform.position.y - 0.005f);
 //            if (_isTransition)
 //            {
@@ -484,3 +488,41 @@ public partial class AnimationInstancing : MonoBehaviour
         UpdateAnimation(changeTime);
     }
 }
+
+
+#if UNITY_EDITOR
+[CustomEditor(typeof(AnimationInstancing))]
+    public class AnimationInstancingEditor : Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            base.OnInspectorGUI();
+            if (GUILayout.Button("Play Certain Animation"))
+            {
+                AnimationInstancing script = target as AnimationInstancing;
+                script.Awake();
+                script.PlayInternal(script._curclipName, 0.0f);
+                script.UpdateAnimation(script._curclipTime);
+                Debug.Log("Update");
+            }
+            
+            if (GUILayout.Button("Play Certain Frame"))
+            {
+                AnimationInstancing script = target as AnimationInstancing;
+                MeshRenderer[] renderers = script.GetComponentsInChildren<MeshRenderer>();
+                if (renderers != null && renderers.Length >= 1)
+                {
+                    MaterialPropertyBlock propertyBlock = new MaterialPropertyBlock();
+                    Debug.Log("update!");   
+                    renderers[0].GetPropertyBlock(propertyBlock);
+                    propertyBlock.SetFloat("_CurFramIndex_Array", script._curFrameIndex);
+                    renderers[0].SetPropertyBlock(propertyBlock);
+                }
+                else
+                {
+                    Debug.Log("No Mesh Renderer found !");   
+                }
+            }
+        }
+    }
+#endif
