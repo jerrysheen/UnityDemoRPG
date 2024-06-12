@@ -494,7 +494,6 @@ public class CPUSkinAnimation : MonoBehaviour
                 // 将模型从bindpose空间转换到模型空间
                 Quaternion bindPoseToModelQuaternion = Quaternion.LookRotation(Vector3.up, Vector3.back);
                 Matrix4x4 bindPoseToModel = Matrix4x4.TRS(Vector3.zero, bindPoseToModelQuaternion, Vector3.one);
-                bindPoseToModel = Matrix4x4.identity;
                 matrix = bindPoseToModel * bindPoseWorldToLocalmatrix.inverse;
             }
 
