@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
@@ -67,8 +68,10 @@ public class CPUSkinAnimation : MonoBehaviour
         transformNameToBone = new Dictionary<int, int>();
         animationCurveDataDic = new Dictionary<string, AnimationCurveStruct[]>();
         
-        ConstructOffsetMatrix();
+        ResetToBindPose();
         CalculateBoneIndex();
+        ConstructOffsetMatrix();
+       
         
         //CalculateBindPoseSkin();
         
@@ -143,7 +146,8 @@ public class CPUSkinAnimation : MonoBehaviour
             currTransform.localRotation = currStruct.rotation;
             currTransform.localScale = currStruct.scale;
         
-            currLocalToWorldDic[currTransform.name] = currTransform.localToWorldMatrix;
+            currLocalToWorldDic[currTransform.name] =  this.gameObject.transform.worldToLocalMatrix * currTransform.localToWorldMatrix ;
+
         }
     }
 
@@ -202,12 +206,12 @@ public class CPUSkinAnimation : MonoBehaviour
                 Vector3 blendB = currLocalToWorldDic[transforms[transformNameToBone[boneIndex1]].name] *
                                  tposeWorldToLocalMatrixSet[boneIndex1] * currVertex;
                 resultVertex += blendB * weight1;
-                Vector3 blendC = currLocalToWorldDic[transforms[transformNameToBone[boneIndex2]].name] *
-                                 tposeWorldToLocalMatrixSet[boneIndex2] * currVertex;
-                resultVertex += blendC * weight2;
-                Vector3 blendD = currLocalToWorldDic[transforms[transformNameToBone[boneIndex3]].name] *
-                                 tposeWorldToLocalMatrixSet[boneIndex3] * currVertex;
-                resultVertex += blendD * weight3;
+                // Vector3 blendC = currLocalToWorldDic[transforms[transformNameToBone[boneIndex2]].name] *
+                //                  tposeWorldToLocalMatrixSet[boneIndex2] * currVertex;
+                // resultVertex += blendC * weight2;
+                // Vector3 blendD = currLocalToWorldDic[transforms[transformNameToBone[boneIndex3]].name] *
+                //                  tposeWorldToLocalMatrixSet[boneIndex3] * currVertex;
+                // resultVertex += blendD * weight3;
                 
                 // Vector3 blendA =  bindPose[transformNameToBone[boneIndex0]].inverse *
                 //                   tposeWorldToLocalMatrixSet[boneIndex0] * currVertex;
@@ -270,7 +274,14 @@ public class CPUSkinAnimation : MonoBehaviour
             }
         }
 
+        Vector3 position = this.gameObject.transform.position;
+        quaternion quaternion = this.gameObject.transform.rotation;
+        Vector3 Scale = this.gameObject.transform.localScale;
+        this.gameObject.transform.position = Vector3.zero;
+        this.gameObject.transform.rotation = new Quaternion(0,0,0,0);
+        this.gameObject.transform.localScale = Vector3.one;
         Transform[] transformAll = rootBoneTransform.GetComponentsInChildren<Transform>();
+        tposeWorldToLocalMatrixSet = new Matrix4x4[transformAll.Length];
         for (int i = 0; i < transformAll.Length; i++)
         {
             if (bonesIndexMap.ContainsKey(transformAll[i].name))
@@ -279,11 +290,17 @@ public class CPUSkinAnimation : MonoBehaviour
             }
         }
 
-        tposeWorldToLocalMatrixSet = new Matrix4x4[transformAll.Length];
+        // 这个地方有个问题， 就是这边的worldtolocal是计算了gameobject的transform的， 这个肯定是不对的。
+        // 要把这个计算排除在外
+        
         for (int i = 0; i < tposeWorldToLocalMatrixSet.Length; i++)
         {
             tposeWorldToLocalMatrixSet[i] = transformAll[i].worldToLocalMatrix;
         }
+        
+        this.gameObject.transform.position = position;
+        this.gameObject.transform.rotation = quaternion;
+        this.gameObject.transform.localScale = Scale;
     }
 
     public void ConstructOffsetMatrix()
@@ -474,9 +491,11 @@ public class CPUSkinAnimation : MonoBehaviour
             else
             {
                 Matrix4x4 bindPoseWorldToLocalmatrix = bindposesSet[bonesSetMap[currTransform.name]];
-                Quaternion worldToModelQuaternion = Quaternion.LookRotation(Vector3.up, Vector3.back);
-                Matrix4x4 worldToModel = Matrix4x4.TRS(Vector3.zero, worldToModelQuaternion, Vector3.one);
-                matrix = worldToModel * bindPoseWorldToLocalmatrix.inverse;;
+                // 将模型从bindpose空间转换到模型空间
+                Quaternion bindPoseToModelQuaternion = Quaternion.LookRotation(Vector3.up, Vector3.back);
+                Matrix4x4 bindPoseToModel = Matrix4x4.TRS(Vector3.zero, bindPoseToModelQuaternion, Vector3.one);
+                bindPoseToModel = Matrix4x4.identity;
+                matrix = bindPoseToModel * bindPoseWorldToLocalmatrix.inverse;
             }
 
             currTransform.position = matrix.GetColumn(3);

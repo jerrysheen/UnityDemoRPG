@@ -20,7 +20,7 @@ MonoBehaviour:
     pixelStartIndex: 114
     frameCount: 60
     frameRate: 30
-    isLoop: 0
+    isLoop: 1
     bones: []
   - name: run
     pixelStartIndex: 6954
@@ -32,7 +32,7 @@ MonoBehaviour:
     pixelStartIndex: 11058
     frameCount: 17
     frameRate: 30
-    isLoop: 0
+    isLoop: 1
     bones: []
   - name: stand
     pixelStartIndex: 12996

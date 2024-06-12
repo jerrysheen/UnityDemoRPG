@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &239262443017387939
+--- !u!1 &3745003282885004922
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,9 +8,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4635250926334484602}
-  - component: {fileID: 4542372184897209994}
-  - component: {fileID: 6568144464546837497}
+  - component: {fileID: 5165749387487137505}
+  - component: {fileID: 2573109489844315360}
+  - component: {fileID: 8233233659375137035}
   m_Layer: 0
   m_Name: chr_city_baize@skin
   m_TagString: Untagged
@@ -18,36 +18,36 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4635250926334484602
+--- !u!4 &5165749387487137505
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 239262443017387939}
+  m_GameObject: {fileID: 3745003282885004922}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 6097659492980420980}
+  m_Father: {fileID: 353299690203396113}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &4542372184897209994
+--- !u!33 &2573109489844315360
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 239262443017387939}
+  m_GameObject: {fileID: 3745003282885004922}
   m_Mesh: {fileID: 4300000, guid: 465a3713898568b4f9c2cb0600ab6ded, type: 2}
---- !u!23 &6568144464546837497
+--- !u!23 &8233233659375137035
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 239262443017387939}
+  m_GameObject: {fileID: 3745003282885004922}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -83,7 +83,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &6640345199797477229
+--- !u!1 &6832153995650875241
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -91,8 +91,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6097659492980420980}
-  - component: {fileID: 7878554626206226432}
+  - component: {fileID: 353299690203396113}
+  - component: {fileID: 2207275333231822834}
   m_Layer: 0
   m_Name: chr_city_baize@gpuAnim
   m_TagString: Untagged
@@ -100,29 +100,29 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6097659492980420980
+--- !u!4 &353299690203396113
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6640345199797477229}
+  m_GameObject: {fileID: 6832153995650875241}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4635250926334484602}
+  - {fileID: 5165749387487137505}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7878554626206226432
+--- !u!114 &2207275333231822834
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6640345199797477229}
+  m_GameObject: {fileID: 6832153995650875241}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 094a87e76202e9b4cb91afc7ff4c34d1, type: 3}
@@ -130,4 +130,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 4e0a68f67b0e1f14b86de9e7216f91bf, type: 2}
   _curclipName: stand
+  _curclipTime: 0
+  _curFrameIndex: -1
   playDefaultAnim: 0

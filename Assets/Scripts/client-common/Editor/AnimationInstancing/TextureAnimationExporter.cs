@@ -457,8 +457,9 @@ public class TextureAnimationExporter:Editor
 				{
 					//设置顶点的骨骼权重
 					BoneWeight weight = boneWeights[v];
-					float weight0 = weight.weight0;
-					float weight1 = weight.weight1;
+					float totalWeight = weight.weight0 + weight.weight1;
+					float weight0 = weight.weight0 / totalWeight;
+					float weight1 = weight.weight1 / totalWeight;
 					float weight2 = weight.weight2;
 					float weight3 = weight.weight3;
 					//设置顶点的骨骼的index
