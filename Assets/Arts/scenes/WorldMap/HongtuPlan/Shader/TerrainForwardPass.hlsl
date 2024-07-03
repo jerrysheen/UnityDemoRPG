@@ -284,28 +284,44 @@ half4 TerrainPassFragment(Varyings input) : SV_Target
                                                         SAMPLE_TEXTURE2D(_IDMapTex, sampler_IDMapTex, globalBlendUV - float2(0, _IDMapTex_TexelSize.y)).r);
 
     uint4 indexMap = uint4(uint(round(globalBlendFactor.r * 255.0))& 15, uint(round(globalBlendFactor.g * 255.0))& 15, uint(round(globalBlendFactor.a * 255.0))& 15, uint(round(globalBlendFactor.b * 255.0))& 15);
-    float4 globalBlendFactorBA = SAMPLE_TEXTURE2D(_IDMapTex,sampler_IDMapTex, globalBlendUV).zwzw;;   
     #endif
+    
+    float4 globalBlendFactor_weight2 = float4(SAMPLE_TEXTURE2D(_IDMapTex1, sampler_IDMapTex1, globalBlendUV - float2(_IDMapTex_TexelSize.x * 0.5f, _IDMapTex_TexelSize.x * 0.5f)).r, 
+                                                            SAMPLE_TEXTURE2D(_IDMapTex1, sampler_IDMapTex1, globalBlendUV - float2(_IDMapTex_TexelSize.x * 1.5f, _IDMapTex_TexelSize.x * 0.5f)).r,
+                                                            SAMPLE_TEXTURE2D(_IDMapTex1, sampler_IDMapTex1, globalBlendUV - float2(_IDMapTex_TexelSize.x * 1.5f, _IDMapTex_TexelSize.x * 1.5f)).r,
+                                                            SAMPLE_TEXTURE2D(_IDMapTex1, sampler_IDMapTex1, globalBlendUV - float2(_IDMapTex_TexelSize.x * 0.5f, _IDMapTex_TexelSize.x * 1.5f)).r);
+
+    uint4 indexMap_weight2 = uint4(uint(round(globalBlendFactor_weight2.r * 255.0))& 15, uint(round(globalBlendFactor_weight2.g * 255.0))& 15, uint(round(globalBlendFactor_weight2.a * 255.0))& 15, uint(round(globalBlendFactor_weight2.b * 255.0))& 15);
+    
     half globalBlendWeight = saturate(_WorldSpaceCameraPos.y / _BlendDistanceFactor);
-    half localBlendWeight = 1.0 - globalBlendWeight;
 
     half4 color0 = SAMPLE_TEXTURE2D_ARRAY_LOD(_DiffuseArr, sampler_DiffuseArr, diffuseUV, indexMap.x, 0);
+    half4 color1 = SAMPLE_TEXTURE2D_ARRAY_LOD(_DiffuseArr, sampler_DiffuseArr, diffuseUV, indexMap.y, 0);
+    half4 color2 = SAMPLE_TEXTURE2D_ARRAY_LOD(_DiffuseArr, sampler_DiffuseArr, diffuseUV, indexMap.z, 0);
+    half4 color3 = SAMPLE_TEXTURE2D_ARRAY_LOD(_DiffuseArr, sampler_DiffuseArr, diffuseUV, indexMap.w, 0);
 
-    half4 color1 = color0;
-        color1 = SAMPLE_TEXTURE2D_ARRAY_LOD(_DiffuseArr, sampler_DiffuseArr, diffuseUV, indexMap.y, 0);
-
-    half4 color2 = color0;
-        color2 = SAMPLE_TEXTURE2D_ARRAY_LOD(_DiffuseArr, sampler_DiffuseArr, diffuseUV, indexMap.z, 0);
-
-    half4 color3 = color0;
-        color3 = SAMPLE_TEXTURE2D_ARRAY_LOD(_DiffuseArr, sampler_DiffuseArr, diffuseUV, indexMap.w, 0);
-
-    half4 diffuseBlend;
+    half4 color4 = SAMPLE_TEXTURE2D_ARRAY_LOD(_DiffuseArr, sampler_DiffuseArr, diffuseUV, indexMap_weight2.x, 0);
+    half4 color5 = SAMPLE_TEXTURE2D_ARRAY_LOD(_DiffuseArr, sampler_DiffuseArr, diffuseUV, indexMap_weight2.y, 0);
+    half4 color6 = SAMPLE_TEXTURE2D_ARRAY_LOD(_DiffuseArr, sampler_DiffuseArr, diffuseUV, indexMap_weight2.z, 0);
+    half4 color7 = SAMPLE_TEXTURE2D_ARRAY_LOD(_DiffuseArr, sampler_DiffuseArr, diffuseUV, indexMap_weight2.w, 0);
+    
     float2 pixelPos = (globalBlendUV) * _IDMapTex_TexelSize.zw;
     float2 biWeight = frac(pixelPos);
+    float2 biWeight1 = frac(pixelPos + 0.5);
 
-    diffuseBlend = lerp(lerp(color3, color2, biWeight.x), lerp(color1, color0, biWeight.x), biWeight.y);
+    half4 diffuseBlend = lerp(lerp(color3, color2, biWeight.x), lerp(color1, color0, biWeight.x), biWeight.y);
+    half4 diffuseBlend1 = lerp(lerp(color7, color6, biWeight1.x), lerp(color5, color4, biWeight1.x), biWeight1.y);
+    //return diffuseBlend;
+
+    #if defined(_LAYER_WEIGHT1)
     return diffuseBlend;
+    return half4(biWeight.xy, 1.0, 1.0);
+    #endif
+    #if defined(_LAYER_WEIGHT2)
+    return diffuseBlend1;
+    return half4(biWeight1.xy, 1.0, 1.0);
+    #endif
+    return 0.5 * diffuseBlend + 0.5 * diffuseBlend1;
 }
 
 #ifdef _RVT_RENDER

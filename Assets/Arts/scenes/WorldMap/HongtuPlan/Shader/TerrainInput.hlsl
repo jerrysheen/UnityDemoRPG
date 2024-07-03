@@ -34,6 +34,7 @@ float4 _NoiseClampValue;
 CBUFFER_END
 
 TEXTURE2D(_IDMapTex);               SAMPLER(sampler_IDMapTex);
+TEXTURE2D(_IDMapTex1);               SAMPLER(sampler_IDMapTex1);
 TEXTURE2D(_NoiseTex);               SAMPLER(sampler_NoiseTex);
 TEXTURE2D(_GlobalNormal);           SAMPLER(sampler_GlobalNormal);
 TEXTURE2D(_Normal0);                SAMPLER(sampler_Normal0);

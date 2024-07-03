@@ -9,8 +9,9 @@ public class TextureTools_Hongtu_ID : EditorWindow
     private static TextureTools_Hongtu_ID s_TextureToolEditor;
     public enum IDMapFormat
     {
-        R8G8,
-        R8
+        R8G8 = 0,
+        R8 = 1,
+        R8G8SecondWeight = 2,
     };
 
     public Texture2D[] m_Weightmaps;
@@ -123,17 +124,35 @@ public class TextureTools_Hongtu_ID : EditorWindow
         {
             int idxOfMax = -1;
             float valOfMax = .0f;
-
+            int idxOfSecond = -1;
+            float valOfSecond = .0f;
             for (int i = 0; i < m_RawColors.Length; ++i)
             {
                 if (m_RawColors[i] > valOfMax)
                 {
+                    valOfSecond = valOfMax;
+                    idxOfSecond = idxOfMax;
                     valOfMax = m_RawColors[i];
                     idxOfMax = i;
                 }
             }
+            //针对于weight2的图，我只需要在有第二个weight的时候记录它， 如果是单权重的图，继续保持原先的权重。
+            if (format == IDMapFormat.R8G8SecondWeight)
+            {
+                if (idxOfSecond == -1)
+                {
+                    m_Texels[0] = idxOfMax;
+                }
+                else
+                {
+                    m_Texels[0] = idxOfSecond;
+                }
+            }
+            else
+            {
+                m_Texels[0] = idxOfMax;
+            }
 
-            m_Texels[0] = idxOfMax;
             for (int i = 1; i < m_Texels.Length; ++i)
             {
                 if (m_Texels[i] == -1)
@@ -144,10 +163,16 @@ public class TextureTools_Hongtu_ID : EditorWindow
 
             if (format == IDMapFormat.R8G8)
             {
+               
                 m_EncodedColor.r = (byte)((m_Texels[0] << 4) | m_Texels[1]);
                 m_EncodedColor.g = (byte)((m_Texels[2] << 4) | m_Texels[3]);
             }
             else if (format == IDMapFormat.R8)
+            {
+                m_EncodedColor.r = (byte)(m_Texels[0]);
+                m_EncodedColor.g = 0;
+            }
+            else if(format == IDMapFormat.R8G8SecondWeight)
             {
                 m_EncodedColor.r = (byte)(m_Texels[0]);
                 m_EncodedColor.g = 0;
@@ -158,7 +183,7 @@ public class TextureTools_Hongtu_ID : EditorWindow
         }
     }
 
-    public void GenerateTexelIDMap(IDMapFormat format)
+        public void GenerateTexelIDMap(IDMapFormat format)
     {
 #if UNITY_EDITOR
         if (m_Weightmaps.Length == 0)
@@ -168,8 +193,12 @@ public class TextureTools_Hongtu_ID : EditorWindow
 
         Texture2D texelIDMap = new Texture2D(m_Weightmaps[0].width, m_Weightmaps[0].height, TextureFormat.RGBA32, false, true);
         texelIDMap.filterMode = FilterMode.Point;
+        
+        Texture2D texelIDMapSecondWeight = new Texture2D(m_Weightmaps[0].width, m_Weightmaps[0].height, TextureFormat.RGBA32, false, true);
+        texelIDMapSecondWeight.filterMode = FilterMode.Point;
 
         List<TexelData> texelList = new List<TexelData>();
+        List<TexelData> texelListWeight = new List<TexelData>();
 
         for (int i = 0; i < m_Weightmaps.Length; ++i)
         {
@@ -179,11 +208,18 @@ public class TextureTools_Hongtu_ID : EditorWindow
                 if (i == 0)
                 {
                     TexelData data = new TexelData();
+                    TexelData data1 = new TexelData();
                     data.m_RawColors[0] = colors[j].r;
                     data.m_RawColors[1] = colors[j].g;
                     data.m_RawColors[2] = colors[j].b;
                     data.m_RawColors[3] = colors[j].a;
                     texelList.Add(data);
+                    
+                    data1.m_RawColors[0] = colors[j].r;
+                    data1.m_RawColors[1] = colors[j].g;
+                    data1.m_RawColors[2] = colors[j].b;
+                    data1.m_RawColors[3] = colors[j].a;
+                    texelListWeight.Add(data1);
                 }
                 else
                 {
@@ -191,34 +227,48 @@ public class TextureTools_Hongtu_ID : EditorWindow
                     texelList[j].m_RawColors[4 * i + 1] = colors[j].g;
                     texelList[j].m_RawColors[4 * i + 2] = colors[j].b;
                     texelList[j].m_RawColors[4 * i + 3] = colors[j].a;
+                    
+                    texelListWeight[j].m_RawColors[4 * i] = colors[j].r;
+                    texelListWeight[j].m_RawColors[4 * i + 1] = colors[j].g;
+                    texelListWeight[j].m_RawColors[4 * i + 2] = colors[j].b;
+                    texelListWeight[j].m_RawColors[4 * i + 3] = colors[j].a;
                 }
             }
         }
 
         Color32[] encodedColors = new Color32[texelList.Count];
+        Color32[] encodedColorsWeight = new Color32[texelListWeight.Count];
+        Debug.Log(format == IDMapFormat.R8G8SecondWeight);
         for (int i = 0; i < texelList.Count; ++i)
         {
             if (i % m_Weightmaps[0].width > 0)
             {
                 texelList[i].m_Texels[1] = texelList[i - 1].m_Texels[0];
+                texelListWeight[i].m_Texels[1] = texelListWeight[i - 1].m_Texels[0];
             }
 
             if (i / m_Weightmaps[0].width > 0)
             {
                 texelList[i].m_Texels[2] = texelList[i - m_Weightmaps[0].width].m_Texels[0];
+                texelListWeight[i].m_Texels[2] = texelListWeight[i - m_Weightmaps[0].width].m_Texels[0];
             }
 
             if (i % m_Weightmaps[0].width > 0 && i / m_Weightmaps[0].width > 0)
             {
                 texelList[i].m_Texels[3] = texelList[i - m_Weightmaps[0].width - 1].m_Texels[0];
+                texelListWeight[i].m_Texels[3] = texelListWeight[i - m_Weightmaps[0].width - 1].m_Texels[0];
             }
 
             texelList[i].Encode(format);
+            texelListWeight[i].Encode(IDMapFormat.R8G8SecondWeight);
             encodedColors[i] = texelList[i].m_EncodedColor;
+            encodedColorsWeight[i] = texelListWeight[i].m_EncodedColor;
         }
 
         texelIDMap.SetPixels32(encodedColors);
+        texelIDMapSecondWeight.SetPixels32(encodedColorsWeight);
         byte[] bytes = texelIDMap.EncodeToTGA();
+        byte[] bytesWeight = texelIDMapSecondWeight.EncodeToTGA();
 
         string suffix = "UnknownFormat";
         if (format == IDMapFormat.R8)
@@ -231,6 +281,7 @@ public class TextureTools_Hongtu_ID : EditorWindow
         }
 
         File.WriteAllBytes(string.Format("Assets/{0}/{1}_TexelIDMap_{2}.tga", m_OutputFolder, m_Weightmaps[0].name, suffix), bytes);
+        File.WriteAllBytes(string.Format("Assets/{0}/{1}_TexelIDMap_{2}_SecondWeight.tga", m_OutputFolder, m_Weightmaps[0].name, suffix), bytesWeight);
         AssetDatabase.Refresh();
 #endif
     }
