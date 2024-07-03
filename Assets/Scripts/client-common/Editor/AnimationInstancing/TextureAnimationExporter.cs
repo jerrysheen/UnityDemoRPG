@@ -451,7 +451,9 @@ public class TextureAnimationExporter:Editor
 				Vector3[] vertices = new Vector3[sharedMesh.vertices.Length];
 				Vector3[] normals = new Vector3[sharedMesh.normals.Length];
 				Vector4[] tangents = new Vector4[sharedMesh.tangents.Length];
-				Matrix4x4 meshMatrix = bonePoses[indexMap[transforms[2].name]]*sharedMesh.bindposes[2];
+				
+				// 乘上这个矩阵是为了摆正模型在世界空间里面的姿态。
+				Matrix4x4 meshMatrix = bonePoses[indexMap[transforms[0].name]]*sharedMesh.bindposes[0];
 				BoneWeight[] boneWeights = sharedMesh.boneWeights;
 				for(int v=0; v<vertexCount; v++)
 				{
