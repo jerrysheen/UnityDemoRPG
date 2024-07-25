@@ -68,12 +68,13 @@ public class CPUSkinAnimation : MonoBehaviour
         transformNameToBone = new Dictionary<int, int>();
         animationCurveDataDic = new Dictionary<string, AnimationCurveStruct[]>();
         
+        // 将模型转换到bindpose底下，因为所有的动画文件的localscale都是基于bindpose的。
         ResetToBindPose();
+        // 计算下初始位置时，所有的worldToLocal，方便后面的pureMesh顶点直接用这个worldToLocal找到它在bindPose底下的位置。
         CalculateBoneIndex();
+        // Sample动画文件，得到
         ConstructOffsetMatrix();
-       
         
-        //CalculateBindPoseSkin();
         
     }
 
@@ -171,33 +172,20 @@ public class CPUSkinAnimation : MonoBehaviour
         {
             float weight0 = weightList[i].x;
             float weight1 = weightList[i].y;
-            float weight2 = weightList[i].z;
-            float weight3 = weightList[i].w;
+            //float weight2 = weightList[i].z;
+            //float weight3 = weightList[i].w;
             // 获得顶点的对应的骨骼，我们需要完成的转化为: 原先的顶点，从BonePose转换到世界位置，再转换到local
             int boneIndex0 = (int)indexList[i].x;
             int boneIndex1 = (int)indexList[i].y;
-            int boneIndex2 = (int)indexList[i].z;
-            int boneIndex3 = (int)indexList[i].w;
+            //int boneIndex2 = (int)indexList[i].z;
+            //int boneIndex3 = (int)indexList[i].w;
             // 针对这个顶点，我需要先将他还原到BoneLocal，然后成乘上现在的位移矩阵，然后再混合权重。
             
             // 注意这个地方，一定要是vector4 的计算
             Vector4 currVertex =new Vector4(originalVertices[i].x, originalVertices[i].y, originalVertices[i].z, 1.0f);
             Vector3 resultVertex = Vector3.zero;
-            try
+            //try
             {
-                // 这种做法哪里不对？ 改进一下
-                // Vector3 blendA = currLocalToWorldDic[transforms[transformNameToBone[boneIndex0]].name] *
-                //                  bindPose[transformNameToBone[boneIndex0]] * currVertex;
-                // resultVertex += blendA * weight0;
-                // Vector3 blendB = currLocalToWorldDic[transforms[transformNameToBone[boneIndex1]].name] *
-                //                  bindPose[transformNameToBone[boneIndex1]] * currVertex;
-                // resultVertex += blendB * weight1;
-                // Vector3 blendC = currLocalToWorldDic[transforms[transformNameToBone[boneIndex2]].name] *
-                //                  bindPose[transformNameToBone[boneIndex2]] * currVertex;
-                // resultVertex += blendC * weight2;
-                // Vector3 blendD = currLocalToWorldDic[transforms[transformNameToBone[boneIndex3]].name] *
-                //                  bindPose[transformNameToBone[boneIndex3]] * currVertex;
-                // resultVertex += blendD * weight3;
                 
                 // 这种做法是对的，这样不需要去考虑空间的问题，动画和bone都被还原到worldSpace底下做了。
                 Vector3 blendA = currLocalToWorldDic[transforms[transformNameToBone[boneIndex0]].name] *
@@ -213,46 +201,22 @@ public class CPUSkinAnimation : MonoBehaviour
                 //                  tposeWorldToLocalMatrixSet[boneIndex3] * currVertex;
                 // resultVertex += blendD * weight3;
                 
-                // Vector3 blendA =  bindPose[transformNameToBone[boneIndex0]].inverse *
-                //                   tposeWorldToLocalMatrixSet[boneIndex0] * currVertex;
-                // resultVertex += blendA * weight0;
-                // Vector3 blendB = bindPose[transformNameToBone[boneIndex1]].inverse *
-                //                  tposeWorldToLocalMatrixSet[boneIndex1] * currVertex;
-                // resultVertex += blendB * weight1;
-                // Vector3 blendC = bindPose[transformNameToBone[boneIndex2]].inverse *
-                //                  tposeWorldToLocalMatrixSet[boneIndex2] * currVertex;
-                // resultVertex += blendC * weight2;
-                // Vector3 blendD = bindPose[transformNameToBone[boneIndex3]].inverse *
-                //                  tposeWorldToLocalMatrixSet[boneIndex3]* currVertex;
-                // resultVertex += blendD * weight3;
             }
-            catch (IndexOutOfRangeException exp)
-            {
-                Debug.LogError("Error！ ： " + boneIndex0 + "Error！ ： " + boneIndex1 + "Error！ ： " + boneIndex2 +
-                               "Error！ ： " + boneIndex3);
-            }
-            catch (KeyNotFoundException exp)
-            {
-                Debug.LogError("Error！ ： " + boneIndex0 + "Error！ ： " + boneIndex1 + "Error！ ： " + boneIndex2 +
-                               "Error！ ： " + boneIndex3);
-            }
+            // catch (IndexOutOfRangeException exp)
+            // {
+            //     Debug.LogError("Error！ ： " + boneIndex0 + "Error！ ： " + boneIndex1 + "Error！ ： " + boneIndex2 +
+            //                    "Error！ ： " + boneIndex3);
+            // }
+            // catch (KeyNotFoundException exp)
+            // {
+            //     Debug.LogError("Error！ ： " + boneIndex0 + "Error！ ： " + boneIndex1 + "Error！ ： " + boneIndex2 +
+            //                    "Error！ ： " + boneIndex3);
+            // }
 
 
-            // Vector3 blendA = bindPose[boneIndex0].inverse * bindPose[boneIndex0] * currVertex;
-            // resultVertex += blendA * weight0;
-            // Vector3 blendB  = bindPose[boneIndex1].inverse * bindPose[boneIndex1] *currVertex;
-            // resultVertex += blendB * weight1;
-            // Vector3 blendC  =  bindPose[boneIndex2].inverse * bindPose[boneIndex2] *currVertex;
-            // resultVertex += blendC * weight2;
-            // Vector3 blendD  =  bindPose[boneIndex3].inverse * bindPose[boneIndex3] *currVertex;
-            // resultVertex += blendD * weight3;
             NewVecticesGroup[i] = resultVertex;
-            //NewVecticesGroup[i] = currVertex;
 
         }
-
-        
-        //currSkinMeshRenderer.sharedMesh = tempMesh;
         originMesh.vertices = NewVecticesGroup;
     }
     
@@ -480,8 +444,11 @@ public class CPUSkinAnimation : MonoBehaviour
         // 在更新的时候，BindPose中的matrix代表当前骨骼节点的Tpose变换，是基于上一个父节点的。
         // 所以需要先将父节点还原，再还原子节点。。
         Transform[] trans = this.GetComponentsInChildren<Transform>();
-        foreach (var currTransform in trans)
+        for (int i = 0; i < trans.Length; i++)
         {
+            Transform currTransform = trans[i];
+        //foreach (var currTransform in trans)
+        //{
             Matrix4x4 matrix;
             if (!bonesSetMap.ContainsKey(currTransform.name))
             {
