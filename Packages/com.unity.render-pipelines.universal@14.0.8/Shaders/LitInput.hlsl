@@ -46,6 +46,15 @@ half4 _CausticDirParam;
 
 CBUFFER_END
 
+UNITY_INSTANCING_BUFFER_START(PropsLightmap)
+    UNITY_DEFINE_INSTANCED_PROP(float4, LightmapIndex_Array)
+    UNITY_DEFINE_INSTANCED_PROP(float4, LightmapST_Array)
+UNITY_INSTANCING_BUFFER_END(Props)
+
+#define LightmapIndex UNITY_ACCESS_INSTANCED_PROP(Props, LightmapIndex_Array)
+#define LightmapST UNITY_ACCESS_INSTANCED_PROP(Props, LightmapST_Array)
+
+
 // NOTE: Do not ifdef the properties for dots instancing, but ifdef the actual usage.
 // Otherwise you might break CPU-side as property constant-buffer offsets change per variant.
 // NOTE: Dots instancing is orthogonal to the constant buffer above.

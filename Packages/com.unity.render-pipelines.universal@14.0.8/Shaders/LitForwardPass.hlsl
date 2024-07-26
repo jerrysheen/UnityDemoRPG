@@ -169,8 +169,13 @@ Varyings LitPassVertex(Attributes input)
     half3 viewDirTS = GetViewDirectionTangentSpace(tangentWS, output.normalWS, viewDirWS);
     output.viewDirTS = viewDirTS;
 #endif
-
+    
     OUTPUT_LIGHTMAP_UV(input.staticLightmapUV, unity_LightmapST, output.staticLightmapUV);
+#if  defined(LIGHTMAP_ON)
+    output.staticLightmapUV.xy = input.staticLightmapUV.xy * LightmapST.xy + LightmapST.zw;
+#endif
+
+    
 #ifdef DYNAMICLIGHTMAP_ON
     output.dynamicLightmapUV = input.dynamicLightmapUV.xy * unity_DynamicLightmapST.xy + unity_DynamicLightmapST.zw;
 #endif
@@ -204,7 +209,6 @@ void LitPassFragment(
 )
 {
 
-
     UNITY_SETUP_INSTANCE_ID(input);
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
 
@@ -221,6 +225,15 @@ void LitPassFragment(
     SurfaceData surfaceData;
     InitializeStandardLitSurfaceData(input.uv, surfaceData);
 
+    //outColor =  SAMPLE_TEXTURE2D(unity_Lightmap, samplerunity_Lightmap, float2(0,0));
+    #if defined(LIGHTMAP_ON) && defined(INSTANCING_ON)
+        //outColor = LightmapIndex /4.0f;
+        outColor =  SAMPLE_TEXTURE2D_ARRAY(unity_Lightmaps, samplerunity_Lightmaps, input.staticLightmapUV.xy, LightmapIndex.x);
+        //outColor = half4(LightmapIndex.x, 0.0, 0.0, 1.0f);
+        return;
+    #endif
+    //outColor =  SAMPLE_TEXTURE2D_ARRAY(unity_Lightmaps, samplerunity_Lightmaps, float2(0,0), 0);
+    //return;
 #if _ENABLE_CAUSTIC
     float3 wpos = input.positionWS;
     float2 noiseUV = wpos.xz * _CausticNoiseTex_ST.xy + _CausticNoiseTex_ST.zw + _Time.x * _CausticNoiseAtten.zw;
@@ -249,6 +262,8 @@ void LitPassFragment(
 
     InputData inputData;
     InitializeInputData(input, surfaceData.normalTS, inputData);
+    outColor = half4(inputData.bakedGI, 1.0f);
+    return;
     SETUP_DEBUG_TEXTURE_DATA(inputData, input.uv, _BaseMap);
 
 #ifdef _DBUFFER

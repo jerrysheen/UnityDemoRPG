@@ -68,9 +68,9 @@ Shader "Universal Render Pipeline/Lit"
         [HideInInspector] _Glossiness("Smoothness", Float) = 0.0
         [HideInInspector] _GlossyReflections("EnvironmentReflections", Float) = 0.0
 
-        [HideInInspector][NoScaleOffset]unity_Lightmaps("unity_Lightmaps", 2DArray) = "" {}
-        [HideInInspector][NoScaleOffset]unity_LightmapsInd("unity_LightmapsInd", 2DArray) = "" {}
-        [HideInInspector][NoScaleOffset]unity_ShadowMasks("unity_ShadowMasks", 2DArray) = "" {}
+//        [HideInInspector][NoScaleOffset]unity_Lightmaps("unity_Lightmaps", 2DArray) = "" {}
+//        [HideInInspector][NoScaleOffset]unity_LightmapsInd("unity_LightmapsInd", 2DArray) = "" {}
+//        [HideInInspector][NoScaleOffset]unity_ShadowMasks("unity_ShadowMasks", 2DArray) = "" {}
         
         [ToggleUI] _EnableCaustic("Receive Shadows", Float) = 0.0
         [HideInInspector] _CausticAtten0("_CausticAtten0", Float) = 0.36
@@ -182,7 +182,11 @@ Shader "Universal Render Pipeline/Lit"
             #pragma shader_feature_local _ENABLE_CAUSTIC
 
             #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl"
+            //#define UNITY_INSTANCED_LIGHTMAPSTS
+            //#define UNITY_USE_LIGHTMAPST_ARRAY
+            #define LIGHTMAP_ON
 
+            #pragma enable_d3d11_debug_symbols
             #include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/Shaders/LitForwardPass.hlsl"
             ENDHLSL
