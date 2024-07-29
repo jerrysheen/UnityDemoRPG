@@ -228,8 +228,11 @@ void LitPassFragment(
     //outColor =  SAMPLE_TEXTURE2D(unity_Lightmap, samplerunity_Lightmap, float2(0,0));
     #if defined(LIGHTMAP_ON) && defined(INSTANCING_ON)
         //outColor = LightmapIndex /4.0f;
+        half4 decodeInstructions = half4(LIGHTMAP_HDR_MULTIPLIER, LIGHTMAP_HDR_EXPONENT, 0.0h, 0.0h);
         outColor =  SAMPLE_TEXTURE2D_ARRAY(unity_Lightmaps, samplerunity_Lightmaps, input.staticLightmapUV.xy, LightmapIndex.x);
-        //outColor = half4(LightmapIndex.x, 0.0, 0.0, 1.0f);
+        outColor.xyz = decodeInstructions.x * outColor.rgb;
+    //outColor = half4(DecodeLightmap(outColor, decodeInstructions), 1.0f);
+        outColor = half4(LightmapIndex.x, 0.0,    0.0, 1.0f);
         return;
     #endif
     //outColor =  SAMPLE_TEXTURE2D_ARRAY(unity_Lightmaps, samplerunity_Lightmaps, float2(0,0), 0);

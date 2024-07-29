@@ -25,6 +25,7 @@ public class LightIndex : MonoBehaviour
 
     public void Record()
     {
+        _renderer = GetComponent<Renderer>();
         if (null != _renderer)
         {
             _index = new Vector4(_renderer.lightmapIndex, 0.0f, 0.0f, 0.0f);
@@ -49,6 +50,12 @@ public class LightIndex : MonoBehaviour
         //     _renderer.lightmapIndex = _index;
         //     _renderer.lightmapScaleOffset = _offset;
         // }
+        if (_renderer == null)
+        {
+            _renderer = GetComponent<Renderer>();
+            if(_renderer) Debug.LogError("这个GO没有挂renderer!");
+        }
+
         if (_mbp == null)
         {
             _mbp = new MaterialPropertyBlock();
