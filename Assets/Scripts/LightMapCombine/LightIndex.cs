@@ -13,6 +13,12 @@ public class LightIndex : MonoBehaviour
     public Vector4 Index => _index;
     public Vector4 ScaleOffset => _offset;
     public MaterialPropertyBlock _mbp;
+
+    //private String lightmapST = "LightmapST_Array";
+    //private String lightmapIndex = "LightmapIndex_Array";
+    
+    private String lightmapST = "unity_LightmapSTArray";
+    private String lightmapIndex = "unity_LightmapIndexArray";
     private void Awake()
     {
     }
@@ -60,8 +66,8 @@ public class LightIndex : MonoBehaviour
         {
             _mbp = new MaterialPropertyBlock();
             _renderer.GetPropertyBlock(_mbp);
-            _mbp.SetVector("LightmapST_Array", _offset);
-            _mbp.SetVector("LightmapIndex_Array", _index);
+            _mbp.SetVector(lightmapST, _offset);
+            _mbp.SetVector(lightmapIndex, _index);
             _renderer.SetPropertyBlock(_mbp);
         }
     }
