@@ -23,6 +23,30 @@ MonoBehaviour:
       normalBlend: 0
   m_CopyDepthPS: {fileID: 4800000, guid: d6dae50ee9e1bfa4db75f19f99355220, type: 3}
   m_DBufferClear: {fileID: 4800000, guid: f056d8bd2a1c7e44e9729144b4c70395, type: 3}
+--- !u!114 &-3743003812343466915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ba5cacdb62342f4ab0ecee56009f7b9, type: 3}
+  m_Name: CustomShadow
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  passSettings:
+    renderPassEvent: 100
+    shadowmapResolutionX: 2048
+    shadowmapResolutionY: 2048
+    shadowBias: {x: 0, y: 0}
+    shadowStrength: 1
+    shadowLowBounds: -5
+    shadowHighBounds: 15
+    enableShadowCache: 0
+    renderShadowCamName: CustomShadowCamera
+    shadowMat: {fileID: 2100000, guid: 3bdc3e607c44b3a4c8b031d4dbf03e83, type: 2}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
