@@ -1,4 +1,4 @@
-Shader "Unlit/ShadowCaster"
+Shader "Unlit/BakedShadowGenerator"
 {
     Properties
     {

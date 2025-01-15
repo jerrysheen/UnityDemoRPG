@@ -13,6 +13,9 @@ public class BoundsVisualizer : MonoBehaviour
     public RenderTexture depthTexture;
     
     public string folderPath = "Assets/Arts/scenes/BakedRealtimeShadow/BakedShadowFile";
+
+    public Material buildingMat;
+    public Material planeMat;
     private void OnDrawGizmos()
     {
         if (targetTransform != null && GetComponent<Renderer>() != null)
@@ -21,6 +24,8 @@ public class BoundsVisualizer : MonoBehaviour
             Vector3[] points = GetRotatedPoints(originalBounds, targetTransform.rotation);
             // 这个地方反向无所谓了， 我只需要筛选出来四个点就ok
             DrawPoints(points);
+
+            DrawNormal(points);
         }
     }
 
@@ -93,6 +98,22 @@ public class BoundsVisualizer : MonoBehaviour
         Gizmos.DrawLine(points[1], points[5]);
         Gizmos.DrawLine(points[2], points[6]);
         Gizmos.DrawLine(points[3], points[7]);
+    }
+    
+    private void DrawNormal(Vector3[] points)
+    {
+        Vector3 center = (points[0] + points[1] + points[2] + points[3]) / 4f;
+
+        // 计算矩形的宽度和高度
+        float width = Vector3.Distance(points[0], points[1]); // 假设点0和点1是宽度的两个点
+        float height = Vector3.Distance(points[0], points[2]); // 假设点0和点3是高度的两个点
+
+        // 计算平面法线：选择两个向量（点0 -> 点1）和（点0 -> 点3）
+        Vector3 vector1 = (points[1] - points[0]).normalized;
+        Vector3 vector2 = (points[2] - points[0]).normalized;
+        Vector3 normal = Vector3.Cross(vector1, vector2).normalized; // 叉积得到法线
+
+        Gizmos.DrawLine(center, center + normal * 20.0f);
     }
 
     public void AlignCamera()
@@ -178,13 +199,35 @@ public class BoundsVisualizer : MonoBehaviour
             proj_reversez.m23 = -proj.m23;
         }
         Matrix4x4 m_MainLightShadowMatrices = proj_reversez * shadowCamera.worldToCameraMatrix;
-        Material mat = this.GetComponent<MeshRenderer>().sharedMaterial;
-        if (mat == null)
+        // Material mat = this.GetComponent<MeshRenderer>().sharedMaterial;
+        // if (mat == null)
+        // {
+        //     Debug.Log("No mat got!");
+        //     return;
+        // }
+        buildingMat.SetMatrix("_ShadowMatrix",m_MainLightShadowMatrices);
+        planeMat.SetMatrix("_ShadowMatrix",m_MainLightShadowMatrices);
+    }
+    
+    public void PlaceAPlane()
+    {
+        Bounds originalBounds = GetComponent<Renderer>().bounds;
+        Vector3 planeCenter = new Vector3(originalBounds.center.x, originalBounds.center.y -originalBounds.extents.y, originalBounds.center.z);
+        
+        // 创建一个矩形物体（例如，使用Quad来可视化）
+        GameObject plane = this.transform.Find("BakedPlane")?.gameObject;
+        if (plane == null)
         {
-            Debug.Log("No mat got!");
-            return;
+            plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+            plane.transform.position = planeCenter;
+            plane.transform.localScale = new Vector3(2, 2, 2); // 设置宽度和高度
+            plane.transform.parent = this.transform;
+            plane.gameObject.name = "BakedPlane";
         }
-        mat.SetMatrix("_ShadowMatrix",m_MainLightShadowMatrices);
+
+        planeMat = new Material(Shader.Find("Unlit/BakedShadowCaster"));
+        plane.GetComponent<MeshRenderer>().sharedMaterial = planeMat;
+        UploadShaderConstant();
     }
 }
 
@@ -209,6 +252,11 @@ public class BoundsVisualizerEditor : Editor
         if (GUILayout.Button("Upload Shader Constant"))
         {
             script.UploadShaderConstant();
+        }
+
+        if (GUILayout.Button("Place a planar plane"))
+        {
+            script.PlaceAPlane();
         }
     }
 }
