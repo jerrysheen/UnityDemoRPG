@@ -3,6 +3,7 @@ Shader "Unlit/BakedShadowGenerator"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        _ShadowBiasLocal("ShadowBias", Vector) = (0,0,0,0)
     }
     SubShader
     {
@@ -25,6 +26,8 @@ Shader "Unlit/BakedShadowGenerator"
             Cull[_Cull]
 
             HLSLPROGRAM
+            float4 _ShadowBiasLocal;
+            
             #pragma target 2.0
 
             // -------------------------------------
@@ -56,14 +59,14 @@ Shader "Unlit/BakedShadowGenerator"
             // Includes
             #include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/Shaders/ShadowCasterPass.hlsl"
-
+            
             float3 ApplyShadowBiasLocal(float3 positionWS, float3 normalWS, float3 lightDirection)
             {
                 float invNdotL = 1.0 - saturate(dot(lightDirection, normalWS));
-                float scale = invNdotL * _ShadowBias.y;
+                float scale = invNdotL * _ShadowBiasLocal.y;
 
                 // normal bias is negative since we want to apply an inset normal offset
-                positionWS = lightDirection * _ShadowBias.xxx + positionWS;
+                positionWS = lightDirection * _ShadowBiasLocal.xxx + positionWS;
                 positionWS = normalWS * scale.xxx + positionWS;
                 return positionWS;
             }

@@ -2,11 +2,12 @@ using System.IO;
 using UnityEngine;
 using System.Linq;
 using UnityEditor;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.UIElements;
 
 public class BoundsVisualizer : MonoBehaviour
 {
-    public Transform targetTransform;
+    public Transform lightTransform;
     public Camera shadowCamera;
 
     public Vector3[] points;
@@ -16,12 +17,16 @@ public class BoundsVisualizer : MonoBehaviour
 
     public Material buildingMat;
     public Material planeMat;
+    public Material globalShadowGenerateMat;
+    private UnityEngine.Matrix4x4 mainLightShadowMatrices;
+    public float defaultSingleShadowMapSize = 256;
+    public Vector2 ShadowBias = Vector2.one;
     private void OnDrawGizmos()
     {
-        if (targetTransform != null && GetComponent<Renderer>() != null)
+        if (lightTransform != null && GetComponent<Renderer>() != null)
         {
             Bounds originalBounds = GetComponent<Renderer>().bounds;
-            Vector3[] points = GetRotatedPoints(originalBounds, targetTransform.rotation);
+            Vector3[] points = GetRotatedPoints(originalBounds, lightTransform.rotation);
             // 这个地方反向无所谓了， 我只需要筛选出来四个点就ok
             DrawPoints(points);
 
@@ -63,7 +68,7 @@ public class BoundsVisualizer : MonoBehaviour
         rotatedPoints[5] = new Vector3(max.x, min.y, max.z);
         rotatedPoints[6] = new Vector3(min.x, max.y, max.z);
         rotatedPoints[7] = new Vector3(max.x, max.y, max.z);
-        
+
 // 假设已经有了旋转后的点和旋转四元数
         Quaternion inverseRotation = Quaternion.Inverse(rotation);
 
@@ -74,6 +79,7 @@ public class BoundsVisualizer : MonoBehaviour
             // 将每个旋转后的点逆向旋转，恢复到原始空间
             originalPoints[i] = inverseRotation * (rotatedPoints[i] - center) + center;
         }
+
         return originalPoints;
     }
 
@@ -123,10 +129,10 @@ public class BoundsVisualizer : MonoBehaviour
             Debug.LogError("No Cam assigned!");
         }
         
-        if (targetTransform != null && GetComponent<Renderer>() != null)
+        if (lightTransform != null && GetComponent<Renderer>() != null)
         {
             Bounds originalBounds = GetComponent<Renderer>().bounds;
-            points = GetRotatedPoints(originalBounds, targetTransform.rotation);
+            points = GetRotatedPoints(originalBounds, lightTransform.rotation);
         }
 
         Vector3 center = (points[0] + points[7]) / 2.0f;
@@ -158,6 +164,8 @@ public class BoundsVisualizer : MonoBehaviour
         RenderTexture.active = depthTexture;
 
         Texture2D tex = new Texture2D(depthTexture.width, depthTexture.height, TextureFormat.R8, false);
+        Debug.Log(tex.isDataSRGB);
+
         tex.ReadPixels(new Rect(0, 0, depthTexture.width, depthTexture.height), 0, 0);
         tex.Apply();
 
@@ -186,30 +194,18 @@ public class BoundsVisualizer : MonoBehaviour
         Debug.Log("Image saved to: " + filePath);
     }
 
-    public void UploadShaderConstant()
+    public void UploadWorldToShadowMatrix()
     {
-        var proj_reversez = shadowCamera.projectionMatrix;
-        var proj = shadowCamera.projectionMatrix;
-        //if (SystemInfo.usesReversedZBuffer && m_ShadowmapFormat == RenderTextureFormat.Shadowmap)
-        if (SystemInfo.usesReversedZBuffer)
-        {
-            proj_reversez.m20 = -proj.m20;
-            proj_reversez.m21 = -proj.m21;
-            proj_reversez.m22 = -proj.m22;
-            proj_reversez.m23 = -proj.m23;
-        }
-        Matrix4x4 m_MainLightShadowMatrices = proj_reversez * shadowCamera.worldToCameraMatrix;
-        // Material mat = this.GetComponent<MeshRenderer>().sharedMaterial;
-        // if (mat == null)
-        // {
-        //     Debug.Log("No mat got!");
-        //     return;
-        // }
-        buildingMat.SetMatrix("_ShadowMatrix",m_MainLightShadowMatrices);
-        planeMat.SetMatrix("_ShadowMatrix",m_MainLightShadowMatrices);
+        UnityEngine.Matrix4x4 worldToShadow  = GetShadowTransform(shadowCamera.projectionMatrix,shadowCamera.worldToCameraMatrix);
+        mainLightShadowMatrices = worldToShadow;
+        buildingMat.SetMatrix("_ShadowMatrix",worldToShadow);
+        buildingMat.SetVector("_ShadowChanelIndex",new Vector4(1,0,0,0));
+        
+        // 底片， 走instancing 一次绘制完
+        planeMat.SetMatrix("_ShadowMatrix",worldToShadow);
     }
     
-    public void PlaceAPlane()
+    public void GenerateBakedPlane()
     {
         Bounds originalBounds = GetComponent<Renderer>().bounds;
         Vector3 planeCenter = new Vector3(originalBounds.center.x, originalBounds.center.y -originalBounds.extents.y, originalBounds.center.z);
@@ -227,7 +223,51 @@ public class BoundsVisualizer : MonoBehaviour
 
         planeMat = new Material(Shader.Find("Unlit/BakedShadowCaster"));
         plane.GetComponent<MeshRenderer>().sharedMaterial = planeMat;
-        UploadShaderConstant();
+        UploadWorldToShadowMatrix();
+    }
+
+    public void UpdateShadowBias()
+    {
+        // 直接提取urp 平行光的计算公式：
+        float frustumSize;
+        // Frustum size is guaranteed to be a cube as we wrap shadow frustum around a sphere
+        frustumSize = 2.0f / mainLightShadowMatrices.m00;
+        
+        // depth and normal bias scale is in shadowmap texel size in world space
+        float texelSize = frustumSize / defaultSingleShadowMapSize;
+        float depthBias = -ShadowBias.x * texelSize;
+        float normalBias = -ShadowBias.y * texelSize;
+        Debug.Log(depthBias + " , " + normalBias);
+        // 更新材质:
+        globalShadowGenerateMat.SetVector("_ShadowBiasLocal", new Vector4(depthBias, normalBias, 0.0f, 0.0f));
+
+    }
+    
+    Matrix4x4 GetShadowTransform(Matrix4x4 proj, Matrix4x4 view)
+    {
+        // Currently CullResults ComputeDirectionalShadowMatricesAndCullingPrimitives doesn't
+        // apply z reversal to projection matrix. We need to do it manually here.
+        if (SystemInfo.usesReversedZBuffer)
+        {
+            proj.m20 = -proj.m20;
+            proj.m21 = -proj.m21;
+            proj.m22 = -proj.m22;
+            proj.m23 = -proj.m23;
+        }
+
+        Matrix4x4 worldToShadow = proj * view;
+
+        var textureScaleAndBias = Matrix4x4.identity;
+        textureScaleAndBias.m00 = 0.5f;
+        textureScaleAndBias.m11 = 0.5f;
+        textureScaleAndBias.m22 = 0.5f;
+        textureScaleAndBias.m03 = 0.5f;
+        textureScaleAndBias.m23 = 0.5f;
+        textureScaleAndBias.m13 = 0.5f;
+        // textureScaleAndBias maps texture space coordinates from [-1,1] to [0,1]
+
+        // Apply texture scale and offset to save a MAD in shader.
+        return textureScaleAndBias * worldToShadow;
     }
 }
 
@@ -249,14 +289,22 @@ public class BoundsVisualizerEditor : Editor
             script.GenerateShadowMap();
         }
         
-        if (GUILayout.Button("Upload Shader Constant"))
-        {
-            script.UploadShaderConstant();
-        }
-
         if (GUILayout.Button("Place a planar plane"))
         {
-            script.PlaceAPlane();
+            script.GenerateBakedPlane();
         }
+        
+        if (GUILayout.Button("Test Bias"))
+        {
+            script.UploadWorldToShadowMatrix();
+            script.UpdateShadowBias();
+        }        
+        
+        if (GUILayout.Button("Upload Shader Constant"))
+        {
+            script.UploadWorldToShadowMatrix();
+        }
+
+
     }
 }

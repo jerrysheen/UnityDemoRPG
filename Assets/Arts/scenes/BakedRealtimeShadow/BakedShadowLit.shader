@@ -1,9 +1,11 @@
 Shader "Unlit/BakedShadowLit"
 {
+    // 建筑阴影脚本
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
         _BakedShadowMap ("_BakedShadowMap", 2D) = "white" {}
+        
     }
     SubShader
     {
@@ -33,11 +35,19 @@ Shader "Unlit/BakedShadowLit"
                 UNITY_FOG_COORDS(1)
                 float4 vertex : SV_POSITION;
             };
-
+            
             sampler2D _MainTex;
             sampler2D _BakedShadowMap;
             float4 _MainTex_ST;
-            uniform float4x4 _ShadowMatrix;
+            
+            UNITY_INSTANCING_BUFFER_START(ShadowPros)
+                UNITY_DEFINE_INSTANCED_PROP(float4x4, _ShadowMatrix_Array)
+                UNITY_DEFINE_INSTANCED_PROP(float4, _ShadowChanelIndex_Array)
+            UNITY_INSTANCING_BUFFER_END(ShadowPros)
+
+            #define _ShadowMatrix UNITY_ACCESS_INSTANCED_PROP(ShadowPros, _ShadowMatrix_Array)
+            #define _ShadowChanelIndex UNITY_ACCESS_INSTANCED_PROP(ShadowPros, _ShadowChanelIndex_Array)
+
             v2f vert (appdata v)
             {
                 v2f o;
@@ -51,24 +61,18 @@ Shader "Unlit/BakedShadowLit"
             fixed4 frag (v2f i) : SV_Target
             {
                 // sample the texture
-                    //half cascadeIndex = ComputeCascadeUniqueIndex(positionWS);
                 float4 shadowCoord = mul(_ShadowMatrix, float4(i.positionWS, 1.0));
-                shadowCoord.x = (shadowCoord.x + shadowCoord.w) * 0.5;
-                shadowCoord.y = (shadowCoord.y + shadowCoord.w) * 0.5;
-                shadowCoord.z = (shadowCoord.z + shadowCoord.w) * 0.5;
-
-                shadowCoord = shadowCoord / max(shadowCoord.w,0.001);
-                //float4 shadowCoord = mul(_ShadowMatrix, float4(i.positionWS, 1.0));
                 fixed4 shadowmap = tex2D(_BakedShadowMap, shadowCoord.xy);
+                float chanelMixed = dot(shadowmap, _ShadowChanelIndex);
+
                 float shadowattan = 0;
-                if(shadowCoord.z + 0.005f > shadowmap.r)
+                if(shadowCoord.z > chanelMixed)
                     {shadowattan =  1;}
                 else{shadowattan =  0.3f;}
                 fixed4 col = tex2D(_MainTex, i.uv);
                 return col * shadowattan;
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
-                return _ShadowMatrix[0][3];
             }
             ENDCG
         }
